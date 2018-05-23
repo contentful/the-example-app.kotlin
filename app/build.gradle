@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.contentful.tea.kotlin"
+        minSdkVersion 24
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        all {
+            buildConfigField("String", "CONTENTFUL_DELIVERY_API_HOST", "\".contentful.com\"")
+            buildConfigField("String", "CONTENTFUL_DELIVERY_TOKEN", "\"580d5944194846b690dd89b630a1cb98a0eef6a19b860ef71efc37ee8076ddb8\"")
+            buildConfigField("String", "CONTENTFUL_PREVIEW_TOKEN", "\"e8fc39d9661c7468d0285a7ff949f7a23539dd2e686fcb7bd84dc01b392d698b\"")
+            buildConfigField("String", "CONTENTFUL_SPACE_ID", "\"qz0n5cdakyl9\"")
+        }
+    }
+    buildToolsVersion '28.0.0 rc1'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
+
+    implementation 'com.contentful.java:java-sdk:+'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
