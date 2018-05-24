@@ -6,6 +6,7 @@ import android.text.Html
 import android.util.Log
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
+import com.contentful.tea.kotlin.data.Course
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.experimental.launch
 
@@ -24,13 +25,33 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
         launch {
-            val entries = client.fetch(CDAEntry::class.java).all()
-            val titles = entries.entries().values.joinToString("\n") { it.localize("en-US").getField("title") as String }
-            Log.d(LOG_TAG, "Found ${entries.total()} entries.")
-            runOnUiThread {
-                test_text.text = Html.fromHtml("<b>${titles.replace("\n", "</b><br/><b>")}</b>", Html.FROM_HTML_MODE_LEGACY)
+            try {
+                val courses = client
+                        .fetch(CDAEntry::class.java)
+                        .withContentType("course")
+                        .all()
+                        .items()
+                        .map { Course(it as CDAEntry, "en-US") }
+
+                Log.d(LOG_TAG, "Found ${courses.size} entries.")
+
+                runOnUiThread {
+                    val titles = courses.joinToString("") { "<p><b>${it.title}</b><br/>${it.shortDescription}</p>" }
+                    test_text.text = Html.fromHtml(titles, Html.FROM_HTML_MODE_LEGACY)
+
+                    showInformation(title = "Courses found", message = courses.joinToString { it.slug })
+                }
+            } catch (throwable: Throwable) {
+                showError(
+                        message = throwable.toString(),
+                        error = throwable,
+                        moreTitle = "Copy to clipboard",
+                        moreHandler = {
+                            saveToClipboard("label", "${throwable.message} ${throwable.stackTraceText}")
+                            toast("Copied to clipboard")
+                        }
+                )
             }
         }
-
     }
 }
