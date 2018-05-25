@@ -1,0 +1,67 @@
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint "com.github.shyiko:ktlint:0.23.1"
+}
+
+task ktlint(type: JavaExec, group: '🍵🕵️') {
+    description = 'Check Kotlin code style.'
+    classpath = configurations.ktlint
+    main = 'com.github.shyiko.ktlint.Main'
+    args '--reporter=plain', "--reporter=checkstyle,output=${buildDir}/reports/ktlint.xml", '--android', 'src/**/*.kt'
+}
+
+task ktlintFormat(type: JavaExec, group: '🍵🕵️') {
+    description = 'Fix Kotlin code style deviations.'
+    classpath = configurations.ktlint
+    main = 'com.github.shyiko.ktlint.Main'
+    args '-F', '--reporter=plain', '--android', 'src/**/*.kt'
+}
+
+task teaLintCheck {
+    group '🍵🕵️'
+    dependsOn 'lint'
+    dependsOn 'ktlint'
+    doLast {
+        if (new File("${projectDir.absolutePath}/build/reports/lint-results.xml").exists()) {
+            def issues = new XmlParser().parse("${projectDir.absolutePath}/build/reports/lint-results.xml")
+            def issueCount = issues.children().size()
+
+            if (issueCount > 0) {
+                def description = "😱 ${issueCount} lint check${issueCount > 1 ? "s" : ""} failed 😱\n\n"
+                def separator = ""
+                issues.each { issue ->
+                    description += separator
+                    separator = "\n"
+
+                    description += "${issue.@severity}: ${issue.@id}\n"
+                    def location = issue.location
+                    description += " 👀 → ${location.@file[0]}"
+                    if (location.@line[0] != null) {
+                        description += ": ${location.@line[0]} column: ${location.@column[0]}"
+                    }
+                    description += "\n"
+
+                    if (issue.@url != null) {
+                        description += " 📄 → ${issue.@url}\n"
+                    }
+                }
+                throw new IllegalStateException(description)
+            } else {
+                println("❤️ No issues found ❤️")
+            }
+        }
+    }
+}
+
+task copyGitHooks(type: Copy) {
+    description 'Copies the git hooks from lint/git-hooks to the .git folder.'
+    group '🍵🕵️'
+    from("lint/git-hooks/") {
+        include '**/*.sh'
+        rename '(.*).sh', '$1'
+    }
+    into "${rootDir}/.git/hooks"
+}
