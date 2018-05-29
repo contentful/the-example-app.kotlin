@@ -2,7 +2,7 @@ package com.contentful.tea.kotlin
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import junit.framework.Assert.assertEquals
+import junit.framework.TestCase.assertEquals
 
 import org.junit.Test
 import org.junit.runner.RunWith

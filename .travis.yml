@@ -1,0 +1,50 @@
+sudo: false
+
+language: android
+
+jdk:
+  - openjdk8
+
+branches:
+  except:
+    - gh-pages
+
+android:
+  components:
+    - tools
+    - platform-tools
+
+before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
+  - sdkmanager tools > /dev/null
+  - sdkmanager "system-images;android-25;google_apis;armeabi-v7a" > /dev/null
+  - sdkmanager emulator > /dev/null
+  - sdkmanager --update > /dev/null
+  - echo no | avdmanager create avd --force -n test -k "system-images;android-25;google_apis;armeabi-v7a" > /dev/null
+  - $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -no-boot-anim &
+
+install:
+  - ./gradlew clean assemble assembleAndroidTest --stacktrace
+
+before_script:
+  - adb shell input keyevent 82 &
+
+script:
+  - android-wait-for-emulator
+  - ./gradlew check connectedCheck --stacktrace
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+
+notifications:
+  slack:
+    secure: BsL0xDpc/LteDyqsdngHjVkgrcawMShgU49KSRwt5BwOEwS5fu9QvXo60MamXLy8KusUWDz5bmKIqp+6nKsneiXg/gsQPZ9zYHv1E9aI+4AeNftwbJNj3p7Z6tlYlKICN4ufyaOTNrPHE9lOtqvkquGgS/MBJqI1vsFr+W4p5/8JZoG1N5k5uG/WDXAGi4ybrWLq80O5zwoWIUaZOVY9S1UWTd4x9J0TGjz+2Pq0vbwl5aH2YxAR4FUtGINVWskVHcBd8CvIEVisGUfyBZlFSSjCa4lrmAEtiYn1fGQOQ+/Im/N689iUplz2wBXD2HNdzfVgT3usqePVkz20NW8ysy3TMTuw2M4Zc0C3koMcExr9uEJNEgpTBFyJuKGl2+wt6pvczYjhEcyFY+WrYG/U7TC92JyOQutfKC7BATZFkkpbiaz31N8tx/KVVbuaexloHL98CjYugCRJgKEwBgKsZ+T3dBUpZ9keDz5Bq0wu3p9sYz+3jRK0HEGRX0XHrC/CJYMz363i/BOk9E6BMWOmE2P+1Qp8s+PONAb7LjN3yAFrn30j7t3EsZDLp4GQB4DlqVmDwctaSeeRJjHf2/was+cIYunsUHrhY2VwYoGRTNBLqEuzwaj6hOyw6AMaS67tFYWRFwrTVHKF1dTyMyN5GXikH49+hpeC4nZI/lnb8qQ=
+
