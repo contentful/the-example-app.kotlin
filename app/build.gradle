@@ -59,7 +59,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.jetbrains.kotlin:kotlin-stdlib:1.2.41'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:1.0.6'
-    testImplementation "com.nhaarman:mockito-kotlin:1.1.0"
+    testImplementation 'com.nhaarman:mockito-kotlin:1.1.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
