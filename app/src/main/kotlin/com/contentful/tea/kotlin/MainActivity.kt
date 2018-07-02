@@ -9,6 +9,8 @@ import com.contentful.java.cda.CDAEntry
 import com.contentful.tea.kotlin.data.Course
 import com.contentful.tea.kotlin.data.LessonModule
 import kotlinx.android.synthetic.main.activity_main.*
+import com.m2mobi.markymarkandroid.MarkyMarkAndroid
+import com.m2mobi.markymarkcontentful.ContentfulFlavor
 import kotlinx.coroutines.experimental.launch
 
 class MainActivity : AppCompatActivity() {
@@ -45,6 +47,10 @@ class MainActivity : AppCompatActivity() {
                 Log.d(LOG_TAG, "Found ${courses.size} entries.")
 
                 runOnUiThread {
+                    val markyMark = MarkyMarkAndroid.getMarkyMark(
+                        applicationContext,
+                        ContentfulFlavor()
+                    ) { _, url -> Log.d(LOG_TAG, url) }
 
                     base_linear_layout.removeAllViews()
 
@@ -58,9 +64,9 @@ class MainActivity : AppCompatActivity() {
                             })
                             it.modules.forEach {
                                 if (it is LessonModule.Copy) {
-                                    base_linear_layout.addView(TextView(this@MainActivity).apply {
-                                        text = "${it.title}\n${it.copy}"
-                                    })
+                                    markyMark.parseMarkdown(it.copy).forEach {
+                                        base_linear_layout.addView(it)
+                                    }
                                 }
                             }
                         }
