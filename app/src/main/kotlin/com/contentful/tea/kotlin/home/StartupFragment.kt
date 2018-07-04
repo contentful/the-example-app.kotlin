@@ -1,4 +1,4 @@
-package com.contentful.tea.kotlin
+package com.contentful.tea.kotlin.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.java.cda.CDAEntry
+import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.extensions.showError
-import com.contentful.tea.kotlin.extensions.showInformation
 import kotlinx.coroutines.experimental.launch
 
 /**
@@ -43,9 +43,7 @@ class StartupFragment : Fragment() {
                             null
                     }
 
-
                 activity?.apply {
-                    showInformation("Found ${courses.size} entries.")
                     runOnUiThread {
                         NavHostFragment.findNavController(this@StartupFragment)
                             .navigate(
@@ -63,12 +61,11 @@ class StartupFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_startup, container, false)
     }
 }
-
-const val LOG_TAG: String = "com.contentful.tea.kotlin.Startup"

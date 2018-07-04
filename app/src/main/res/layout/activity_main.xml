@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
->
-    <LinearLayout
-            android:id="@+id/base_linear_layout"
-            android:gravity="center"
-            tools:ignore="UnusedResources"
-            android:orientation="vertical"
+        tools:context=".MainActivity"
+        android:orientation="vertical"
+        >
+
+    <fragment
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/navigation_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            app:navGraph="@navigation/navigation_main"
+            app:defaultNavHost="true"
+            tools:layout="@layout/fragment_startup"
+            />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@android:drawable/divider_horizontal_textfield"
-            android:showDividers="beginning|middle|end"
-    >
-        <TextView
-                android:drawableTop="@mipmap/ic_launcher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-        />
-    </LinearLayout>
-</ScrollView>
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
+            app:itemIconTint="@android:color/white"
+            app:itemTextColor="@android:color/white"
+            app:menu="@menu/menu_bottom_navigation"
+            />
+</LinearLayout>

@@ -3,12 +3,19 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".Startup">
+             tools:context=".home.StartupFragment"
+        >
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            android:drawableTop="@mipmap/ic_launcher_foreground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="@string/app_name"
+            android:scaleX="3"
+            android:scaleY="3"
+            android:textSize="@dimen/startup_app_text"
+            />
 
 </FrameLayout>

@@ -2,69 +2,43 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:title="TITLE"
         >
-    <PreferenceCategory
-            android:title="Fetch Content">
-        <ListPreference
-                android:title="Pick your favourite api"
-                android:key="api"
-                android:summary="@array/api_keys_readable"
-                android:defaultValue="0"
-                android:entries="@array/api_keys_readable"
-                android:entryValues="@array/api_keys_stored"
-                />
-        <ListPreference
-                android:title="Select your language"
-                android:summary="spanish"
-                android:key="locale"
-                android:defaultValue="1"
-                android:entries="@array/locales_readable"
-                android:entryValues="@array/locales_stored"
-                />
-    </PreferenceCategory>
+    <Preference
+            android:key="space"
+            android:title="Connected To Space"
+            android:summary="[prod] The example app v1"
+            android:selectable="false"
+            />
+
+    <Preference
+            android:key="scan_qr"
+            android:icon="@mipmap/ic_launcher_foreground"
+            android:title="Scan QR Code to fill in data"
+            />
 
     <PreferenceCategory
-            android:title="Credentials">
-        <Preference
-                android:title="Connect to space"
-                android:summary="[prod] foo bar"
-                >
-            <!-- TODO: open space settings-->
-        </Preference>
-        <Preference
-                android:title="Scan QR code to connect"
-                android:summary="Select preview from any of your entries in the Contentful Webapp and show the resulting QR code to this app."
-                >
-            <!-- TODO: open qr reading settings-->
-        </Preference>
-    </PreferenceCategory>
-
-    <PreferenceCategory
-            android:title="Editorial Features">
-        <SwitchPreference
-                android:title="Enable Editorial Features"
-                android:key="editorial_features"
-                android:summary="Enable to display an edit link and other contextual helpers to authors. You need to have access to the connected space to make this work."
+            android:title="Space Settings">
+        <EditTextPreference
+                android:title="SpaceID"
+                android:key="spaceId"
+                android:summary="kh531dasdfaasd"
+                />
+        <EditTextPreference
+                android:title="Content Delivery Api Access Token"
+                android:key="cda_token"
+                android:summary="kh531dasdfaasd"
+                />
+        <EditTextPreference
+                android:title="Content Preview Api Access Token"
+                android:key="cpa_token"
+                android:summary="kh531dasdfaasd"
                 />
     </PreferenceCategory>
 
-    <PreferenceCategory>
-
+    <PreferenceCategory android:title="Reset">
         <Preference
-                android:title="About"
-                android:key="about"
-                >
-        </Preference>
-
-        <Preference
-                android:title="Imprint"
-                android:key="imprint"
-                >
-        </Preference>
-
-        <Preference
-                android:title="Licences"
-                android:key="licences"
-                >
-        </Preference>
+                android:key="reset"
+                android:title="Reset credentials"
+                android:summary="Reset application to default settings, loosing all the changes you made since installing it."
+                />
     </PreferenceCategory>
 </PreferenceScreen>

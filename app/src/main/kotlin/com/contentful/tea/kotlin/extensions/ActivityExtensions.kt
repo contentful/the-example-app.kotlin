@@ -1,4 +1,4 @@
-package com.contentful.tea.kotlin
+package com.contentful.tea.kotlin.extensions
 
 import android.app.Activity
 import android.content.ClipData

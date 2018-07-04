@@ -1,4 +1,4 @@
-package com.contentful.tea.kotlin.data
+package com.contentful.tea.kotlin.contentful
 
 import com.contentful.java.cda.CDAAsset
 import com.contentful.java.cda.CDAEntry
@@ -18,18 +18,18 @@ data class Course(
     val categories: List<Category>
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "slug"),
-            entry.getField<CDAAsset>(locale, "image")
-                    .urlForImageWith(https(), formatOf(webp)),
-            entry.getField<String>(locale, "shortDescription"),
-            entry.getField<String>(locale, "description"),
-            entry.getField<Double>(locale, "duration").toInt(),
-            entry.getField<String>(locale, "skillLevel"),
-            entry.getField<List<CDAEntry>>(locale, "lessons")
-                    .map { Lesson(it, locale) },
-            entry.getField<List<CDAEntry>>(locale, "categories")
-                    .map { Category(it, locale) }
+        entry.getField<String>(locale, "title"),
+        entry.getField<String>(locale, "slug"),
+        entry.getField<CDAAsset>(locale, "image")
+            .urlForImageWith(https(), formatOf(webp)),
+        entry.getField<String>(locale, "shortDescription"),
+        entry.getField<String>(locale, "description"),
+        entry.getField<Double>(locale, "duration").toInt(),
+        entry.getField<String>(locale, "skillLevel"),
+        entry.getField<List<CDAEntry>>(locale, "lessons")
+            .map { Lesson(it, locale) },
+        entry.getField<List<CDAEntry>>(locale, "categories")
+            .map { Category(it, locale) }
     )
 }
 
@@ -38,7 +38,7 @@ data class Category(
     val slug: String
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "slug")
+        entry.getField<String>(locale, "title"),
+        entry.getField<String>(locale, "slug")
     )
 }

@@ -1,4 +1,4 @@
-package com.contentful.tea.kotlin.data
+package com.contentful.tea.kotlin.contentful
 
 import com.contentful.java.cda.CDAAsset
 import com.contentful.java.cda.CDAEntry

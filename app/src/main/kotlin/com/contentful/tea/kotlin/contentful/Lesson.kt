@@ -1,4 +1,4 @@
-package com.contentful.tea.kotlin.data
+package com.contentful.tea.kotlin.contentful
 
 import com.contentful.java.cda.CDAAsset
 import com.contentful.java.cda.CDAEntry
@@ -10,22 +10,23 @@ data class Lesson(
     val modules: List<LessonModule>
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "slug"),
-            entry.getField<List<CDAEntry>>(locale, "modules")
-                    .map { findLessonModule(it, locale) }
+        entry.getField<String>(locale, "title"),
+        entry.getField<String>(locale, "slug"),
+        entry.getField<List<CDAEntry>>(locale, "modules")
+            .map { findLessonModule(it, locale) }
     )
 }
 
 fun findLessonModule(entry: CDAEntry, locale: String): LessonModule =
-        when (entry.contentType().id()) {
-            "lessonCodeSnippets" -> LessonModule.CodeSnippet(entry, locale)
-            "lessonImage" -> LessonModule.Image(entry, locale)
-            "lessonCopy" -> LessonModule.Copy(entry, locale)
-            else -> LessonModule.Copy(
-                "<lesson module type not found>",
-                "## lesson module type not found")
-        }
+    when (entry.contentType().id()) {
+        "lessonCodeSnippets" -> LessonModule.CodeSnippet(entry, locale)
+        "lessonImage" -> LessonModule.Image(entry, locale)
+        "lessonCopy" -> LessonModule.Copy(entry, locale)
+        else -> LessonModule.Copy(
+            "<lesson module type not found>",
+            "## lesson module type not found"
+        )
+    }
 
 sealed class LessonModule {
     data class CodeSnippet(
@@ -41,16 +42,16 @@ sealed class LessonModule {
         val swift: String
     ) : LessonModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-                entry.getField<String>(locale, "title"),
-                entry.getField<String>(locale, "curl"),
-                entry.getField<String>(locale, "dotNet"),
-                entry.getField<String>(locale, "javascript"),
-                entry.getField<String>(locale, "java"),
-                entry.getField<String>(locale, "javaAndroid"),
-                entry.getField<String>(locale, "php"),
-                entry.getField<String>(locale, "python"),
-                entry.getField<String>(locale, "ruby"),
-                entry.getField<String>(locale, "swift")
+            entry.getField<String>(locale, "title"),
+            entry.getField<String>(locale, "curl"),
+            entry.getField<String>(locale, "dotNet"),
+            entry.getField<String>(locale, "javascript"),
+            entry.getField<String>(locale, "java"),
+            entry.getField<String>(locale, "javaAndroid"),
+            entry.getField<String>(locale, "php"),
+            entry.getField<String>(locale, "python"),
+            entry.getField<String>(locale, "ruby"),
+            entry.getField<String>(locale, "swift")
         )
     }
 
@@ -58,27 +59,25 @@ sealed class LessonModule {
         val title: String,
         val caption: String,
         val image: String
-    )
-        : LessonModule() {
+    ) : LessonModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-                entry.getField<String>(locale, "title"),
-                entry.getField<String>(locale, "caption"),
-                entry.getField<CDAAsset>(locale, "image")
-                        .urlForImageWith(
-                                ImageOption.https(),
-                                ImageOption.formatOf(ImageOption.Format.webp)
-                        )
+            entry.getField<String>(locale, "title"),
+            entry.getField<String>(locale, "caption"),
+            entry.getField<CDAAsset>(locale, "image")
+                .urlForImageWith(
+                    ImageOption.https(),
+                    ImageOption.formatOf(ImageOption.Format.webp)
+                )
         )
     }
 
     data class Copy(
         val title: String,
         val copy: String
-    )
-        : LessonModule() {
+    ) : LessonModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-                entry.getField<String>(locale, "title"),
-                entry.getField<String>(locale, "copy")
+            entry.getField<String>(locale, "title"),
+            entry.getField<String>(locale, "copy")
         )
     }
 }

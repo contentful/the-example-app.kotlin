@@ -1,3 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="startup_app_text">8sp</dimen>
+    <dimen name="max_border">32dp</dimen>
+    <dimen name="higher_border">24dp</dimen>
+    <dimen name="high_border">16dp</dimen>
+    <dimen name="mid_border">8dp</dimen>
+    <dimen name="low_border">4dp</dimen>
+    <dimen name="min_border">2dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_content_padding">8dp</dimen>
+    <dimen name="card_corner_radius">2dp</dimen>
 </resources>
