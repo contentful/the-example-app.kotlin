@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".CourseOverviewFragment"
+              android:id="@+id/overview_container"
+              android:orientation="vertical"
+        >
+
+    <TextView
+            android:id="@+id/overview_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textStyle="bold"
+            />
+
+    <TextView
+            android:id="@+id/overview_duration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textStyle="italic"
+            />
+
+    <TextView
+            android:id="@+id/overview_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sample_text"
+            />
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:layout_gravity="center"
+                android:background="#80808080"
+                />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/overview_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/mid_border"
+                android:layout_gravity="end"
+                android:layout_margin="@dimen/mid_border"
+                android:src="@mipmap/ic_launcher"
+                />
+    </FrameLayout>
+
+    <!-- TODO: REMOVE FOLLOWING LINES WITH DYNAMIC CONTENT! -->
+
+    <TextView
+            android:id="@+id/overview_lessons_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lessons"
+            android:textColor="@color/colorPrimary"
+            />
+
+    <TextView
+            android:drawableStart="@mipmap/ic_launcher_foreground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/app_name"
+            />
+
+    <TextView
+            android:drawableStart="@mipmap/ic_launcher_foreground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/app_name"
+            />
+
+    <TextView
+            android:drawableStart="@mipmap/ic_launcher_foreground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/app_name"
+            />
+
+    <TextView
+            android:drawableStart="@mipmap/ic_launcher_foreground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/app_name"
+            />
+
+    <TextView
+            android:drawableStart="@mipmap/ic_launcher_foreground"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/app_name"
+            />
+
+</LinearLayout>

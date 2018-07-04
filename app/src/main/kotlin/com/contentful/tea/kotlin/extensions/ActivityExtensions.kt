@@ -5,9 +5,9 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 
 fun Activity.showError(
     message: String,
@@ -20,23 +20,23 @@ fun Activity.showError(
 ) {
     runOnUiThread {
         AlertDialog
-                .Builder(this)
-                .apply {
-                    setTitle(title)
-                    if (error != null) {
-                        setMessage("$message\n\nStacktrace: ${error.stackTraceText}")
-                    } else {
-                        setMessage(message)
-                    }
-                    if (moreHandler != null) {
-                        setNeutralButton(moreTitle, { _, _ -> moreHandler() })
-                    }
-                    if (cancelHandler != null) {
-                        setNegativeButton(moreTitle, { _, _ -> cancelHandler() })
-                    }
-                    setPositiveButton(android.R.string.ok, { _, _ -> okHandler() })
+            .Builder(this)
+            .apply {
+                setTitle(title)
+                if (error != null) {
+                    setMessage("$message\n\nStacktrace: ${error.stackTraceText}")
+                } else {
+                    setMessage(message)
                 }
-                .show()
+                if (moreHandler != null) {
+                    setNeutralButton(moreTitle) { _, _ -> moreHandler() }
+                }
+                if (cancelHandler != null) {
+                    setNegativeButton(moreTitle) { _, _ -> cancelHandler() }
+                }
+                setPositiveButton(android.R.string.ok) { _, _ -> okHandler() }
+            }
+            .show()
 
         if (error === null) {
             Log.i(this.javaClass.simpleName, message)
