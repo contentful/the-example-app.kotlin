@@ -2,19 +2,8 @@
 <navigation xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            app:startDestination="@id/startup"
+            app:startDestination="@id/home"
         >
-    <fragment
-            android:id="@+id/startup"
-            android:name="com.contentful.tea.kotlin.home.StartupFragment"
-            android:label="fragment_startup"
-            tools:layout="@layout/fragment_startup"
-            >
-        <action
-                android:id="@+id/startupDone"
-                app:destination="@id/home"
-                />
-    </fragment>
     <fragment
             android:id="@+id/home"
             android:name="com.contentful.tea.kotlin.home.HomeFragment"

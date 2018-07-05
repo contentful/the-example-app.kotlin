@@ -16,6 +16,7 @@
                 android:layout_height="wrap_content"
                 tools:context=".courses.OneLessonFragment"
                 android:orientation="vertical"
+                tools:ignore="UseCompoundDrawables"
                 >
 
             <!--TODO: Replace with dynamic content-->
@@ -23,12 +24,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/sample_text"
+                    android:drawableBottom="@mipmap/ic_launcher"
                     />
 
             <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher"
                     android:contentDescription="@null"
                     />
 

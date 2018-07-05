@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">The Example APP - Kotlin</string>
+    <!--suppress Typos -->
     <string name="sample_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc porta, diam sed sagittis fringilla, tortor nisl dictum velit, vel fermentum nibh ex id odio. Morbi pulvinar elit vel libero consectetur egestas. Duis viverra turpis in arcu viverra viverra. Suspendisse ornare risus nec elementum aliquet. Morbi consequat massa tortor, nec vestibulum nibh condimentum vitae. Praesent consectetur, metus at sagittis luctus, urna augue auctor nisl, sed aliquam nunc lorem vitae velit. Duis luctus nunc eu risus fermentum sagittis. Sed venenatis egestas dolor, vitae dictum orci consequat ut. Aliquam eu erat nec turpis vulputate congue. Aenean sollicitudin porttitor tortor, fringilla consectetur lorem varius vel. Curabitur pharetra sagittis purus, molestie pretium dolor volutpat ac. Ut tempor diam lectus, in semper orci egestas ut.</string>
     <string name="lessons">Lessons</string>
     <string name="app_bar_home">Home</string>
@@ -8,4 +9,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="startup_built">built by</string>
+    <string name="startup_description_contentful_logo">Contentful Logo</string>
+    <string name="startup_description_app_logo">The logo of the example app.</string>
 </resources>
