@@ -4,11 +4,11 @@
     <item
             android:id="@+id/bottom_navigation_home"
             android:title="@string/app_bar_home"
-            android:icon="@android:drawable/ic_menu_save"
+            android:icon="@drawable/ic_action_home"
             />
     <item
             android:id="@+id/bottom_navigation_courses"
             android:title="@string/app_bar_courses"
-            android:icon="@android:drawable/ic_menu_sort_alphabetically"
+            android:icon="@drawable/ic_action_courses"
             />
 </menu>

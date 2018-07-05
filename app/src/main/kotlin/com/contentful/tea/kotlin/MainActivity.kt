@@ -14,10 +14,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        bottom_navigation.setOnNavigationItemSelectedListener { bottomNavigationItemSelected(it) }
+        setSupportActionBar(findViewById(R.id.main_toolbar))
+
+        supportActionBar?.apply {
+            title = ""
+        }
+
+        main_bottom_navigation.setOnNavigationItemSelectedListener {
+            bottomNavigationItemSelected(it)
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.apply { clear() }
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
