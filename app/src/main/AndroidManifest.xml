@@ -13,13 +13,10 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             >
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-
+        <activity
+                android:name=".MainActivity"
+                android:launchMode="singleTop"
+                >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -27,11 +24,20 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
 
                 <data
-                        android:scheme="the-example-app"
                         android:host="mobile"
                         android:pathPrefix="/"
+                        android:scheme="the-example-app"
                         />
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".home.StartupActivity"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
     </application>
