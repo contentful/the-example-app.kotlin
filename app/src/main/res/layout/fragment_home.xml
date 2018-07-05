@@ -10,8 +10,4 @@
         tools:background="#FF808080"
         >
 
-    <include layout="@layout/course_card"/>
-
-    <include layout="@layout/course_card"/>
-
 </LinearLayout>
