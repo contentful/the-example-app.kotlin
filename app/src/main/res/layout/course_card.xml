@@ -4,48 +4,65 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/mid_border"
+        android:layout_height="@dimen/course_card_max_height"
         android:layout_margin="@dimen/mid_border"
-        app:cardBackgroundColor="#FFFFFFFF"
         app:cardCornerRadius="@dimen/card_corner_radius"
         app:cardElevation="@dimen/card_elevation"
-        app:contentPadding="@dimen/card_content_padding"
-        app:cardPreventCornerOverlap="true"
         tools:showIn="@layout/fragment_home"
+        app:cardPreventCornerOverlap="false"
         >
 
-    <RelativeLayout
+    <ImageView
+            android:id="@+id/card_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_image"
+            android:contentDescription="@null"
+            />
+
+    <RelativeLayout
+            android:id="@+id/card_scrim"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#E6536171"
+            android:paddingTop="@dimen/card_content_padding_horizontal"
+            android:paddingBottom="@dimen/card_content_padding_horizontal"
+            android:paddingLeft="@dimen/card_content_padding_vertical"
+            android:paddingRight="@dimen/card_content_padding_vertical"
             >
 
         <TextView
                 android:id="@+id/card_title"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                tools:text="Foobar"
+                android:layout_width="wrap_content"
+                android:lineSpacingMultiplier="1.33"
+                android:textSize="@dimen/card_title_font_size"
+                android:textColor="#FFFFFF"
+                tools:text="Hello Contentful"
                 />
 
         <TextView
                 android:id="@+id/card_description"
+                android:layout_below="@id/card_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                tools:text="Foobar"
-                android:layout_below="@id/card_title"
+                android:lineSpacingMultiplier="1.54"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/card_description_font_size"
+                tools:text="Learn how to build your own applications with Contentful."
                 />
 
         <Button
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/card_call_to_action"
+                android:layout_alignParentBottom="true"
+                android:textAllCaps="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:id="@+id/card_call_to_action"
-                tools:text="Foobar"
-                android:layout_below="@id/card_description"
+                android:textColor="#FFFFFF"
+                android:text="@string/card_button_view_course"
                 />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
-
-    

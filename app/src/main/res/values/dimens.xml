@@ -2,7 +2,13 @@
 <resources>
     <dimen name="high_border">16dp</dimen>
     <dimen name="mid_border">8dp</dimen>
-    <dimen name="card_elevation">4dp</dimen>
-    <dimen name="card_content_padding">8dp</dimen>
-    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="card_elevation">1dp</dimen>
+    <dimen name="card_content_padding_vertical">24dp</dimen>
+    <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="bar_elevation">8dp</dimen>
+    <dimen name="main_app_bar_logo_height">30dp</dimen>
+    <dimen name="card_content_padding_horizontal">16dp</dimen>
+    <dimen name="card_title_font_size">24sp</dimen>
+    <dimen name="card_description_font_size">13sp</dimen>
+    <dimen name="course_card_max_height">125dp</dimen>
 </resources>

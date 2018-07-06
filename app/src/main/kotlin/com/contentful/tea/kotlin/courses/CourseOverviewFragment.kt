@@ -41,7 +41,7 @@ class CourseOverviewFragment : Fragment() {
             overview_container.addView(TextView(activity).apply {
                 text = "Course $courseId.$i"
                 setCompoundDrawables(
-                    resources.getDrawable(R.mipmap.ic_launcher_foreground),
+                    resources.getDrawable(R.mipmap.ic_launcher_foreground, resources.newTheme()),
                     null,
                     null,
                     null

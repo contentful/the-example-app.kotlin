@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.home.forEach
+import com.contentful.tea.kotlin.extensions.forEach
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_courses.*
 

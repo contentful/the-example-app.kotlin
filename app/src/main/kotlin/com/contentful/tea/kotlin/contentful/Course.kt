@@ -7,6 +7,7 @@ import com.contentful.java.cda.image.ImageOption.formatOf
 import com.contentful.java.cda.image.ImageOption.https
 
 data class Course(
+    val id: String,
     val title: String,
     val slug: String,
     val image: String,
@@ -18,6 +19,7 @@ data class Course(
     val categories: List<Category>
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
+        entry.id(),
         entry.getField<String>(locale, "title"),
         entry.getField<String>(locale, "slug"),
         entry.getField<CDAAsset>(locale, "image")
