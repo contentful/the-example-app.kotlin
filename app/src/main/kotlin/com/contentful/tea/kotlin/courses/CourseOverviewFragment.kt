@@ -1,19 +1,20 @@
 package com.contentful.tea.kotlin.courses
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.contentful.Contentful
+import com.contentful.tea.kotlin.contentful.Course
 import kotlinx.android.synthetic.main.fragment_course_overview.*
+import kotlinx.android.synthetic.main.item_lesson.view.*
 
 class CourseOverviewFragment : Fragment() {
     private var courseId: String? = null
+    private var firstLessonId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,34 +32,54 @@ class CourseOverviewFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_course_overview, container, false)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Toast.makeText(context, courseId, Toast.LENGTH_LONG).show()
         overview_next.setOnClickListener { onNextButtonClicked() }
 
-        // TODO: Generate lessons from contentful
-        for (i in 1 until 10) {
-            overview_container.addView(TextView(activity).apply {
-                text = "Course $courseId.$i"
-                setCompoundDrawables(
-                    resources.getDrawable(R.mipmap.ic_launcher_foreground, resources.newTheme()),
-                    null,
-                    null,
-                    null
-                )
-                setOnClickListener { lessonClicked(i.toString()) }
-            })
+        courseId?.let {
+            Contentful()
+                .fetchCourse(courseId!!) { course ->
+                    activity?.runOnUiThread {
+                        updateData(course)
+                    }
+                }
         }
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun lessonClicked(id: String) {
+    private fun updateData(course: Course) {
+        firstLessonId = if (course.lessons.isNotEmpty()) course.lessons.first().id else null
+
+        overview_title.text = course.title
+        overview_description.text = course.description
+        overview_duration.text = getString(
+            R.string.lesson_duration,
+            course.duration,
+            course.skillLevel
+        )
+
+        val inflater = LayoutInflater.from(context)
+        course.lessons.forEach { lesson ->
+            val index = course.lessons.indexOf(lesson)
+            inflater
+                .inflate(R.layout.item_lesson, overview_container, false)
+                .apply {
+                    this.lesson_item_title.text = lesson.title
+                    this.lesson_item_description.text =
+                        getString(R.string.lesson_number, index + 1)
+                    setOnClickListener {
+                        lessonClicked(lesson.id)
+                    }
+
+                    overview_container.addView(this)
+                }
+        }
+    }
+
+    private fun lessonClicked(lessonId: String) {
         val navController = NavHostFragment.findNavController(this)
-        val action = CourseOverviewFragmentDirections.openLesson(courseId, id)
+        val action = CourseOverviewFragmentDirections.openLesson(courseId, lessonId)
         navController.navigate(action)
     }
 
-    private fun onNextButtonClicked() = lessonClicked(nextLessonId())
-
-    private fun nextLessonId(): String = "TODO" // TODO: find first lesson id
+    private fun onNextButtonClicked() = firstLessonId?.let { lessonClicked(it) }
 }

@@ -9,6 +9,6 @@
     <item
             android:id="@+id/bottom_navigation_courses"
             android:title="@string/app_bar_courses"
-            android:icon="@drawable/ic_action_courses"
+            android:icon="@drawable/ic_lesson"
             />
 </menu>

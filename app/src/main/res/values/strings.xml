@@ -7,10 +7,11 @@
     <string name="app_bar_courses">Courses</string>
     <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="startup_built">built by</string>
     <string name="startup_description_contentful_logo">Contentful Logo</string>
     <string name="startup_description_app_logo">The logo of the example app.</string>
     <string name="card_button_view_course">view course</string>
+    <string name="lesson_number">Lesson %d</string>
+    <string name="lesson_duration">Duration: %d min • Skill level: %s</string>
 </resources>
