@@ -40,16 +40,4 @@
             app:defaultNavHost="true"
             tools:layout="@layout/fragment_home"
             />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/main_bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:elevation="@dimen/bar_elevation"
-            app:itemIconTint="#FF536171"
-            app:itemTextColor="#FF536171"
-            app:menu="@menu/menu_bottom_navigation"
-            android:background="@android:color/white"
-            />
 </LinearLayout>

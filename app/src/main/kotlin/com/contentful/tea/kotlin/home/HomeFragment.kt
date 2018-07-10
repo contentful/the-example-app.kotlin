@@ -2,9 +2,13 @@ package com.contentful.tea.kotlin.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Contentful
@@ -42,6 +46,15 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+        main_bottom_navigation.setOnNavigationItemSelectedListener {
+            if (activity != null) {
+                bottomNavigationItemSelected(it)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private fun updateModuleView(view: View, module: LayoutModule) {
@@ -73,4 +86,27 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun bottomNavigationItemSelected(item: MenuItem): Boolean {
+        val navController = Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
+        return when (item.itemId) {
+            R.id.bottom_navigation_home -> {
+                navigateIfNotAlreadyThere(navController, R.id.home)
+                true
+            }
+            R.id.bottom_navigation_courses -> {
+                navigateIfNotAlreadyThere(navController, R.id.courses)
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun navigateIfNotAlreadyThere(navController: NavController, @IdRes id: Int): Boolean =
+        if (navController.currentDestination.id != id) {
+            navController.navigate(id)
+            true
+        } else {
+            false
+        }
 }

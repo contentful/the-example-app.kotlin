@@ -2,12 +2,31 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/home_courses"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".home.HomeFragment"
-        android:orientation="vertical"
         tools:background="#FF808080"
+        android:orientation="vertical"
         >
 
+    <LinearLayout
+            android:id="@+id/home_courses"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/main_bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:elevation="@dimen/bar_elevation"
+            app:itemIconTint="#FF536171"
+            app:itemTextColor="#FF536171"
+            app:menu="@menu/menu_bottom_navigation"
+            android:background="@android:color/white"
+            />
 </LinearLayout>
