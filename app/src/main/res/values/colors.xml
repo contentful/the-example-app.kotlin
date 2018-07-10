@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#FF4A90E2</color>
-    <!--suppress UnusedResources -->
-    <color name="colorPrimaryDark">#00574B</color>
-    <!--suppress UnusedResources -->
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimaryDark">#FF536171</color>
+    <color name="colorAccent">#FFFFFF</color>
+    <color name="defaultScrim">#E6536171</color>
 </resources>

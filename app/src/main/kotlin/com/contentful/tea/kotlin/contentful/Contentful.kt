@@ -58,6 +58,73 @@ class Contentful(
         }
     }
 
+    fun fetchAllCoursesOfCategory(
+        categoryId: String,
+        errorCallback: (Throwable) -> Unit = ::defaultError,
+        successCallback: (List<Course>) -> Unit
+    ) {
+        launch {
+            try {
+                val courses =
+                    client
+                        .fetch(CDAEntry::class.java)
+                        .withContentType("course")
+                        .linksToEntryId(categoryId)
+                        .include(10)
+                        .all()
+                        .items()
+                        .map { Course(it as CDAEntry, locale) }
+
+                successCallback(courses)
+            } catch (throwable: Throwable) {
+                errorCallback(throwable)
+            }
+        }
+    }
+
+    fun fetchAllCourses(
+        errorCallback: (Throwable) -> Unit = ::defaultError,
+        successCallback: (List<Course>) -> Unit
+    ) {
+        launch {
+            try {
+                val courses =
+                    client
+                        .fetch(CDAEntry::class.java)
+                        .withContentType("course")
+                        .include(10)
+                        .all()
+                        .items()
+                        .map { Course(it as CDAEntry, locale) }
+
+                successCallback(courses)
+            } catch (throwable: Throwable) {
+                errorCallback(throwable)
+            }
+        }
+    }
+
+    fun fetchAllCategories(
+        errorCallback: (Throwable) -> Unit = ::defaultError,
+        successCallback: (List<Category>) -> Unit
+    ) {
+        launch {
+            try {
+                val categories = client
+                    .fetch(CDAEntry::class.java)
+                    .withContentType("category")
+                    .include(10)
+                    .all()
+                    .items()
+                    .map { Category(it as CDAEntry, locale) }
+
+                successCallback(categories)
+            } catch (throwable: Throwable) {
+                errorCallback(throwable)
+            }
+        }
+    }
+
     private fun defaultError(t: Throwable) {
         Log.e(TAG, "Failure in fetching from Contentful", t)
     }

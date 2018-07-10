@@ -36,10 +36,12 @@ data class Course(
 }
 
 data class Category(
+    val id: String,
     val title: String,
     val slug: String
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
+        entry.id(),
         entry.getField<String>(locale, "title"),
         entry.getField<String>(locale, "slug")
     )

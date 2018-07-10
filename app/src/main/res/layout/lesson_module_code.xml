@@ -4,13 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:padding="@dimen/high_border"
         >
-
-    <TextViewl
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
 
     <Spinner
             android:layout_width="match_parent"
