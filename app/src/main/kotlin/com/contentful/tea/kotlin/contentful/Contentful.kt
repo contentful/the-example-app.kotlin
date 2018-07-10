@@ -35,6 +35,29 @@ class Contentful(
         }
     }
 
+    fun fetchCourse(
+        courseId: String,
+        errorCallback: (Throwable) -> Unit = ::defaultError,
+        successCallback: (Course) -> Unit
+    ) {
+        launch {
+            try {
+                val course = Course(
+                    client
+                        .fetch(CDAEntry::class.java)
+                        .withContentType("course")
+                        .include(10)
+                        .one(courseId),
+                    locale
+                )
+
+                successCallback(course)
+            } catch (throwable: Throwable) {
+                errorCallback(throwable)
+            }
+        }
+    }
+
     private fun defaultError(t: Throwable) {
         Log.e(TAG, "Failure in fetching from Contentful", t)
     }

@@ -2,14 +2,19 @@ package com.contentful.tea.kotlin.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Layout
 import com.contentful.tea.kotlin.contentful.LayoutModule
+import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -41,6 +46,15 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+        main_bottom_navigation.setOnNavigationItemSelectedListener {
+            if (activity != null) {
+                bottomNavigationItemSelected(it)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private fun updateModuleView(view: View, module: LayoutModule) {
@@ -48,7 +62,7 @@ class HomeFragment : Fragment() {
             is LayoutModule.HightlightedCourse -> {
                 view.card_title.text = module.course.title
                 view.card_description.text = module.course.shortDescription
-                view.card_background.setImageResource(R.drawable.placeholder_image)
+                view.card_background.setImageResourceFromUrl(module.course.image)
 
                 val l: (View) -> Unit = {
                     val navController = NavHostFragment.findNavController(this@HomeFragment)
@@ -61,7 +75,7 @@ class HomeFragment : Fragment() {
             }
             is LayoutModule.HeroImage -> {
                 view.card_title.text = module.title
-                view.card_background.setImageResource(R.drawable.placeholder_image)
+                view.card_background.setImageResourceFromUrl(module.backgroundImage)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
             }
             is LayoutModule.Copy -> {
@@ -72,4 +86,27 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun bottomNavigationItemSelected(item: MenuItem): Boolean {
+        val navController = Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
+        return when (item.itemId) {
+            R.id.bottom_navigation_home -> {
+                navigateIfNotAlreadyThere(navController, R.id.home)
+                true
+            }
+            R.id.bottom_navigation_courses -> {
+                navigateIfNotAlreadyThere(navController, R.id.courses)
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun navigateIfNotAlreadyThere(navController: NavController, @IdRes id: Int): Boolean =
+        if (navController.currentDestination.id != id) {
+            navController.navigate(id)
+            true
+        } else {
+            false
+        }
 }

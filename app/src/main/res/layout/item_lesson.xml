@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        >
+
+    <ImageView
+            android:id="@+id/lesson_item_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@null"
+            android:layout_centerVertical="true"
+            android:padding="12dp"
+            android:src="@drawable/ic_lesson"
+            android:background="@drawable/ic_background_circle"
+            />
+
+    <LinearLayout
+            android:paddingStart="@dimen/high_border"
+            android:paddingEnd="@dimen/high_border"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_toEndOf="@id/lesson_item_image"
+            android:orientation="vertical"
+            >
+
+        <TextView
+                android:id="@+id/lesson_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/lesson_item_title_font_size"
+                tools:text="APIs"
+                android:textColor="#FF536171"
+                />
+
+        <TextView
+                android:id="@+id/lesson_item_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Lesson 1"
+                />
+    </LinearLayout>
+
+</RelativeLayout>

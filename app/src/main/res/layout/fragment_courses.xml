@@ -9,7 +9,7 @@
         >
 
     <com.google.android.material.tabs.TabLayout
-            android:id="@+id/top_navigation"
+            android:id="@+id/courses_top_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
@@ -44,4 +44,16 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/courses_bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:elevation="@dimen/bar_elevation"
+            app:itemIconTint="#FF536171"
+            app:itemTextColor="#FF536171"
+            app:menu="@menu/menu_bottom_navigation"
+            android:background="@android:color/white"
+            />
 </LinearLayout>
