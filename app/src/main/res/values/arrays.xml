@@ -16,4 +16,15 @@
         <item>en-US</item>
         <item>de-DE</item>
     </string-array>
+    <string-array name="code_languages">
+        <item>JavaAndroid</item>
+        <item>Java</item>
+        <item>Swift</item>
+        <item>CURL</item>
+        <item>DotNet</item>
+        <item>Javascript</item>
+        <item>Php</item>
+        <item>Python</item>
+        <item>Ruby</item>
+    </string-array>
 </resources>

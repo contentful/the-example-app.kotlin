@@ -4,14 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.contentful.Contentful
+import com.contentful.tea.kotlin.contentful.Course
+import com.contentful.tea.kotlin.contentful.LessonModule
+import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
 import kotlinx.android.synthetic.main.fragment_lesson.*
+import kotlinx.android.synthetic.main.lesson_module_code.view.*
+import kotlinx.android.synthetic.main.lesson_module_copy.view.*
+import kotlinx.android.synthetic.main.lesson_module_image.view.*
 
 class OneLessonFragment : Fragment() {
-    private var courseId: String = ""
-    private var lessonId: String = ""
+    private var courseId: String? = null
+    private var lessonId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,17 +37,107 @@ class OneLessonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val nextLessonId = nextLessonId()
-        if (nextLessonId.isEmpty()) {
-            lesson_next_button.hide()
-        } else {
-            lesson_next_button.setOnClickListener {
-                val navController = NavHostFragment.findNavController(this)
-                val action = OneLessonFragmentDirections.openLesson(courseId, nextLessonId)
-                navController.navigate(action)
-            }
+        courseId?.apply {
+            Contentful()
+                .fetchCourse(this) { course ->
+                    activity?.runOnUiThread {
+                        updateData(course)
+                    }
+                }
         }
     }
 
-    private fun nextLessonId() = "NEXT LESSON" // TODO: GENERATE NEXT LESSON ID
+    private fun updateData(course: Course) {
+        val selectedLesson = course.lessons.first { it.id == lessonId }
+
+        val nextIndex = course.lessons.indexOf(selectedLesson) + 1
+        if (nextIndex == -1 || nextIndex >= course.lessons.lastIndex) {
+            lesson_next_button.hide()
+        } else {
+            lesson_next_button.setOnClickListener {
+                nextLessonClicked(course.lessons[nextIndex].id)
+            }
+        }
+
+        selectedLesson.modules.forEach {
+            addModule(it)
+        }
+    }
+
+    private fun addModule(
+        module: LessonModule,
+        inflater: LayoutInflater = LayoutInflater.from(context)
+    ) = when (module) {
+        is LessonModule.CodeSnippet -> {
+            lesson_module_container.addView(createCodeView(inflater, module))
+        }
+        is LessonModule.Image -> {
+            lesson_module_container.addView(createImageView(inflater, module))
+        }
+        is LessonModule.Copy -> {
+            lesson_module_container.addView(createCopyView(inflater, module))
+        }
+    }
+
+    private fun createCodeView(inflater: LayoutInflater, module: LessonModule.CodeSnippet): View {
+        val view = inflater.inflate(R.layout.lesson_module_code, lesson_module_container, false)
+        view.module_code_language_selector.setSelection(0)
+        view.module_code_language_selector.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                    view.module_code_source.text = getString(R.string.module_code_select_language)
+                }
+
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val language = resources.getStringArray(R.array.code_languages)[position]
+                    view!!.module_code_source.text = sourCodeFromLanguageIndex(module, language)
+                }
+            }
+
+        view.module_code_source.text = module.javaAndroid
+        return view
+    }
+
+    private fun createImageView(inflater: LayoutInflater, module: LessonModule.Image): View {
+        val view = inflater.inflate(R.layout.lesson_module_image, lesson_module_container, false)
+        view.module_image_caption.text = module.caption
+        view.module_image_image.setImageResourceFromUrl(
+            module.image,
+            R.mipmap.ic_launcher_foreground
+        )
+        return view
+    }
+
+    private fun createCopyView(inflater: LayoutInflater, module: LessonModule.Copy): View {
+        val view = inflater.inflate(R.layout.lesson_module_copy, lesson_module_container, false)
+        view.module_copy_text.text = module.copy
+        return view
+    }
+
+    private fun sourCodeFromLanguageIndex(
+        codeModule: LessonModule.CodeSnippet,
+        language: String
+    ): CharSequence? = when (language) {
+        "curl" -> codeModule.curl
+        "dotNet" -> codeModule.dotNet
+        "javascript" -> codeModule.javascript
+        "java" -> codeModule.java
+        "javaAndroid" -> codeModule.javaAndroid
+        "php" -> codeModule.php
+        "python" -> codeModule.python
+        "ruby" -> codeModule.ruby
+        "swift" -> codeModule.swift
+        else -> codeModule.javaAndroid
+    }
+
+    private fun nextLessonClicked(lessonId: String) {
+        val navController = NavHostFragment.findNavController(this)
+        val action = CourseOverviewFragmentDirections.openLesson(courseId, lessonId)
+        navController.navigate(action)
+    }
 }

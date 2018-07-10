@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="@dimen/high_border"
+        >
+
+    <TextViewl
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/module_code_language_selector"
+            android:entries="@array/code_languages"
+            />
+
+    <TextView
+            android:id="@+id/module_code_source"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="@string/sample_code"
+            android:fontFamily="monospace"
+            />
+</LinearLayout>

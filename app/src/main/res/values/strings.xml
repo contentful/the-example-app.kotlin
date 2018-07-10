@@ -14,4 +14,6 @@
     <string name="card_button_view_course">view course</string>
     <string name="lesson_number">Lesson %d</string>
     <string name="lesson_duration">Duration: %d min • Skill level: %s</string>
+    <string name="sample_code"><![CDATA[final CDAClient client =\n CDAClient\n .builder()\n .setToken("<cpa_token>")\n .preview()\n .setSpace("<space_id>")\n .build();]]></string>
+    <string name="module_code_select_language"><![CDATA[<please select a language>]]></string>
 </resources>
