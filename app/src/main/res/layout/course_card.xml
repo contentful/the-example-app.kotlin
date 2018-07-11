@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:lineSpacingMultiplier="1.33"
                 android:textSize="@dimen/card_title_font_size"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorPrimary"
                 tools:text="Hello Contentful"
                 />
 
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.54"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorPrimary"
                 android:paddingTop="@dimen/mid_border"
                 android:textSize="@dimen/card_description_font_size"
                 tools:text="Learn how to build your own applications with Contentful."
@@ -62,7 +62,7 @@
                 android:textAllCaps="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorPrimary"
                 android:text="@string/card_button_view_course"
                 android:padding="0dp"
                 />

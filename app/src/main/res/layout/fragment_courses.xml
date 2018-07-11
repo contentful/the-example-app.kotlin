@@ -12,12 +12,6 @@
             android:id="@+id/courses_top_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            app:tabTextColor="@color/colorPrimaryDark"
-            app:tabSelectedTextColor="@color/colorPrimary"
-            app:tabIndicatorColor="@color/colorPrimary"
-            app:tabRippleColor="@color/colorPrimaryDark"
-            app:tabBackground="@color/colorAccent"
             />
 
     <ScrollView

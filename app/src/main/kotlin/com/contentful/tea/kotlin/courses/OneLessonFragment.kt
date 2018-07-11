@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
@@ -54,9 +55,9 @@ class OneLessonFragment : Fragment() {
 
         val nextIndex = course.lessons.indexOf(selectedLesson) + 1
         if (nextIndex >= course.lessons.lastIndex) {
-            lesson_next_button.hide()
+            lesson_next_button?.hide()
         } else {
-            lesson_next_button.setOnClickListener {
+            lesson_next_button?.setOnClickListener {
                 nextLessonClicked(course.lessons[nextIndex].id)
             }
         }
@@ -83,7 +84,17 @@ class OneLessonFragment : Fragment() {
 
     private fun createCodeView(inflater: LayoutInflater, module: LessonModule.CodeSnippet): View {
         val codeView = inflater.inflate(R.layout.lesson_module_code, lesson_module_container, false)
+
+        val languageAdapter = ArrayAdapter<String>(
+            activity,
+            R.layout.item_language_spinner,
+            R.id.language_item_name,
+            resources.getStringArray(R.array.code_languages)
+        )
+        languageAdapter.setDropDownViewResource(R.layout.item_language_spinner)
+
         codeView.module_code_language_selector.setSelection(0)
+        codeView.module_code_language_selector.adapter = languageAdapter
         codeView.module_code_language_selector.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {

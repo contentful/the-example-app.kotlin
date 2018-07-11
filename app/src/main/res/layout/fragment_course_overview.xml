@@ -27,12 +27,10 @@
                 android:textStyle="bold"
                 android:textSize="24sp"
                 tools:text="@string/app_name"
-                android:textColor="@color/colorPrimaryDark"
                 />
 
         <TextView
                 android:textSize="12sp"
-                android:textColor="@color/colorPrimaryDark"
                 android:id="@+id/overview_duration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,7 +61,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1.5dp"
                     android:layout_gravity="center"
-                    android:background="#80808080"
+                    android:background="@color/horizontal_rule_color"
                     />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -74,8 +72,6 @@
                     android:layout_gravity="end"
                     android:layout_margin="@dimen/high_border"
                     android:src="@drawable/ic_lesson_next"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:tint="@android:color/white"
                     />
 
             <TextView

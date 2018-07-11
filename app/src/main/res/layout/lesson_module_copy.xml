@@ -6,4 +6,5 @@
           android:layout_height="match_parent"
           android:id="@+id/module_copy_text"
           tools:text="@string/sample_text"
+          android:paddingBottom="@dimen/mid_border"
         />
