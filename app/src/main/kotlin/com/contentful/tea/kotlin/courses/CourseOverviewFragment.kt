@@ -58,13 +58,16 @@ class CourseOverviewFragment : Fragment() {
 
     private fun updateData(course: Course) {
         firstLessonId = if (course.lessons.isNotEmpty()) course.lessons.first().id else null
+        val parser = dependencies.markdown
 
-        overview_title.text = course.title
-        overview_description.text = course.description
-        overview_duration.text = getString(
-            R.string.lesson_duration,
-            course.duration,
-            course.skillLevel
+        overview_title.text = parser.parse(course.title)
+        overview_description.text = parser.parse(course.description)
+        overview_duration.text = parser.parse(
+            getString(
+                R.string.lesson_duration,
+                course.duration,
+                course.skillLevel
+            )
         )
 
         val inflater = LayoutInflater.from(context)
@@ -73,9 +76,10 @@ class CourseOverviewFragment : Fragment() {
             inflater
                 .inflate(R.layout.item_lesson, overview_container, false)
                 .apply {
-                    this.lesson_item_title.text = lesson.title
-                    this.lesson_item_description.text =
+                    this.lesson_item_title.text = parser.parse(lesson.title)
+                    this.lesson_item_description.text = parser.parse(
                         getString(R.string.lesson_number, index + 1)
+                    )
                     setOnClickListener {
                         lessonClicked(lesson.id)
                     }

@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
                 activity?.runOnUiThread {
                     layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
                         updateModuleView(this, module)
-                        home_courses.addView(this)
+                        home_courses?.addView(this)
                     }
                 }
             }
@@ -68,10 +68,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateModuleView(view: View, module: LayoutModule) {
+        val parser = dependencies.markdown
         when (module) {
             is LayoutModule.HightlightedCourse -> {
-                view.card_title.text = module.course.title
-                view.card_description.text = module.course.shortDescription
+                view.card_title.text = parser.parse(module.course.title)
+                view.card_description.text = parser.parse(module.course.shortDescription)
                 view.card_background.setImageResourceFromUrl(module.course.image)
 
                 val l: (View) -> Unit = {
@@ -84,13 +85,13 @@ class HomeFragment : Fragment() {
                 view.card_call_to_action.setOnClickListener(l)
             }
             is LayoutModule.HeroImage -> {
-                view.card_title.text = module.title
+                view.card_title.text = parser.parse(module.title)
                 view.card_background.setImageResourceFromUrl(module.backgroundImage)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
             }
             is LayoutModule.Copy -> {
-                view.card_title.text = module.headline
-                view.card_description.text = module.copy
+                view.card_title.text = parser.parse(module.headline)
+                view.card_description.text = parser.parse(module.copy)
                 view.card_background.setBackgroundResource(android.R.color.transparent)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
             }

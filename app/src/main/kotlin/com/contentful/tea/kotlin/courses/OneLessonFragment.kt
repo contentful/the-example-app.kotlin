@@ -136,7 +136,7 @@ class OneLessonFragment : Fragment() {
 
     private fun createImageView(inflater: LayoutInflater, module: LessonModule.Image): View {
         val view = inflater.inflate(R.layout.lesson_module_image, lesson_module_container, false)
-        view.module_image_caption.text = module.caption
+        view.module_image_caption.text = dependencies.markdown.parse(module.caption)
         view.module_image_image.setImageResourceFromUrl(
             module.image,
             R.mipmap.ic_launcher_foreground
@@ -146,14 +146,14 @@ class OneLessonFragment : Fragment() {
 
     private fun createCopyView(inflater: LayoutInflater, module: LessonModule.Copy): View {
         val view = inflater.inflate(R.layout.lesson_module_copy, lesson_module_container, false)
-        view.module_copy_text.text = module.copy
+        view.module_copy_text.text = dependencies.markdown.parse(module.copy)
         return view
     }
 
     private fun sourceCodeFromLanguageIndex(
         codeModule: LessonModule.CodeSnippet,
         language: String
-    ): CharSequence? = when (language.toLowerCase()) {
+    ): CharSequence = when (language.toLowerCase()) {
         "curl" -> codeModule.curl
         "dotnet" -> codeModule.dotNet
         "javascript" -> codeModule.javascript

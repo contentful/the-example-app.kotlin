@@ -85,10 +85,12 @@ class CoursesFragment : Fragment() {
         val navController =
             Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
 
+        val parser = dependencies.markdown
+
         courses.forEach { course ->
             layoutInflater.inflate(R.layout.course_card, courses_container, false).apply {
-                this.card_title.text = course.title
-                this.card_description.text = course.shortDescription
+                this.card_title.text = parser.parse(course.title)
+                this.card_description.text = parser.parse(course.shortDescription)
 
                 this.card_background.setBackgroundColor(
                     resources.getColor(
