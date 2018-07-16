@@ -12,8 +12,6 @@
             android:id="@+id/courses_top_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:tabTextColor="@android:color/white"
             />
 
     <ScrollView
@@ -26,23 +24,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/courses_list"
+                android:id="@+id/courses_container"
                 tools:context=".courses.CoursesFragment"
-                >
-
-            <include layout="@layout/course_card"/>
-
-            <include layout="@layout/course_card"/>
-
-            <include layout="@layout/course_card"/>
-
-            <include layout="@layout/course_card"/>
-
-            <include layout="@layout/course_card"/>
-
-            <include layout="@layout/course_card"/>
-
-        </LinearLayout>
+                />
     </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -51,8 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:elevation="@dimen/bar_elevation"
-            app:itemIconTint="#FF536171"
-            app:itemTextColor="#FF536171"
+            app:itemIconTint="@color/colorPrimaryDark"
+            app:itemTextColor="@color/colorPrimaryDark"
             app:menu="@menu/menu_bottom_navigation"
             android:background="@android:color/white"
             />

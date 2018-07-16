@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/lesson_item_title_font_size"
                 tools:text="APIs"
-                android:textColor="#FF536171"
+                android:textColor="@color/colorPrimaryDark"
                 />
 
         <TextView

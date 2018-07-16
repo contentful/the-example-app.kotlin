@@ -20,16 +20,6 @@
                 tools:ignore="UseCompoundDrawables"
                 android:padding="@dimen/high_border"
                 >
-
-            <TextView
-                    android:id="@+id/lesson_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:text="API-first"
-                    android:textColor="#FF536171"
-                    android:textSize="24sp"
-                    />
-
             <!-- Space for lesson modules -->
         </LinearLayout>
     </ScrollView>
@@ -41,7 +31,6 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="@dimen/high_border"
-            android:backgroundTint="@color/colorPrimary"
             android:src="@drawable/ic_lesson_next"
             />
 </RelativeLayout>

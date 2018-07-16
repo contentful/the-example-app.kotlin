@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.contentful.LessonModule
+import com.contentful.tea.kotlin.extensions.saveToClipboard
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
+import com.contentful.tea.kotlin.extensions.toast
 import kotlinx.android.synthetic.main.fragment_lesson.*
 import kotlinx.android.synthetic.main.lesson_module_code.view.*
 import kotlinx.android.synthetic.main.lesson_module_copy.view.*
@@ -52,9 +55,9 @@ class OneLessonFragment : Fragment() {
 
         val nextIndex = course.lessons.indexOf(selectedLesson) + 1
         if (nextIndex >= course.lessons.lastIndex) {
-            lesson_next_button.hide()
+            lesson_next_button?.hide()
         } else {
-            lesson_next_button.setOnClickListener {
+            lesson_next_button?.setOnClickListener {
                 nextLessonClicked(course.lessons[nextIndex].id)
             }
         }
@@ -80,12 +83,23 @@ class OneLessonFragment : Fragment() {
     }
 
     private fun createCodeView(inflater: LayoutInflater, module: LessonModule.CodeSnippet): View {
-        val view = inflater.inflate(R.layout.lesson_module_code, lesson_module_container, false)
-        view.module_code_language_selector.setSelection(0)
-        view.module_code_language_selector.onItemSelectedListener =
+        val codeView = inflater.inflate(R.layout.lesson_module_code, lesson_module_container, false)
+
+        val languageAdapter = ArrayAdapter<String>(
+            activity,
+            R.layout.item_language_spinner,
+            R.id.language_item_name,
+            resources.getStringArray(R.array.code_languages)
+        )
+        languageAdapter.setDropDownViewResource(R.layout.item_language_spinner)
+
+        codeView.module_code_language_selector.setSelection(0)
+        codeView.module_code_language_selector.adapter = languageAdapter
+        codeView.module_code_language_selector.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(adapterView: AdapterView<*>?) {
-                    view.module_code_source.text = getString(R.string.module_code_select_language)
+                    codeView.module_code_source.text =
+                        getString(R.string.module_code_select_language)
                 }
 
                 override fun onItemSelected(
@@ -95,12 +109,19 @@ class OneLessonFragment : Fragment() {
                     id: Long
                 ) {
                     val language = resources.getStringArray(R.array.code_languages)[position]
-                    view!!.module_code_source.text = sourceCodeFromLanguageIndex(module, language)
+                    codeView.module_code_source.text = sourceCodeFromLanguageIndex(module, language)
                 }
             }
 
-        view.module_code_source.text = module.javaAndroid
-        return view
+        codeView.module_code_source.text = module.javaAndroid
+        codeView.module_code_source.setOnClickListener {
+            activity?.saveToClipboard(
+                codeView.module_code_language_selector.selectedItem.toString(),
+                codeView.module_code_source.text.toString()
+            )
+            activity?.toast(getString(R.string.module_code_source_copied))
+        }
+        return codeView
     }
 
     private fun createImageView(inflater: LayoutInflater, module: LessonModule.Image): View {
@@ -122,12 +143,12 @@ class OneLessonFragment : Fragment() {
     private fun sourceCodeFromLanguageIndex(
         codeModule: LessonModule.CodeSnippet,
         language: String
-    ): CharSequence? = when (language) {
+    ): CharSequence? = when (language.toLowerCase()) {
         "curl" -> codeModule.curl
-        "dotNet" -> codeModule.dotNet
+        "dotnet" -> codeModule.dotNet
         "javascript" -> codeModule.javascript
         "java" -> codeModule.java
-        "javaAndroid" -> codeModule.javaAndroid
+        "javaandroid" -> codeModule.javaAndroid
         "php" -> codeModule.php
         "python" -> codeModule.python
         "ruby" -> codeModule.ruby

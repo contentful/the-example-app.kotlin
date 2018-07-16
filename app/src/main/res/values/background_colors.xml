@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bright_pink">#40FF007F</color>
+    <color name="red">#40FF0000</color>
+    <color name="orange">#40FF7F00</color>
+    <color name="yellow">#40FFFF00</color>
+    <color name="chartreuse">#407FFF00</color>
+    <color name="green">#4000FF00</color>
+    <color name="spring_green">#4000FF7F</color>
+    <color name="cyan">#4000FFFF</color>
+    <color name="azure">#40007FFF</color>
+    <color name="blue">#400000FF</color>
+    <color name="violet">#407F00FF</color>
+    <color name="magenta">#40FF00FF</color>
+
+    <array name="rainbow">
+        <item>@color/bright_pink</item>
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/yellow</item>
+        <item>@color/chartreuse</item>
+        <item>@color/green</item>
+        <item>@color/spring_green</item>
+        <item>@color/cyan</item>
+        <item>@color/azure</item>
+        <item>@color/blue</item>
+        <item>@color/violet</item>
+        <item>@color/magenta</item>
+    </array>
+</resources>

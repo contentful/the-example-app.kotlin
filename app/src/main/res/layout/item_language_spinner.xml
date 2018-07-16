@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mid_border"
+        >
+
+    <TextView
+            android:id="@+id/language_item_name"
+            android:paddingStart="@dimen/high_border"
+            android:paddingEnd="@dimen/high_border"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Java"
+            />
+
+</RelativeLayout>

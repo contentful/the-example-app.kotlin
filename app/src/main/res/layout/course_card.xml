@@ -8,7 +8,6 @@
         android:layout_margin="@dimen/mid_border"
         app:cardCornerRadius="@dimen/card_corner_radius"
         app:cardElevation="@dimen/card_elevation"
-        tools:showIn="@layout/fragment_home"
         app:cardPreventCornerOverlap="false"
         >
 
@@ -17,29 +16,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/placeholder"
+            tools:src="@drawable/placeholder"
             android:contentDescription="@null"
             />
 
     <RelativeLayout
             android:id="@+id/card_scrim"
-            android:padding="10dp"
+            android:padding="@dimen/high_border"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#E6536171"
-            android:paddingTop="@dimen/card_content_padding_horizontal"
-            android:paddingBottom="@dimen/card_content_padding_horizontal"
-            android:paddingLeft="@dimen/card_content_padding_vertical"
-            android:paddingRight="@dimen/card_content_padding_vertical"
+            android:background="@color/defaultScrim"
+            android:paddingTop="@dimen/card_content_padding_vertical"
+            android:paddingBottom="@dimen/card_content_padding_vertical"
+            android:paddingLeft="@dimen/card_content_padding_horizontal"
+            android:paddingRight="@dimen/card_content_padding_horizontal"
             >
 
         <TextView
                 android:id="@+id/card_title"
+                android:paddingTop="@dimen/high_border"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:lineSpacingMultiplier="1.33"
                 android:textSize="@dimen/card_title_font_size"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/colorPrimary"
                 tools:text="Hello Contentful"
                 />
 
@@ -49,7 +49,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingMultiplier="1.54"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/colorPrimary"
+                android:paddingTop="@dimen/mid_border"
                 android:textSize="@dimen/card_description_font_size"
                 tools:text="Learn how to build your own applications with Contentful."
                 />
@@ -61,8 +62,9 @@
                 android:textAllCaps="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/colorPrimary"
                 android:text="@string/card_button_view_course"
+                android:padding="0dp"
                 />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

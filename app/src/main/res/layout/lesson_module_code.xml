@@ -1,29 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:padding="@dimen/high_border"
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/card_corner_radius"
+        app:cardElevation="@dimen/card_elevation"
+        app:cardPreventCornerOverlap="false"
+        android:layout_marginBottom="@dimen/mid_border"
         >
 
-    <TextViewl
+    <RelativeLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="match_parent"
+            android:background="@color/dimmed_background"
+            >
 
-    <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/module_code_language_selector"
-            android:entries="@array/code_languages"
-            />
+        <Spinner
+                android:id="@+id/module_code_language_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/code_languages"
+                tools:listitem="@layout/item_language_spinner"
+                />
 
-    <TextView
-            android:id="@+id/module_code_source"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="@string/sample_code"
-            android:fontFamily="monospace"
-            />
-</LinearLayout>
+        <View
+                android:id="@+id/module_code_divider"
+                android:layout_below="@id/module_code_language_selector"
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:layout_gravity="center"
+                android:background="@color/horizontal_rule_color"
+                />
+
+        <HorizontalScrollView
+                android:layout_below="@id/module_code_divider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+
+                <TextView
+                        android:id="@+id/module_code_line_numbers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/line_numbers"
+                        android:fontFamily="monospace"
+                        android:paddingStart="3dp"
+                        android:paddingEnd="3dp"
+                        />
+
+                <TextView
+                        android:id="@+id/module_code_source"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="@string/sample_code"
+                        android:fontFamily="monospace"
+                        />
+            </LinearLayout>
+
+        </HorizontalScrollView>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

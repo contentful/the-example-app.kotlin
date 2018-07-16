@@ -10,8 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.extensions.forEach
+import com.contentful.tea.kotlin.contentful.Category
+import com.contentful.tea.kotlin.contentful.Contentful
+import com.contentful.tea.kotlin.contentful.Course
+import com.contentful.tea.kotlin.home.HomeFragmentDirections
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_courses.*
 
 class CoursesFragment : Fragment() {
@@ -31,8 +35,29 @@ class CoursesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO: Make dynamic
-        courses_top_navigation.addTab(courses_top_navigation.newTab().setText(categoryId))
+
+        Contentful()
+            .fetchAllCategories { categories ->
+                activity?.runOnUiThread {
+                    updateCategories(categories)
+                }
+            }
+
+        if (isAllCategory()) {
+            Contentful()
+                .fetchAllCourses { courses ->
+                    activity?.runOnUiThread {
+                        updateCourses(courses)
+                    }
+                }
+        } else {
+            Contentful()
+                .fetchAllCoursesOfCategory(categoryId) { courses ->
+                    activity?.runOnUiThread {
+                        updateCourses(courses)
+                    }
+                }
+        }
 
         courses_bottom_navigation.setOnNavigationItemSelectedListener {
             if (activity != null) {
@@ -42,29 +67,86 @@ class CoursesFragment : Fragment() {
                 false
             }
         }
-        courses_top_navigation.addOnTabSelectedListener(UsableOnTabListener {
-            topNavigationItemSelected(
-                it
-            )
-        })
+    }
 
-        val navController = Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
-        courses_list.forEach { index, view ->
-            view.setOnClickListener {
-                val action = CoursesFragmentDirections.openCourseOverview("course " + index)
-                navController.navigate(action)
+    private fun isAllCategory() = categoryId.isEmpty() || categoryId == "all"
+
+    private fun updateCourses(courses: List<Course>) {
+        val navController =
+            Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
+
+        courses.forEach { course ->
+            layoutInflater.inflate(R.layout.course_card, courses_container, false).apply {
+                this.card_title.text = course.title
+                this.card_description.text = course.shortDescription
+
+                this.card_background.setBackgroundColor(
+                    resources.getColor(
+                        R.color.defaultScrim,
+                        null
+                    )
+                )
+
+                val colors = resources.getIntArray(R.array.rainbow)
+                val color = colors[courses_container.childCount % colors.size]
+                this.card_scrim.setBackgroundColor(color)
+
+                val l: (View) -> Unit = {
+                    val action = HomeFragmentDirections.openCourseOverview(course.id)
+                    navController.navigate(action)
+                }
+
+                setOnClickListener(l)
+                this.card_call_to_action.setOnClickListener(l)
+                courses_container?.addView(this)
             }
         }
     }
 
+    private fun updateCategories(categories: List<Category>) {
+        courses_top_navigation.addTab(
+            courses_top_navigation
+                .newTab()
+                .setText(R.string.categories_all)
+                .setTag("")
+
+        )
+
+        categories.forEach { category ->
+            courses_top_navigation.addTab(
+                courses_top_navigation
+                    .newTab()
+                    .setText(category.title)
+                    .setTag(category.id)
+            )
+        }
+
+        for (i: Int in 0 until courses_top_navigation.tabCount) {
+            val tab = courses_top_navigation.getTabAt(i)!!
+            if (tab.tag == categoryId) {
+                tab.select()
+            }
+        }
+
+        if (courses_top_navigation.selectedTabPosition == -1) {
+            courses_top_navigation.getTabAt(0)!!.select()
+        }
+
+        courses_top_navigation.addOnTabSelectedListener(UsableOnTabListener { tab ->
+            topNavigationItemSelected(tab)
+        })
+    }
+
     private fun topNavigationItemSelected(tab: TabLayout.Tab) = if (!isDetached) {
-        val navController = Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
+        val navController =
+            Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
         navController.navigate(CoursesFragmentDirections.openCategory(tab.tag as String))
     } else {
     }
 
     private fun bottomNavigationItemSelected(item: MenuItem): Boolean {
-        val navController = Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
+        val navController =
+            Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
         return when (item.itemId) {
             R.id.bottom_navigation_home -> {
                 navigateIfNotAlreadyThere(navController, R.id.home)
@@ -90,7 +172,7 @@ class CoursesFragment : Fragment() {
 class UsableOnTabListener(private val selectDelegate: (TabLayout.Tab) -> Unit) :
     TabLayout.BaseOnTabSelectedListener<TabLayout.Tab> {
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        tab ?: selectDelegate(tab!!)
+        tab?.apply { selectDelegate(this) }
     }
 
     override fun onTabReselected(tab: TabLayout.Tab?) {}
