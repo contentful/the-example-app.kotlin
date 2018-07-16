@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import com.contentful.tea.kotlin.Dependencies
+import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Layout
@@ -25,11 +27,19 @@ import kotlinx.android.synthetic.main.fragment_home.*
 class HomeFragment : Fragment() {
     private var contentful: Contentful = Contentful()
 
+    private lateinit var dependencies: Dependencies
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        if (activity !is DependenciesProvider) {
+            throw IllegalStateException("Activity must implement Dependency provider.")
+        }
+
+        dependencies = (activity as DependenciesProvider).dependencies()
+
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 

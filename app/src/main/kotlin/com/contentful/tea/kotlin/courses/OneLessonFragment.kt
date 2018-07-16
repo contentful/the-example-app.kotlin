@@ -8,6 +8,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import com.contentful.tea.kotlin.Dependencies
+import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Course
@@ -24,6 +26,8 @@ class OneLessonFragment : Fragment() {
     private var courseId: String? = null
     private var lessonId: String? = null
 
+    private lateinit var dependencies: Dependencies
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,6 +37,12 @@ class OneLessonFragment : Fragment() {
             courseId = OneLessonFragmentArgs.fromBundle(arguments).courseId
             lessonId = OneLessonFragmentArgs.fromBundle(arguments).lessonId
         }
+
+        if (activity !is DependenciesProvider) {
+            throw IllegalStateException("Activity must implement Dependency provider.")
+        }
+
+        dependencies = (activity as DependenciesProvider).dependencies()
 
         return inflater.inflate(R.layout.fragment_lesson, container, false)
     }

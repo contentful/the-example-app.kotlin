@@ -9,6 +9,8 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.contentful.tea.kotlin.Dependencies
+import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Category
 import com.contentful.tea.kotlin.contentful.Contentful
@@ -21,6 +23,8 @@ import kotlinx.android.synthetic.main.fragment_courses.*
 class CoursesFragment : Fragment() {
     private var categoryId: String = ""
 
+    private lateinit var dependencies: Dependencies
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,6 +33,12 @@ class CoursesFragment : Fragment() {
         arguments?.apply {
             categoryId = CoursesFragmentArgs.fromBundle(arguments).categoryId
         }
+
+        if (activity !is DependenciesProvider) {
+            throw IllegalStateException("Activity must implement Dependency provider.")
+        }
+
+        dependencies = (activity as DependenciesProvider).dependencies()
 
         return inflater.inflate(R.layout.fragment_courses, container, false)
     }

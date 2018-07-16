@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import com.contentful.tea.kotlin.Dependencies
+import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Course
 import kotlinx.android.synthetic.main.fragment_course_overview.*
 import kotlinx.android.synthetic.main.item_lesson.view.*
@@ -16,11 +17,19 @@ class CourseOverviewFragment : Fragment() {
     private var courseId: String? = null
     private var firstLessonId: String? = null
 
+    private lateinit var dependencies: Dependencies
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             courseId = CourseOverviewFragmentArgs.fromBundle(arguments).courseId
         }
+
+        if (activity !is DependenciesProvider) {
+            throw IllegalStateException("Activity must implement Dependency provider.")
+        }
+
+        dependencies = (activity as DependenciesProvider).dependencies()
     }
 
     override fun onCreateView(
@@ -36,7 +45,8 @@ class CourseOverviewFragment : Fragment() {
         overview_next.setOnClickListener { onNextButtonClicked() }
 
         courseId?.let {
-            Contentful()
+            dependencies
+                .contentful
                 .fetchCourse(courseId!!) { course ->
                     activity?.runOnUiThread {
                         updateData(course)
