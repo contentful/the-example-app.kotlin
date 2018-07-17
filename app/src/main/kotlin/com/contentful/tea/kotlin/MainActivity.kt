@@ -6,7 +6,9 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation.findNavController
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DependenciesProvider {
+
+    var dependencies: Dependencies? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,4 +38,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp() =
         findNavController(this, R.id.navigation_host_fragment).navigateUp()
+
+    override fun dependencies(): Dependencies {
+        if (dependencies == null) {
+            dependencies = Dependencies(applicationContext)
+        }
+
+        return dependencies as Dependencies
+    }
 }

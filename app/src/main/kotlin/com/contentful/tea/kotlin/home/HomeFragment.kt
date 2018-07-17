@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import com.contentful.tea.kotlin.Dependencies
+import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Layout
@@ -25,11 +27,19 @@ import kotlinx.android.synthetic.main.fragment_home.*
 class HomeFragment : Fragment() {
     private var contentful: Contentful = Contentful()
 
+    private lateinit var dependencies: Dependencies
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        if (activity !is DependenciesProvider) {
+            throw IllegalStateException("Activity must implement Dependency provider.")
+        }
+
+        dependencies = (activity as DependenciesProvider).dependencies()
+
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -41,7 +51,7 @@ class HomeFragment : Fragment() {
                 activity?.runOnUiThread {
                     layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
                         updateModuleView(this, module)
-                        home_courses.addView(this)
+                        home_courses?.addView(this)
                     }
                 }
             }
@@ -58,10 +68,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateModuleView(view: View, module: LayoutModule) {
+        val parser = dependencies.markdown
         when (module) {
             is LayoutModule.HightlightedCourse -> {
-                view.card_title.text = module.course.title
-                view.card_description.text = module.course.shortDescription
+                view.card_title.text = parser.parse(module.course.title)
+                view.card_description.text = parser.parse(module.course.shortDescription)
                 view.card_background.setImageResourceFromUrl(module.course.image)
 
                 val l: (View) -> Unit = {
@@ -74,13 +85,13 @@ class HomeFragment : Fragment() {
                 view.card_call_to_action.setOnClickListener(l)
             }
             is LayoutModule.HeroImage -> {
-                view.card_title.text = module.title
+                view.card_title.text = parser.parse(module.title)
                 view.card_background.setImageResourceFromUrl(module.backgroundImage)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
             }
             is LayoutModule.Copy -> {
-                view.card_title.text = module.headline
-                view.card_description.text = module.copy
+                view.card_title.text = parser.parse(module.headline)
+                view.card_description.text = parser.parse(module.copy)
                 view.card_background.setBackgroundResource(android.R.color.transparent)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
             }
