@@ -11,7 +11,6 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Layout
 import com.contentful.tea.kotlin.contentful.LayoutModule
 import com.contentful.tea.kotlin.dependencies.Dependencies
@@ -25,8 +24,6 @@ import kotlinx.android.synthetic.main.fragment_home.*
  * settings.
  */
 class HomeFragment : Fragment() {
-    private var contentful: Contentful = Contentful()
-
     private lateinit var dependencies: Dependencies
 
     override fun onCreateView(
@@ -46,16 +43,18 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        contentful.fetchHomeLayout { layout: Layout ->
-            layout.contentModules.forEach { module ->
-                activity?.runOnUiThread {
-                    layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
-                        updateModuleView(this, module)
-                        home_courses?.addView(this)
+        dependencies
+            .contentful
+            .fetchHomeLayout { layout: Layout ->
+                layout.contentModules.forEach { module ->
+                    activity?.runOnUiThread {
+                        layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
+                            updateModuleView(this, module)
+                            home_courses?.addView(this)
+                        }
                     }
                 }
             }
-        }
 
         main_bottom_navigation.setOnNavigationItemSelectedListener {
             if (activity != null) {
