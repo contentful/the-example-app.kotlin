@@ -129,6 +129,10 @@ class Contentful(
         Log.e(TAG, "Failure in fetching from Contentful", t)
     }
 
+    fun applyParameter(parameter: Parameter) {
+        // TODO Use parameters to request "stuff" from contentful
+    }
+
     companion object {
         private val TAG: String = Contentful::class.simpleName!!
     }

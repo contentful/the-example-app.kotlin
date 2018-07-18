@@ -1,14 +1,20 @@
 package com.contentful.tea.kotlin
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation.findNavController
+import com.contentful.tea.kotlin.routing.MainRouteCallback
+import com.contentful.tea.kotlin.routing.RouteCallback
+import com.contentful.tea.kotlin.routing.route
 
 class MainActivity : AppCompatActivity(), DependenciesProvider {
 
     var dependencies: Dependencies? = null
+
+    private val routeCallback: RouteCallback = MainRouteCallback(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,6 +23,21 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
 
         supportActionBar?.apply {
             title = ""
+        }
+
+        rerouteIfNeeded()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        rerouteIfNeeded()
+    }
+
+    private fun rerouteIfNeeded() {
+        if (intent != null && intent.action == Intent.ACTION_VIEW) {
+            route(intent.data.host + intent.data.path, routeCallback)
         }
     }
 
