@@ -9,12 +9,12 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.contentful.tea.kotlin.Dependencies
-import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Category
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Course
+import com.contentful.tea.kotlin.dependencies.Dependencies
+import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.home.HomeFragmentDirections
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.course_card.view.*
