@@ -77,7 +77,7 @@ class HomeFragment : Fragment() {
 
                 val l: (View) -> Unit = {
                     val navController = NavHostFragment.findNavController(this@HomeFragment)
-                    val action = HomeFragmentDirections.openCourseOverview(module.course.id)
+                    val action = HomeFragmentDirections.openCourseOverview(module.course.slug)
                     navController.navigate(action)
                 }
 

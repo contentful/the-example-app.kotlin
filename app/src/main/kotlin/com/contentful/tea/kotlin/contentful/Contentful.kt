@@ -4,6 +4,7 @@ import android.util.Log
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
 import com.contentful.tea.kotlin.BuildConfig
+import com.contentful.tea.kotlin.routing.Parameter
 import kotlinx.coroutines.experimental.launch
 
 class Contentful(
@@ -35,8 +36,8 @@ class Contentful(
         }
     }
 
-    fun fetchCourse(
-        courseId: String,
+    fun fetchCourseBySlug(
+        coursesSlug: String,
         errorCallback: (Throwable) -> Unit = ::defaultError,
         successCallback: (Course) -> Unit
     ) {
@@ -47,7 +48,10 @@ class Contentful(
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
                         .include(10)
-                        .one(courseId),
+                        .where("fields.slug", coursesSlug)
+                        .all()
+                        .items()
+                        .first() as CDAEntry,
                     locale
                 )
 
@@ -58,7 +62,7 @@ class Contentful(
         }
     }
 
-    fun fetchAllCoursesOfCategory(
+    fun fetchAllCoursesOfCategoryId(
         categoryId: String,
         errorCallback: (Throwable) -> Unit = ::defaultError,
         successCallback: (List<Course>) -> Unit
