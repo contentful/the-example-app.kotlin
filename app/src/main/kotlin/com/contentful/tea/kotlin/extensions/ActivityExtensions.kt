@@ -5,16 +5,17 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
+import android.text.Html
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 
 fun Activity.showError(
-    message: String,
-    title: String = "Error",
+    message: CharSequence,
+    title: CharSequence = "Error",
+    moreTitle: CharSequence = "More …",
     error: Throwable? = null,
     moreHandler: Function0<Unit>? = null,
-    moreTitle: String = "More …",
     cancelHandler: Function0<Unit>? = null,
     okHandler: Function0<Unit> = {}
 ) {
@@ -24,9 +25,23 @@ fun Activity.showError(
             .apply {
                 setTitle(title)
                 if (error != null) {
-                    setMessage("$message\n\nStacktrace: ${error.stackTraceText}")
+                    if (message.isEmpty()) {
+                        setMessage(
+                            Html.fromHtml(
+                                "<br/><hr/><small><tt>${error.message}<tt></small>",
+                                0
+                            )
+                        )
+                    } else {
+                        setMessage(
+                            Html.fromHtml(
+                                "$message<br><hr/><tt><small>${error.message}</small><tt>",
+                                0
+                            )
+                        )
+                    }
                 } else {
-                    setMessage(message)
+                    setMessage(Html.fromHtml(message.toString(), 0))
                 }
                 if (moreHandler != null) {
                     setNeutralButton(moreTitle) { _, _ -> moreHandler() }
@@ -35,32 +50,33 @@ fun Activity.showError(
                     setNegativeButton(moreTitle) { _, _ -> cancelHandler() }
                 }
                 setPositiveButton(android.R.string.ok) { _, _ -> okHandler() }
+                setOnCancelListener { okHandler() }
             }
             .show()
 
         if (error === null) {
-            Log.i(this.javaClass.simpleName, message)
+            Log.i(this.javaClass.simpleName, Html.fromHtml(message.toString(), 0).toString())
         } else {
-            Log.e(this.javaClass.simpleName, message, error)
+            Log.e(this.javaClass.simpleName, Html.fromHtml(message.toString(), 0).toString(), error)
         }
     }
 }
 
 fun Activity.showInformation(
-    message: String,
-    title: String = "Information",
+    message: CharSequence,
+    title: CharSequence = "Information",
     moreHandler: Function0<Unit>? = null,
-    moreTitle: String = "More …",
+    moreTitle: CharSequence = "More …",
     cancelHandler: Function0<Unit>? = null,
     okHandler: Function0<Unit> = {}
 ) {
-    showError(message, title, null, moreHandler, moreTitle, cancelHandler, okHandler)
+    showError(message, title, moreTitle, null, moreHandler, cancelHandler, okHandler)
 }
 
-val Throwable.stackTraceText: String
-    get() = this.stackTrace.reversed().joinToString("\n")
+val Throwable.stackTraceText: CharSequence
+    get() = this.stackTrace.reversed().joinToString("<br/>")
 
-fun Context.saveToClipboard(label: String, content: String) {
+fun Context.saveToClipboard(label: CharSequence, content: CharSequence) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clipDescription = ClipDescription(label, arrayOf("text/plain"))
     val clipItem = ClipData.Item(content)

@@ -15,7 +15,7 @@ class Contentful(
     private val locale: String = "en-US"
 ) {
     fun fetchHomeLayout(
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (Layout) -> Unit
     ) {
         launch {
@@ -38,7 +38,7 @@ class Contentful(
 
     fun fetchCourseBySlug(
         coursesSlug: String,
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (Course) -> Unit
     ) {
         launch {
@@ -64,7 +64,7 @@ class Contentful(
 
     fun fetchAllCoursesOfCategoryId(
         categoryId: String,
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (List<Course>) -> Unit
     ) {
         launch {
@@ -87,7 +87,7 @@ class Contentful(
     }
 
     fun fetchAllCourses(
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (List<Course>) -> Unit
     ) {
         launch {
@@ -109,7 +109,7 @@ class Contentful(
     }
 
     fun fetchAllCategories(
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (List<Category>) -> Unit
     ) {
         launch {

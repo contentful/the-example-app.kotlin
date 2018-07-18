@@ -6,8 +6,10 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation.findNavController
+import com.contentful.tea.kotlin.courses.CoursesFragmentDirections
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
+import com.contentful.tea.kotlin.extensions.showError
 import com.contentful.tea.kotlin.routing.MainRouteCallback
 import com.contentful.tea.kotlin.routing.RouteCallback
 import com.contentful.tea.kotlin.routing.route
@@ -39,7 +41,18 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
 
     private fun rerouteIfNeeded() {
         if (intent != null && intent.action == Intent.ACTION_VIEW) {
-            route(intent.data.host + intent.data.path, routeCallback)
+            val route = intent.data.host + intent.data.path
+            if (!route(route, routeCallback)) {
+                val navController = findNavController(this, R.id.navigation_host_fragment)
+                showError(
+                    message = getString(R.string.error_parsing_route, route),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    moreHandler = {
+                        val action = CoursesFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    }
+                )
+            }
         }
     }
 

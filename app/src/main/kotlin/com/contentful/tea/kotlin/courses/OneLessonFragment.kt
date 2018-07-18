@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Course
@@ -184,5 +183,20 @@ class OneLessonFragment : Fragment() {
     }
 
     private fun lessonNotFound(throwable: Throwable) {
+        activity?.apply {
+            val navController = NavHostFragment.findNavController(this@OneLessonFragment)
+            showError(
+                message = getString(R.string.error_lesson_id_not_found, courseSlug, lessonSlug),
+                moreTitle = getString(R.string.error_open_settings_button),
+                error = throwable,
+                moreHandler = {
+                    val action = OneLessonFragmentDirections.openSettings()
+                    navController.navigate(action)
+                },
+                okHandler = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }

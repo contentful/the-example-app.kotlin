@@ -132,7 +132,7 @@
                 app:destination="@id/course_overview"
                 />
         <action
-                android:id="@+id/openCourses"
+                android:id="@+id/openCategory"
                 app:destination="@id/courses"
                 />
     </fragment>
@@ -180,7 +180,7 @@
                 app:destination="@id/course_overview"
                 />
         <action
-                android:id="@+id/openCourses"
+                android:id="@+id/openCategory"
                 app:destination="@id/courses"
                 />
     </fragment>

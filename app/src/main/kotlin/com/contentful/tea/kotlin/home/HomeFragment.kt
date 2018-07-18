@@ -16,6 +16,7 @@ import com.contentful.tea.kotlin.contentful.LayoutModule
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
+import com.contentful.tea.kotlin.extensions.showError
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -45,7 +46,7 @@ class HomeFragment : Fragment() {
 
         dependencies
             .contentful
-            .fetchHomeLayout { layout: Layout ->
+            .fetchHomeLayout(errorCallback = ::errorFetchingLayout) { layout: Layout ->
                 layout.contentModules.forEach { module ->
                     activity?.runOnUiThread {
                         layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
@@ -119,4 +120,22 @@ class HomeFragment : Fragment() {
         } else {
             false
         }
+
+    private fun errorFetchingLayout(throwable: Throwable) {
+        activity?.apply {
+            val navController = NavHostFragment.findNavController(this@HomeFragment)
+            showError(
+                message = getString(R.string.error_fetching_layout),
+                moreTitle = getString(R.string.error_open_settings_button),
+                error = throwable,
+                moreHandler = {
+                    val action = HomeFragmentDirections.openSettings()
+                    navController.navigate(action)
+                },
+                okHandler = {
+                    navController.popBackStack()
+                }
+            )
+        }
+    }
 }
