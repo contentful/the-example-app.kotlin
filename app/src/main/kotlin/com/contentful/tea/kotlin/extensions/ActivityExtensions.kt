@@ -9,6 +9,7 @@ import android.text.Html
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.contentful.tea.kotlin.R
 
 fun Activity.showError(
     message: CharSequence,
@@ -21,7 +22,7 @@ fun Activity.showError(
 ) {
     runOnUiThread {
         AlertDialog
-            .Builder(this)
+            .Builder(this, R.style.TeaErrorDialog)
             .apply {
                 setTitle(title)
                 if (error != null) {
@@ -61,20 +62,6 @@ fun Activity.showError(
         }
     }
 }
-
-fun Activity.showInformation(
-    message: CharSequence,
-    title: CharSequence = "Information",
-    moreHandler: Function0<Unit>? = null,
-    moreTitle: CharSequence = "More …",
-    cancelHandler: Function0<Unit>? = null,
-    okHandler: Function0<Unit> = {}
-) {
-    showError(message, title, moreTitle, null, moreHandler, cancelHandler, okHandler)
-}
-
-val Throwable.stackTraceText: CharSequence
-    get() = this.stackTrace.reversed().joinToString("<br/>")
 
 fun Context.saveToClipboard(label: CharSequence, content: CharSequence) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

@@ -7,4 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="TeaErrorDialog"
+           parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/errorBackground</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
 </resources>
