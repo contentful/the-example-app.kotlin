@@ -25,30 +25,12 @@ fun Activity.showError(
             .Builder(this, R.style.TeaErrorDialog)
             .apply {
                 setTitle(title)
-                if (error != null) {
-                    if (message.isEmpty()) {
-                        setMessage(
-                            Html.fromHtml(
-                                "<br/><hr/><small><tt>${error.message}<tt></small>",
-                                0
-                            )
-                        )
-                    } else {
-                        setMessage(
-                            Html.fromHtml(
-                                "$message<br><hr/><tt><small>${error.message}</small><tt>",
-                                0
-                            )
-                        )
-                    }
-                } else {
-                    setMessage(Html.fromHtml(message.toString(), 0))
-                }
+                extractMessage(error, message)
                 if (moreHandler != null) {
                     setNeutralButton(moreTitle) { _, _ -> moreHandler() }
                 }
                 if (cancelHandler != null) {
-                    setNegativeButton(moreTitle) { _, _ -> cancelHandler() }
+                    setNegativeButton(android.R.string.cancel) { _, _ -> cancelHandler() }
                 }
                 setPositiveButton(android.R.string.ok) { _, _ -> okHandler() }
                 setOnCancelListener { okHandler() }
@@ -62,6 +44,19 @@ fun Activity.showError(
         }
     }
 }
+
+private fun extractMessage(error: Throwable?, message: CharSequence): CharSequence =
+    if (error != null) {
+        if (message.isEmpty()) {
+            "<small><tt>${error.message}<tt></small>".toHtml()
+        } else {
+            "$message<br><hr/><tt><small>${error.message}</small><tt>".toHtml()
+        }
+    } else {
+        message.toHtml()
+    }
+
+private fun CharSequence.toHtml() = Html.fromHtml(this.toString(), 0)
 
 fun Context.saveToClipboard(label: CharSequence, content: CharSequence) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
