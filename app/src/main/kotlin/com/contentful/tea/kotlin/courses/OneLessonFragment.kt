@@ -1,6 +1,7 @@
 package com.contentful.tea.kotlin.courses
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -147,6 +148,7 @@ class OneLessonFragment : Fragment() {
     private fun createImageView(inflater: LayoutInflater, module: LessonModule.Image): View {
         val view = inflater.inflate(R.layout.lesson_module_image, lesson_module_container, false)
         view.module_image_caption.text = dependencies.markdown.parse(module.caption)
+        view.module_image_caption.movementMethod = LinkMovementMethod.getInstance()
         view.module_image_image.setImageResourceFromUrl(
             module.image,
             R.mipmap.ic_launcher_foreground
@@ -157,6 +159,7 @@ class OneLessonFragment : Fragment() {
     private fun createCopyView(inflater: LayoutInflater, module: LessonModule.Copy): View {
         val view = inflater.inflate(R.layout.lesson_module_copy, lesson_module_container, false)
         view.module_copy_text.text = dependencies.markdown.parse(module.copy)
+        view.module_copy_text.movementMethod = LinkMovementMethod.getInstance()
         return view
     }
 
