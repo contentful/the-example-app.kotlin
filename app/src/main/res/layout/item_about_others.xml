@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mid_border"
+        >
+
+    <FrameLayout
+            android:id="@+id/about_others_logo_container"
+            android:layout_centerHorizontal="true"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            >
+
+        <ImageView
+                android:layout_gravity="center"
+                android:id="@+id/about_others_logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                tools:src="@color/colorAccent"
+                />
+
+    </FrameLayout>
+
+    <TextView
+            android:layout_below="@id/about_others_logo_container"
+            android:id="@+id/about_others_hosted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_others_hosted_label"
+            android:layout_centerHorizontal="true"
+            />
+
+    <TextView
+            android:layout_below="@id/about_others_hosted"
+            android:id="@+id/about_others_github"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_others_github_label"
+            android:layout_centerHorizontal="true"
+            />
+</RelativeLayout>

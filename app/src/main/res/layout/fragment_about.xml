@@ -4,98 +4,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context=".information.AboutFragment"
+                android:padding="@dimen/mid_border"
         >
 
     <TextView
             android:id="@+id/about_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment"
+            android:text="@string/about_title"
             android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="@dimen/about_title_font"
             />
 
     <TextView
             android:id="@+id/about_description"
+            android:paddingTop="@dimen/mid_border"
+            android:paddingBottom="@dimen/mid_border"
             android:layout_below="@id/about_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sample_text"
+            android:text="@string/about_description"
             />
 
-    <!--TODO Fill out links and other team member stuff-->
-    <ScrollView
+    <HorizontalScrollView
             android:layout_below="@id/about_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
 
         <LinearLayout
+                android:id="@+id/about_others"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                tools:items="@id/item_about_others"
                 >
-
-            <TextView
-                    android:id="@+id/about_android"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:drawableTop="@mipmap/ic_launcher"
-                    android:gravity="center"
-                    tools:text="Android"
-                    />
-
-            <TextView
-                    android:id="@+id/about_java"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:drawableTop="@mipmap/ic_launcher"
-                    android:gravity="center"
-                    tools:text="Java"
-                    />
-
-            <TextView
-                    android:id="@+id/about_php"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:drawableTop="@mipmap/ic_launcher"
-                    android:gravity="center"
-                    tools:text="php"
-                    />
-
-            <TextView
-                    android:id="@+id/about_python"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:drawableTop="@mipmap/ic_launcher"
-                    android:gravity="center"
-                    tools:text="Python"
-                    />
-
-            <TextView
-                    android:id="@+id/about_csharp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:drawableTop="@mipmap/ic_launcher"
-                    android:gravity="center"
-                    tools:text=".net"
-                    />
-
-            <TextView
-                    android:id="@+id/about_coco"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@null"
-                    android:drawableTop="@mipmap/ic_launcher"
-                    android:gravity="center"
-                    tools:text="ios"
-                    />
-
         </LinearLayout>
-    </ScrollView>
+    </HorizontalScrollView>
 
 </RelativeLayout>
