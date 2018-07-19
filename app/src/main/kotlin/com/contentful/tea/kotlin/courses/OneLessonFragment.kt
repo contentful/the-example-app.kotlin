@@ -8,14 +8,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
-import com.contentful.tea.kotlin.Dependencies
-import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.contentful.LessonModule
+import com.contentful.tea.kotlin.dependencies.Dependencies
+import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.saveToClipboard
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
+import com.contentful.tea.kotlin.extensions.showError
 import com.contentful.tea.kotlin.extensions.toast
 import kotlinx.android.synthetic.main.fragment_lesson.*
 import kotlinx.android.synthetic.main.lesson_module_code.view.*
@@ -23,8 +23,8 @@ import kotlinx.android.synthetic.main.lesson_module_copy.view.*
 import kotlinx.android.synthetic.main.lesson_module_image.view.*
 
 class OneLessonFragment : Fragment() {
-    private var courseId: String? = null
-    private var lessonId: String? = null
+    private var courseSlug: String? = null
+    private var lessonSlug: String? = null
 
     private lateinit var dependencies: Dependencies
 
@@ -34,8 +34,8 @@ class OneLessonFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         arguments?.apply {
-            courseId = OneLessonFragmentArgs.fromBundle(arguments).courseId
-            lessonId = OneLessonFragmentArgs.fromBundle(arguments).lessonId
+            courseSlug = OneLessonFragmentArgs.fromBundle(arguments).courseSlug
+            lessonSlug = OneLessonFragmentArgs.fromBundle(arguments).lessonSlug
         }
 
         if (activity !is DependenciesProvider) {
@@ -50,9 +50,13 @@ class OneLessonFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        courseId?.apply {
-            Contentful()
-                .fetchCourse(this) { course ->
+        courseSlug?.apply {
+            dependencies
+                .contentful
+                .fetchCourseBySlug(
+                    this,
+                    ::lessonNotFound
+                ) { course ->
                     activity?.runOnUiThread {
                         updateData(course)
                     }
@@ -61,19 +65,25 @@ class OneLessonFragment : Fragment() {
     }
 
     private fun updateData(course: Course) {
-        val selectedLesson = course.lessons.first { it.id == lessonId }
-
-        val nextIndex = course.lessons.indexOf(selectedLesson) + 1
-        if (nextIndex >= course.lessons.lastIndex) {
-            lesson_next_button?.hide()
+        val selectedLesson = course.lessons.firstOrNull { it.slug == lessonSlug }
+        if (selectedLesson == null) {
+            lessonNotFound(
+                IllegalStateException("""Lesson "$lessonSlug" in "$courseSlug" not found.""")
+            )
         } else {
-            lesson_next_button?.setOnClickListener {
-                nextLessonClicked(course.lessons[nextIndex].id)
-            }
-        }
 
-        selectedLesson.modules.forEach {
-            addModule(it)
+            val nextIndex = course.lessons.indexOf(selectedLesson) + 1
+            if (nextIndex >= course.lessons.lastIndex) {
+                lesson_next_button?.hide()
+            } else {
+                lesson_next_button?.setOnClickListener {
+                    nextLessonClicked(course.lessons[nextIndex].slug)
+                }
+            }
+
+            selectedLesson.modules.forEach {
+                addModule(it)
+            }
         }
     }
 
@@ -166,9 +176,27 @@ class OneLessonFragment : Fragment() {
         else -> codeModule.javaAndroid
     }
 
-    private fun nextLessonClicked(lessonId: String) {
+    private fun nextLessonClicked(lessonSlug: String) {
         val navController = NavHostFragment.findNavController(this)
-        val action = CourseOverviewFragmentDirections.openLesson(courseId, lessonId)
+        val action = CourseOverviewFragmentDirections.openLesson(courseSlug, lessonSlug)
         navController.navigate(action)
+    }
+
+    private fun lessonNotFound(throwable: Throwable) {
+        activity?.apply {
+            val navController = NavHostFragment.findNavController(this@OneLessonFragment)
+            showError(
+                message = getString(R.string.error_lesson_id_not_found, courseSlug, lessonSlug),
+                moreTitle = getString(R.string.error_open_settings_button),
+                error = throwable,
+                moreHandler = {
+                    val action = OneLessonFragmentDirections.openSettings()
+                    navController.navigate(action)
+                },
+                okHandler = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }

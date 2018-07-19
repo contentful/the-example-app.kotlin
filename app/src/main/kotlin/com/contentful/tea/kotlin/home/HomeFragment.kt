@@ -10,13 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import com.contentful.tea.kotlin.Dependencies
-import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.Layout
 import com.contentful.tea.kotlin.contentful.LayoutModule
+import com.contentful.tea.kotlin.dependencies.Dependencies
+import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
+import com.contentful.tea.kotlin.extensions.showError
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -25,8 +25,6 @@ import kotlinx.android.synthetic.main.fragment_home.*
  * settings.
  */
 class HomeFragment : Fragment() {
-    private var contentful: Contentful = Contentful()
-
     private lateinit var dependencies: Dependencies
 
     override fun onCreateView(
@@ -46,16 +44,18 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        contentful.fetchHomeLayout { layout: Layout ->
-            layout.contentModules.forEach { module ->
-                activity?.runOnUiThread {
-                    layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
-                        updateModuleView(this, module)
-                        home_courses?.addView(this)
+        dependencies
+            .contentful
+            .fetchHomeLayout(errorCallback = ::errorFetchingLayout) { layout: Layout ->
+                layout.contentModules.forEach { module ->
+                    activity?.runOnUiThread {
+                        layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
+                            updateModuleView(this, module)
+                            home_courses?.addView(this)
+                        }
                     }
                 }
             }
-        }
 
         main_bottom_navigation.setOnNavigationItemSelectedListener {
             if (activity != null) {
@@ -77,7 +77,7 @@ class HomeFragment : Fragment() {
 
                 val l: (View) -> Unit = {
                     val navController = NavHostFragment.findNavController(this@HomeFragment)
-                    val action = HomeFragmentDirections.openCourseOverview(module.course.id)
+                    val action = HomeFragmentDirections.openCourseOverview(module.course.slug)
                     navController.navigate(action)
                 }
 
@@ -120,4 +120,22 @@ class HomeFragment : Fragment() {
         } else {
             false
         }
+
+    private fun errorFetchingLayout(throwable: Throwable) {
+        activity?.apply {
+            val navController = NavHostFragment.findNavController(this@HomeFragment)
+            showError(
+                message = getString(R.string.error_fetching_layout),
+                moreTitle = getString(R.string.error_open_settings_button),
+                error = throwable,
+                moreHandler = {
+                    val action = HomeFragmentDirections.openSettings()
+                    navController.navigate(action)
+                },
+                okHandler = {
+                    navController.popBackStack()
+                }
+            )
+        }
+    }
 }

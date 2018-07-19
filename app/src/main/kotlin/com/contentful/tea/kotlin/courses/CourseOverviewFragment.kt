@@ -6,23 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
-import com.contentful.tea.kotlin.Dependencies
-import com.contentful.tea.kotlin.DependenciesProvider
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Course
+import com.contentful.tea.kotlin.dependencies.Dependencies
+import com.contentful.tea.kotlin.dependencies.DependenciesProvider
+import com.contentful.tea.kotlin.extensions.showError
 import kotlinx.android.synthetic.main.fragment_course_overview.*
 import kotlinx.android.synthetic.main.item_lesson.view.*
 
 class CourseOverviewFragment : Fragment() {
-    private var courseId: String? = null
-    private var firstLessonId: String? = null
+    private var courseSlug: String? = null
+    private var firstLessonSlug: String? = null
 
     private lateinit var dependencies: Dependencies
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            courseId = CourseOverviewFragmentArgs.fromBundle(arguments).courseId
+            courseSlug = CourseOverviewFragmentArgs.fromBundle(arguments).courseSlug
         }
 
         if (activity !is DependenciesProvider) {
@@ -44,10 +45,13 @@ class CourseOverviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         overview_next.setOnClickListener { onNextButtonClicked() }
 
-        courseId?.let {
+        courseSlug?.let {
             dependencies
                 .contentful
-                .fetchCourse(courseId!!) { course ->
+                .fetchCourseBySlug(
+                    courseSlug!!,
+                    errorCallback = ::errorFetchingCourseBySlug
+                ) { course ->
                     activity?.runOnUiThread {
                         updateData(course)
                     }
@@ -57,7 +61,7 @@ class CourseOverviewFragment : Fragment() {
     }
 
     private fun updateData(course: Course) {
-        firstLessonId = if (course.lessons.isNotEmpty()) course.lessons.first().id else null
+        firstLessonSlug = if (course.lessons.isNotEmpty()) course.lessons.first().slug else null
         val parser = dependencies.markdown
 
         overview_title.text = parser.parse(course.title)
@@ -81,7 +85,7 @@ class CourseOverviewFragment : Fragment() {
                         getString(R.string.lesson_number, index + 1)
                     )
                     setOnClickListener {
-                        lessonClicked(lesson.id)
+                        lessonClicked(lesson.slug)
                     }
 
                     overview_container.addView(this)
@@ -89,11 +93,29 @@ class CourseOverviewFragment : Fragment() {
         }
     }
 
-    private fun lessonClicked(lessonId: String) {
+    private fun lessonClicked(lessonSlug: String) {
         val navController = NavHostFragment.findNavController(this)
-        val action = CourseOverviewFragmentDirections.openLesson(courseId, lessonId)
+        val action = CourseOverviewFragmentDirections.openLesson(courseSlug, lessonSlug)
         navController.navigate(action)
     }
 
-    private fun onNextButtonClicked() = firstLessonId?.let { lessonClicked(it) }
+    private fun onNextButtonClicked() = firstLessonSlug?.let { lessonClicked(it) }
+
+    private fun errorFetchingCourseBySlug(throwable: Throwable) {
+        activity?.apply {
+            val navController = NavHostFragment.findNavController(this@CourseOverviewFragment)
+            showError(
+                message = getString(R.string.error_fetching_course_from_slug, courseSlug),
+                moreTitle = getString(R.string.error_open_settings_button),
+                error = throwable,
+                moreHandler = {
+                    val action = CourseOverviewFragmentDirections.openSettings()
+                    navController.navigate(action)
+                },
+                okHandler = {
+                    navController.popBackStack()
+                }
+            )
+        }
+    }
 }

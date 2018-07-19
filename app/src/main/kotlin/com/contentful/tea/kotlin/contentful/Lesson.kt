@@ -5,13 +5,11 @@ import com.contentful.java.cda.CDAEntry
 import com.contentful.java.cda.image.ImageOption
 
 data class Lesson(
-    val id: String,
     val title: String,
     val slug: String,
     val modules: List<LessonModule>
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
-        entry.id(),
         entry.getField<String>(locale, "title"),
         entry.getField<String>(locale, "slug"),
         entry.getField<List<CDAEntry>>(locale, "modules")

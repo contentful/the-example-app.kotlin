@@ -4,6 +4,7 @@ import android.util.Log
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
 import com.contentful.tea.kotlin.BuildConfig
+import com.contentful.tea.kotlin.routing.Parameter
 import kotlinx.coroutines.experimental.launch
 
 class Contentful(
@@ -14,7 +15,7 @@ class Contentful(
     private val locale: String = "en-US"
 ) {
     fun fetchHomeLayout(
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (Layout) -> Unit
     ) {
         launch {
@@ -35,9 +36,9 @@ class Contentful(
         }
     }
 
-    fun fetchCourse(
-        courseId: String,
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+    fun fetchCourseBySlug(
+        coursesSlug: String,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (Course) -> Unit
     ) {
         launch {
@@ -47,7 +48,10 @@ class Contentful(
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
                         .include(10)
-                        .one(courseId),
+                        .where("fields.slug", coursesSlug)
+                        .all()
+                        .items()
+                        .first() as CDAEntry,
                     locale
                 )
 
@@ -58,9 +62,9 @@ class Contentful(
         }
     }
 
-    fun fetchAllCoursesOfCategory(
+    fun fetchAllCoursesOfCategoryId(
         categoryId: String,
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (List<Course>) -> Unit
     ) {
         launch {
@@ -83,7 +87,7 @@ class Contentful(
     }
 
     fun fetchAllCourses(
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (List<Course>) -> Unit
     ) {
         launch {
@@ -105,7 +109,7 @@ class Contentful(
     }
 
     fun fetchAllCategories(
-        errorCallback: (Throwable) -> Unit = ::defaultError,
+        errorCallback: (Throwable) -> Unit,
         successCallback: (List<Category>) -> Unit
     ) {
         launch {
@@ -127,6 +131,10 @@ class Contentful(
 
     private fun defaultError(t: Throwable) {
         Log.e(TAG, "Failure in fetching from Contentful", t)
+    }
+
+    fun applyParameter(parameter: Parameter) {
+        // TODO Use parameters to request "stuff" from contentful
     }
 
     companion object {

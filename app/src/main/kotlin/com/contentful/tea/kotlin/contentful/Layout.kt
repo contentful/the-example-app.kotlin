@@ -26,7 +26,7 @@ fun findLayoutModule(entry: CDAEntry, locale: String): LayoutModule =
         "layoutHeroImage" -> LayoutModule.HeroImage(entry, locale)
         else -> LayoutModule.Copy(
             "<layout module type not found>",
-            "##layout module type not found",
+            "## layout module type not found",
             "",
             "",
             "",

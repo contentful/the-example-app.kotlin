@@ -23,11 +23,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data
-                        android:host="mobile"
-                        android:pathPrefix="/"
-                        android:scheme="the-example-app"
-                        />
+                <data android:scheme="the-example-app-mobile"/>
             </intent-filter>
         </activity>
         <activity android:name=".home.StartupActivity">

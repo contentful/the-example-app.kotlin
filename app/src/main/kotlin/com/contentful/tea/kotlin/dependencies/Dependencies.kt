@@ -1,4 +1,4 @@
-package com.contentful.tea.kotlin
+package com.contentful.tea.kotlin.dependencies
 
 import android.content.Context
 import com.contentful.tea.kotlin.contentful.Contentful
