@@ -95,12 +95,13 @@ fun parameter(uri: String): Parameter {
         parameterMap["space_id"].orEmpty(),
         parameterMap["preview_token"].orEmpty(),
         parameterMap["delivery_token"].orEmpty(),
-        parameterMap["editorial_features"].orFalse(),
+        parameterMap["editorial_features"].enabledOrFalse(),
         parameterMap["api"].orEmpty()
     )
 }
 
-fun Any?.orFalse(): Boolean = if (this == null || this !is String) false else this.toBoolean()
+fun Any?.enabledOrFalse(): Boolean =
+    if (this == null || this !is String) false else this.toLowerCase() == "enabled"
 
 fun matches(uri: String, template: String): Boolean {
     return uri.matches(template.toRegex())
