@@ -13,5 +13,6 @@
     <dimen name="card_description_font_size">13sp</dimen>
     <dimen name="course_card_max_height">180dp</dimen>
     <dimen name="imprint_category_font">18sp</dimen>
+    <dimen name="about_description_font">18sp</dimen>
     <dimen name="about_title_font">24sp</dimen>
 </resources>

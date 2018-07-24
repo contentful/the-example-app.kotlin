@@ -222,6 +222,22 @@
             android:label="fragment_qrcode_scanner"
             tools:layout="@layout/fragment_qrcode_scanner"
             >
+        <action
+                android:id="@+id/openHome"
+                app:destination="@id/home"
+                />
+        <action
+                android:id="@+id/openCategory"
+                app:destination="@id/courses"
+                />
+        <action
+                android:id="@+id/openCourseOverview"
+                app:destination="@id/course_overview"
+                />
+        <action
+                android:id="@+id/openLesson"
+                app:destination="@id/lesson"
+                />
     </fragment>
     <fragment
             android:id="@+id/aboutFragment"

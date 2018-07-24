@@ -3,7 +3,7 @@
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#FF536171</color>
     <color name="colorAccent">#FF4A90E2</color>
-    <color name="errorBackground">#FFD7443F</color>
+    <color name="errorBackground">#d47774</color>
     <color name="defaultScrim">#E6536171</color>
     <color name="dimmed_background">#FFE5EBED</color>
     <color name="horizontal_rule_color">#80808080</color>

@@ -42,4 +42,9 @@
     <string name="about_description"><![CDATA[This is "The Android Example App in Kotlin". While building your own apps with Contentful, you can reference this app\'s code, found on <a href="https://github.com/contentful/the-example-app.kotlin">GitHub<a>.<br/><br/>You can also edit the content in the app by cloning the Contentful space to your own Contentful account by following the instructions <a href="https://github.com/contentful/content-models/blob/master/the-example-app/README.md">here</a>.<br/><br/>This app is also available in the following platforms and languages:]]></string>
     <string name="about_others_hosted_label">WWW</string>
     <string name="about_others_github_label">GitHub</string>
+    <string name="settings_qr_description">Open \"Preview\" for this platform from any of your entries. Scan the resulting QR code here.</string>
+    <string name="settings_qr_non_tea_url"><![CDATA[Found qr code content <tt>%s</tt> does not belong to this app. Do you want to open this qr code with another app?]]></string>
+    <string name="settings_qr_non_tea_more">Try different app …</string>
+    <string name="settings_qr_non_tea_chooser_title">open non tea qr code</string>
+    <string name="settings_qr_finder_status_text">Place a qr code inside this rectangle to scan it.</string>
 </resources>

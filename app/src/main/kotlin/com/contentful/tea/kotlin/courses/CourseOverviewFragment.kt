@@ -95,7 +95,7 @@ class CourseOverviewFragment : Fragment() {
 
     private fun lessonClicked(lessonSlug: String) {
         val navController = NavHostFragment.findNavController(this)
-        val action = CourseOverviewFragmentDirections.openLesson(courseSlug, lessonSlug)
+        val action = CourseOverviewFragmentDirections.openLesson(courseSlug!!, lessonSlug)
         navController.navigate(action)
     }
 
