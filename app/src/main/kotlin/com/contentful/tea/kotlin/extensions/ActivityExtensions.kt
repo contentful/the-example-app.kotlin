@@ -13,7 +13,7 @@ import com.contentful.tea.kotlin.R
 
 fun Activity.showError(
     message: CharSequence,
-    title: CharSequence = "Error",
+    title: CharSequence = "Error occurred",
     moreTitle: CharSequence = "More …",
     error: Throwable? = null,
     moreHandler: Function0<Unit>? = null,
@@ -25,7 +25,7 @@ fun Activity.showError(
             .Builder(this, R.style.TeaErrorDialog)
             .apply {
                 setTitle(title)
-                extractMessage(error, message)
+                setMessage(extractMessage(error, message))
                 if (moreHandler != null) {
                     setNeutralButton(moreTitle) { _, _ -> moreHandler() }
                 }
@@ -38,9 +38,9 @@ fun Activity.showError(
             .show()
 
         if (error === null) {
-            Log.i(this.javaClass.simpleName, Html.fromHtml(message.toString(), 0).toString())
+            Log.i(this.javaClass.simpleName, message.removeHtmlTags().replace('\n', ' '))
         } else {
-            Log.e(this.javaClass.simpleName, Html.fromHtml(message.toString(), 0).toString(), error)
+            Log.e(this.javaClass.simpleName, message.removeHtmlTags().replace('\n', ' '), error)
         }
     }
 }
@@ -48,15 +48,24 @@ fun Activity.showError(
 private fun extractMessage(error: Throwable?, message: CharSequence): CharSequence =
     if (error != null) {
         if (message.isEmpty()) {
-            "<small><tt>${error.message}<tt></small>".toHtml()
+            if (error.message.isNullOrEmpty()) {
+                "🛑"
+            } else {
+                "<small><tt>${error.message}<tt></small>".toHtml()
+            }
         } else {
-            "$message<br><hr/><tt><small>${error.message}</small><tt>".toHtml()
+            if (error.message.isNullOrEmpty()) {
+                message.toHtml()
+            } else {
+                "$message<br><hr/><tt><small>${error.message}</small><tt>".toHtml()
+            }
         }
     } else {
         message.toHtml()
     }
 
-private fun CharSequence.toHtml() = Html.fromHtml(this.toString(), 0)
+fun CharSequence.toHtml(): CharSequence = Html.fromHtml(toString(), 0)
+fun CharSequence.removeHtmlTags(): String = Html.fromHtml(toString(), 0).toString()
 
 fun Context.saveToClipboard(label: CharSequence, content: CharSequence) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
