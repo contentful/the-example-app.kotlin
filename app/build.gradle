@@ -58,8 +58,8 @@ dependencies {
     implementation 'androidx.preference:preference:1.0.0-beta01'
     implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
 
-    implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha03"
-    implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha03"
+    implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha04"
+    implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha04"
     implementation 'com.google.android.gms:play-services-oss-licenses:16.0.0'
 
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
@@ -75,8 +75,8 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:1.0.6'
     testImplementation 'org.mockito:mockito-core:2.19.1'
 
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
 }
 
 afterEvaluate {
