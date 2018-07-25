@@ -1,19 +1,10 @@
 package com.contentful.tea.kotlin.routing
 
-const val parameterRegEx = """(\?.+)?"""
+import com.contentful.tea.kotlin.contentful.Parameter
+
 const val courseSlugRegEx = """[\w-]+"""
 const val categorySlugRegEx = """[\w-]+"""
 const val lessonSlugRegEx = """[\w-]+"""
-
-data class Parameter(
-    val spaceId: String,
-    val previewToken: String,
-    val deliveryToken: String,
-    val editorialFeatures: Boolean,
-    val api: String
-) {
-    constructor() : this("", "", "", false, "")
-}
 
 open class RouteCallback {
     open fun openHome(parameter: Parameter) {}
@@ -26,11 +17,11 @@ fun route(pathAndParameter: String, callback: RouteCallback): Boolean {
     val (parameter, path) = separateParameterFromPath(pathAndParameter)
 
     return when {
-        matches(path, parameterRegEx) -> {
+        path.isEmpty() -> {
             callback.openHome(parameter)
             true
         }
-        matches(path, "courses/$courseSlugRegEx$parameterRegEx") -> {
+        matches(path, "courses/$courseSlugRegEx") -> {
             callback.goToCourse(
                 courseId(path),
                 parameter
@@ -39,7 +30,7 @@ fun route(pathAndParameter: String, callback: RouteCallback): Boolean {
         }
         matches(
             path,
-            "courses/categories/$categorySlugRegEx$parameterRegEx"
+            "courses/categories/$categorySlugRegEx"
         ) -> {
             callback.goToCategory(
                 categoryId(path),
@@ -49,7 +40,7 @@ fun route(pathAndParameter: String, callback: RouteCallback): Boolean {
         }
         matches(
             path,
-            "courses/$courseSlugRegEx/lessons/$lessonSlugRegEx$parameterRegEx"
+            "courses/$courseSlugRegEx/lessons/$lessonSlugRegEx"
         ) -> {
             callback.goToLesson(
                 courseId(path),
@@ -79,7 +70,7 @@ fun lessonId(uri: String): String {
 
 fun separateParameterFromPath(uri: String): Pair<Parameter, String> {
     if (!uri.contains("?")) {
-        return Pair(Parameter(), "")
+        return Pair(Parameter(), uri)
     }
 
     val (_, parameter) = uri.split("?")

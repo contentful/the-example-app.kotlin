@@ -35,7 +35,7 @@
     <string name="lessons">Lessons</string>
     <string name="module_code_select_language"><![CDATA[<Please select a language>]]></string>
     <string name="module_code_source_copied">Copied to clipboard …</string>
-    <string name="settings_connected_successfully_to_space"><![CDATA[Successfully connected to <i>new</i> space <tt>%s</tt>.]]></string>
+    <string name="settings_connected_successfully_to_space"><![CDATA[Successfully connected to space <tt>%s</tt>.]]></string>
     <string name="settings_qr_description">Open \"Preview\" for this platform from any of your entries. Scan the resulting QR code here.</string>
     <string name="settings_qr_finder_status_text">Place a qr code inside this rectangle to scan it.</string>
     <string name="settings_qr_non_tea_chooser_title">open non tea qr code</string>

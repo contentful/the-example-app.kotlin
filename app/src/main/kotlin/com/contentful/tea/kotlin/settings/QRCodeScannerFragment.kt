@@ -31,7 +31,6 @@ class QRCodeScannerFragment : Fragment() {
                 settings_qr_barcode.pauseAndWait()
 
                 if (result.text.startsWith("the-example-app-mobile://")) {
-                    settings_qr_barcode.pauseAndWait()
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.text)))
                 } else {
                     activity?.showError(

@@ -1,5 +1,6 @@
 package com.contentful.tea.kotlin.routing
 
+import com.contentful.tea.kotlin.contentful.Parameter
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock

@@ -4,12 +4,13 @@ import android.app.Activity
 import android.widget.Toast
 import androidx.navigation.Navigation
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.contentful.Parameter
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.showError
 import com.contentful.tea.kotlin.extensions.toHtml
 import com.contentful.tea.kotlin.home.HomeFragmentDirections
 
-class MainRouteCallback(val activity: Activity) : RouteCallback() {
+class MainRouteCallback(private val activity: Activity) : RouteCallback() {
 
     init {
         if (activity !is DependenciesProvider) {
@@ -27,7 +28,7 @@ class MainRouteCallback(val activity: Activity) : RouteCallback() {
                         R.string.settings_connected_successfully_to_space,
                         it.name()
                     ).toHtml(),
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_LONG
                 ).show()
                 successHandler()
             }

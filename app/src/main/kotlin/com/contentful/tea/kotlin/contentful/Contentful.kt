@@ -5,14 +5,27 @@ import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
 import com.contentful.java.cda.CDASpace
 import com.contentful.tea.kotlin.BuildConfig
-import com.contentful.tea.kotlin.routing.Parameter
 import kotlinx.coroutines.experimental.launch
 
+data class Parameter(
+    val spaceId: String,
+    val previewToken: String,
+    val deliveryToken: String,
+    val editorialFeatures: Boolean,
+    val api: String
+) {
+    constructor() : this("", "", "", false, "")
+
+    fun isEmpty(): Boolean =
+        spaceId.isEmpty() && previewToken.isEmpty() && deliveryToken.isEmpty() && api.isEmpty()
+}
+
 class Contentful(
-    var client: CDAClient = CDAClient.builder()
+    private var client: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
+    private var parameter: Parameter = Parameter(),
     private val locale: String = "en-US"
 ) {
     fun fetchHomeLayout(
@@ -135,21 +148,34 @@ class Contentful(
         errorHandler: (Throwable) -> Unit,
         successHandler: (CDASpace) -> Unit
     ) {
-        val clientWithNewConfiguration = CDAClient.builder()
-            .setToken(parameter.deliveryToken)
-            .setSpace(parameter.spaceId)
-            .build()
+        if (parameter.isEmpty()) {
+            // empty parameter: no need to reevaluate the old one
+            launch {
+                try {
+                    successHandler(client.fetchSpace())
+                } catch (throwable: Throwable) {
+                    Log.e(TAG, "Cannot connect to predefined space.")
+                    errorHandler(throwable)
+                }
+            }
+        } else {
+            val clientWithNewConfiguration = CDAClient.builder()
+                .setToken(parameter.deliveryToken)
+                .setSpace(parameter.spaceId)
+                .build()
 
-        launch {
-            try {
-                val space = clientWithNewConfiguration.fetchSpace()
-                Log.d(TAG, """Connected to space "${space.name()}".""")
-                client = clientWithNewConfiguration
+            launch {
+                try {
+                    val space = clientWithNewConfiguration.fetchSpace()
+                    Log.d(TAG, """Connected to space "${space.name()}".""")
+                    this@Contentful.client = clientWithNewConfiguration
+                    this@Contentful.parameter = parameter
 
-                successHandler(space)
-            } catch (throwable: Throwable) {
-                Log.e(TAG, "Cannot connect to space.")
-                errorHandler(throwable)
+                    successHandler(space)
+                } catch (throwable: Throwable) {
+                    Log.e(TAG, "Cannot connect to space.")
+                    errorHandler(throwable)
+                }
             }
         }
     }
