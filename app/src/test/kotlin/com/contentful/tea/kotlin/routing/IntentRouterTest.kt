@@ -65,7 +65,7 @@ class IntentRouterTest {
             "?space_id=spaceId&" +
                 "preview_token=previewToken&" +
                 "delivery_token=deliveryToken&" +
-                "editorial_features=true&" +
+                "editorial_features=enabled&" +
                 "api=api&",
             callback
         )

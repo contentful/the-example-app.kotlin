@@ -3,12 +3,13 @@ package com.contentful.tea.kotlin.contentful
 import android.util.Log
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
+import com.contentful.java.cda.CDASpace
 import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.routing.Parameter
 import kotlinx.coroutines.experimental.launch
 
 class Contentful(
-    val client: CDAClient = CDAClient.builder()
+    var client: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
@@ -129,12 +130,28 @@ class Contentful(
         }
     }
 
-    private fun defaultError(t: Throwable) {
-        Log.e(TAG, "Failure in fetching from Contentful", t)
-    }
+    fun applyParameter(
+        parameter: Parameter,
+        errorHandler: (Throwable) -> Unit,
+        successHandler: (CDASpace) -> Unit
+    ) {
+        val clientWithNewConfiguration = CDAClient.builder()
+            .setToken(parameter.deliveryToken)
+            .setSpace(parameter.spaceId)
+            .build()
 
-    fun applyParameter(parameter: Parameter) {
-        // TODO Use parameters to request "stuff" from contentful
+        launch {
+            try {
+                val space = clientWithNewConfiguration.fetchSpace()
+                Log.d(TAG, """Connected to space "${space.name()}".""")
+                client = clientWithNewConfiguration
+
+                successHandler(space)
+            } catch (throwable: Throwable) {
+                Log.e(TAG, "Cannot connect to space.")
+                errorHandler(throwable)
+            }
+        }
     }
 
     companion object {

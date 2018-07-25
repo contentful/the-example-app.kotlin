@@ -41,11 +41,11 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
 
     private fun rerouteIfNeeded() {
         if (intent != null && intent.action == Intent.ACTION_VIEW) {
-            val route = intent.data.host + intent.data.path
-            if (!route(route, routeCallback)) {
+            val pathAndParameter = intent.dataString.substringAfter("://")
+            if (!route(pathAndParameter, routeCallback)) {
                 val navController = findNavController(this, R.id.navigation_host_fragment)
                 showError(
-                    message = getString(R.string.error_parsing_route, route),
+                    message = getString(R.string.error_parsing_route, pathAndParameter),
                     moreTitle = getString(R.string.error_open_settings_button),
                     moreHandler = {
                         val action = CoursesFragmentDirections.openSettings()

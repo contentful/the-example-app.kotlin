@@ -22,38 +22,38 @@ open class RouteCallback {
     open fun goToLesson(courseSlug: String, lessonSlug: String, parameter: Parameter) {}
 }
 
-fun route(uri: String, callback: RouteCallback): Boolean {
-    val parameter = parameter(uri)
+fun route(pathAndParameter: String, callback: RouteCallback): Boolean {
+    val (parameter, path) = separateParameterFromPath(pathAndParameter)
 
     return when {
-        matches(uri, parameterRegEx) -> {
+        matches(path, parameterRegEx) -> {
             callback.openHome(parameter)
             true
         }
-        matches(uri, "courses/$courseSlugRegEx$parameterRegEx") -> {
+        matches(path, "courses/$courseSlugRegEx$parameterRegEx") -> {
             callback.goToCourse(
-                courseId(uri),
+                courseId(path),
                 parameter
             )
             true
         }
         matches(
-            uri,
+            path,
             "courses/categories/$categorySlugRegEx$parameterRegEx"
         ) -> {
             callback.goToCategory(
-                categoryId(uri),
+                categoryId(path),
                 parameter
             )
             true
         }
         matches(
-            uri,
+            path,
             "courses/$courseSlugRegEx/lessons/$lessonSlugRegEx$parameterRegEx"
         ) -> {
             callback.goToLesson(
-                courseId(uri),
-                lessonId(uri),
+                courseId(path),
+                lessonId(path),
                 parameter
             )
             true
@@ -77,9 +77,9 @@ fun lessonId(uri: String): String {
     return lessonId
 }
 
-fun parameter(uri: String): Parameter {
+fun separateParameterFromPath(uri: String): Pair<Parameter, String> {
     if (!uri.contains("?")) {
-        return Parameter()
+        return Pair(Parameter(), "")
     }
 
     val (_, parameter) = uri.split("?")
@@ -91,12 +91,14 @@ fun parameter(uri: String): Parameter {
         .map { Pair(it[0], it[1]) }
         .toMap()
 
-    return Parameter(
-        parameterMap["space_id"].orEmpty(),
-        parameterMap["preview_token"].orEmpty(),
-        parameterMap["delivery_token"].orEmpty(),
-        parameterMap["editorial_features"].enabledOrFalse(),
-        parameterMap["api"].orEmpty()
+    return Pair(
+        Parameter(
+            parameterMap["space_id"].orEmpty(),
+            parameterMap["preview_token"].orEmpty(),
+            parameterMap["delivery_token"].orEmpty(),
+            parameterMap["editorial_features"].enabledOrFalse(),
+            parameterMap["api"].orEmpty()
+        ), uri.substringBefore("?")
     )
 }
 
