@@ -60,7 +60,7 @@
                         android:id="@+id/module_code_source"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="@string/sample_code"
+                        tools:text="public class Sample { \n\tpublic static void main(String args[]){\n\t}\n}"
                         android:fontFamily="monospace"
                         />
             </LinearLayout>
