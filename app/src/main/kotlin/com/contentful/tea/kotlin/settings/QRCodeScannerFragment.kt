@@ -28,7 +28,7 @@ class QRCodeScannerFragment : Fragment() {
     private val decodeCallback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult?) {
             result?.let {
-                settings_qr_barcode.pauseAndWait()
+                settings_qr_barcode.pause()
 
                 if (result.text.startsWith("the-example-app-mobile://")) {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.text)))

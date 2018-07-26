@@ -38,8 +38,6 @@ data class Parameter(
     val api: Api
 ) {
     constructor() : this("", "", "", Disabled, CDA)
-
-    fun isEmpty(): Boolean = spaceId.isEmpty() && previewToken.isEmpty() && deliveryToken.isEmpty()
 }
 
 class Contentful(
@@ -47,7 +45,13 @@ class Contentful(
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
-    private var parameter: Parameter = Parameter(),
+    private var parameter: Parameter = Parameter(
+        spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
+        deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
+        previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
+        editorialFeature = EditorialFeature.Disabled,
+        api = Api.CDA
+    ),
     private val locale: String = "en-US"
 ) {
     fun fetchHomeLayout(
@@ -166,38 +170,37 @@ class Contentful(
     }
 
     fun applyParameter(
-        parameter: Parameter,
+        incomingParameter: Parameter,
         errorHandler: (Throwable) -> Unit,
         successHandler: (CDASpace) -> Unit
     ) {
-        if (parameter.isEmpty()) {
-            // empty parameter: no need to reevaluate the old one
-            launch {
-                try {
-                    successHandler(client.fetchSpace())
-                } catch (throwable: Throwable) {
-                    Log.e(TAG, "Cannot connect to predefined space.")
-                    errorHandler(throwable)
-                }
+        val incomingClient = CDAClient.builder().apply {
+            setSpace(incomingParameter.spaceId.or(parameter.spaceId))
+            if (incomingParameter.api == CPA) {
+                setToken(incomingParameter.previewToken.or(parameter.previewToken))
+                preview()
+            } else {
+                setToken(incomingParameter.deliveryToken.or(parameter.deliveryToken))
             }
-        } else {
-            val clientWithNewConfiguration = CDAClient.builder()
-                .setToken(parameter.deliveryToken)
-                .setSpace(parameter.spaceId)
-                .build()
+        }.build()
 
-            launch {
-                try {
-                    val space = clientWithNewConfiguration.fetchSpace()
-                    Log.d(TAG, """Connected to space "${space.name()}".""")
-                    this@Contentful.client = clientWithNewConfiguration
-                    this@Contentful.parameter = parameter
+        launch {
+            try {
+                val space = incomingClient.fetchSpace()
+                Log.d(TAG, """Connected to space "${space.name()}".""")
+                this@Contentful.client = incomingClient
+                this@Contentful.parameter = Parameter(
+                    spaceId = incomingParameter.spaceId.or(parameter.spaceId),
+                    deliveryToken = incomingParameter.deliveryToken.or(parameter.deliveryToken),
+                    previewToken = incomingParameter.previewToken.or(parameter.previewToken),
+                    editorialFeature = incomingParameter.editorialFeature,
+                    api = incomingParameter.api
+                )
 
-                    successHandler(space)
-                } catch (throwable: Throwable) {
-                    Log.e(TAG, "Cannot connect to space.")
-                    errorHandler(throwable)
-                }
+                successHandler(space)
+            } catch (throwable: Throwable) {
+                Log.e(TAG, "Cannot connect to space.")
+                errorHandler(throwable)
             }
         }
     }
@@ -206,3 +209,5 @@ class Contentful(
         private val TAG: String = Contentful::class.simpleName!!
     }
 }
+
+fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!
