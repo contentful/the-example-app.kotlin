@@ -10,9 +10,10 @@ data class Lesson(
     val modules: List<LessonModule>
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
-        entry.getField<String>(locale, "title"),
-        entry.getField<String>(locale, "slug"),
-        entry.getField<List<CDAEntry>>(locale, "modules")
+        entry.getField<String?>(locale, "title").orEmpty(),
+        entry.getField<String?>(locale, "slug").orEmpty(),
+        entry.getField<List<CDAEntry>?>(locale, "modules")
+            .orEmpty()
             .map { findLessonModule(it, locale) }
     )
 }
@@ -42,16 +43,16 @@ sealed class LessonModule {
         val swift: String
     ) : LessonModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "curl"),
-            entry.getField<String>(locale, "dotNet"),
-            entry.getField<String>(locale, "javascript"),
-            entry.getField<String>(locale, "java"),
-            entry.getField<String>(locale, "javaAndroid"),
-            entry.getField<String>(locale, "php"),
-            entry.getField<String>(locale, "python"),
-            entry.getField<String>(locale, "ruby"),
-            entry.getField<String>(locale, "swift")
+            entry.getField<String?>(locale, "title").orEmpty(),
+            entry.getField<String?>(locale, "curl").orEmpty(),
+            entry.getField<String?>(locale, "dotNet").orEmpty(),
+            entry.getField<String?>(locale, "javascript").orEmpty(),
+            entry.getField<String?>(locale, "java").orEmpty(),
+            entry.getField<String?>(locale, "javaAndroid").orEmpty(),
+            entry.getField<String?>(locale, "php").orEmpty(),
+            entry.getField<String?>(locale, "python").orEmpty(),
+            entry.getField<String?>(locale, "ruby").orEmpty(),
+            entry.getField<String?>(locale, "swift").orEmpty()
         )
     }
 
@@ -61,13 +62,13 @@ sealed class LessonModule {
         val image: String
     ) : LessonModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "caption"),
-            entry.getField<CDAAsset>(locale, "image")
-                .urlForImageWith(
+            entry.getField<String?>(locale, "title").orEmpty(),
+            entry.getField<String?>(locale, "caption").orEmpty(),
+            entry.getField<CDAAsset?>(locale, "image")
+                ?.urlForImageWith(
                     ImageOption.https(),
                     ImageOption.formatOf(ImageOption.Format.webp)
-                )
+                ).orEmpty()
         )
     }
 
@@ -76,8 +77,8 @@ sealed class LessonModule {
         val copy: String
     ) : LessonModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "copy")
+            entry.getField<String?>(locale, "title").orEmpty(),
+            entry.getField<String?>(locale, "copy").orEmpty()
         )
     }
 }
