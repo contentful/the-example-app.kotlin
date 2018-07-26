@@ -5,19 +5,41 @@ import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
 import com.contentful.java.cda.CDASpace
 import com.contentful.tea.kotlin.BuildConfig
+import com.contentful.tea.kotlin.contentful.Api.CDA
+import com.contentful.tea.kotlin.contentful.Api.CPA
+import com.contentful.tea.kotlin.contentful.EditorialFeature.Disabled
+import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
 import kotlinx.coroutines.experimental.launch
+
+enum class Api {
+    CDA,
+    CPA
+}
+
+fun String?.toApi(): Api = if (this == null || this.toLowerCase() == "cda") CDA else CPA
+
+enum class EditorialFeature {
+    Enabled,
+    Disabled
+}
+
+fun String?.toEditorialFeature(): EditorialFeature =
+    if (this == null || this.toLowerCase() == "enabled") {
+        Enabled
+    } else {
+        Disabled
+    }
 
 data class Parameter(
     val spaceId: String,
     val previewToken: String,
     val deliveryToken: String,
-    val editorialFeatures: Boolean,
-    val api: String
+    val editorialFeature: EditorialFeature,
+    val api: Api
 ) {
-    constructor() : this("", "", "", false, "")
+    constructor() : this("", "", "", Disabled, CDA)
 
-    fun isEmpty(): Boolean =
-        spaceId.isEmpty() && previewToken.isEmpty() && deliveryToken.isEmpty() && api.isEmpty()
+    fun isEmpty(): Boolean = spaceId.isEmpty() && previewToken.isEmpty() && deliveryToken.isEmpty()
 }
 
 class Contentful(

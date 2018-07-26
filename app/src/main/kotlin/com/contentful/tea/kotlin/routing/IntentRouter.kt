@@ -1,6 +1,8 @@
 package com.contentful.tea.kotlin.routing
 
 import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.contentful.toApi
+import com.contentful.tea.kotlin.contentful.toEditorialFeature
 
 const val courseSlugRegEx = """[\w-]+"""
 const val categorySlugRegEx = """[\w-]+"""
@@ -87,14 +89,11 @@ fun separateParameterFromPath(uri: String): Pair<Parameter, String> {
             parameterMap["space_id"].orEmpty(),
             parameterMap["preview_token"].orEmpty(),
             parameterMap["delivery_token"].orEmpty(),
-            parameterMap["editorial_features"].enabledOrFalse(),
-            parameterMap["api"].orEmpty()
+            parameterMap["editorial_features"].toEditorialFeature(),
+            parameterMap["api"].toApi()
         ), uri.substringBefore("?")
     )
 }
-
-fun Any?.enabledOrFalse(): Boolean =
-    if (this == null || this !is String) false else this.toLowerCase() == "enabled"
 
 fun matches(uri: String, template: String): Boolean {
     return uri.matches(template.toRegex())
