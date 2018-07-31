@@ -5,6 +5,6 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:id="@+id/module_copy_text"
-          tools:text="@string/sample_text"
+          tools:text="This is a sample text, do not mind what the actual content is."
           android:paddingBottom="@dimen/mid_border"
         />

@@ -49,7 +49,7 @@
                 android:paddingBottom="0dp"
                 android:paddingStart="@dimen/high_border"
                 android:paddingEnd="@dimen/high_border"
-                tools:text="@string/sample_text"
+                tools:text="This is a sample text, do not mind what the actual content is."
                 />
 
         <FrameLayout

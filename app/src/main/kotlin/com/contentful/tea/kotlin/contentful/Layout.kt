@@ -12,10 +12,11 @@ data class Layout(
     val contentModules: List<LayoutModule>
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
-        entry.getField<String>(locale, "title"),
-        entry.getField<String>(locale, "slug"),
-        entry.getField<List<CDAEntry>>(locale, "contentModules")
-            .map { findLayoutModule(it, locale) }
+        entry.getField<String?>(locale, "title").orEmpty(),
+        entry.getField<String?>(locale, "slug").orEmpty(),
+        entry.getField<List<CDAEntry>?>(locale, "contentModules").orEmpty().map {
+            findLayoutModule(it, locale)
+        }
     )
 }
 
@@ -44,12 +45,12 @@ sealed class LayoutModule {
         val visualStyle: String
     ) : LayoutModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "headline"),
-            entry.getField<String>(locale, "copy"),
-            entry.getField<String>(locale, "ctaTitle"),
-            entry.getField<String>(locale, "ctaLink"),
-            entry.getField<String>(locale, "visualStyle")
+            entry.getField<String?>(locale, "title").orEmpty(),
+            entry.getField<String?>(locale, "headline").orEmpty(),
+            entry.getField<String?>(locale, "copy").orEmpty(),
+            entry.getField<String?>(locale, "ctaTitle").orEmpty(),
+            entry.getField<String?>(locale, "ctaLink").orEmpty(),
+            entry.getField<String?>(locale, "visualStyle").orEmpty()
         )
     }
 
@@ -60,10 +61,12 @@ sealed class LayoutModule {
 
     ) : LayoutModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            entry.getField<String>(locale, "headline"),
-            entry.getField<CDAAsset>(locale, "backgroundImage")
-                .urlForImageWith(https(), formatOf(webp))
+            entry.getField<String?>(locale, "title").orEmpty(),
+            entry.getField<String?>(locale, "headline").orEmpty(),
+            entry.getField<CDAAsset?>(locale, "backgroundImage")?.urlForImageWith(
+                https(),
+                formatOf(webp)
+            ).orEmpty()
         )
     }
 
@@ -72,8 +75,15 @@ sealed class LayoutModule {
         val course: Course
     ) : LayoutModule() {
         constructor(entry: CDAEntry, locale: String) : this(
-            entry.getField<String>(locale, "title"),
-            Course(entry.getField<CDAEntry>(locale, "course"), locale)
+            entry.getField<String?>(locale, "title").orEmpty(),
+            if (entry.getField<CDAEntry?>(locale, "course") == null) {
+                Course(
+                    "", "", "", "", "", 0, "",
+                    emptyList(), emptyList()
+                )
+            } else {
+                Course(entry.getField<CDAEntry>(locale, "course"), locale)
+            }
         )
     }
 }

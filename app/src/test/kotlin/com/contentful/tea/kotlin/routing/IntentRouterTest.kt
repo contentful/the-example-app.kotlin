@@ -1,5 +1,12 @@
+@file:JvmName("FOO")
+
 package com.contentful.tea.kotlin.routing
 
+import com.contentful.tea.kotlin.contentful.Api.CDA
+import com.contentful.tea.kotlin.contentful.Api.CPA
+import com.contentful.tea.kotlin.contentful.EditorialFeature.Disabled
+import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
+import com.contentful.tea.kotlin.contentful.Parameter
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
@@ -65,8 +72,8 @@ class IntentRouterTest {
             "?space_id=spaceId&" +
                 "preview_token=previewToken&" +
                 "delivery_token=deliveryToken&" +
-                "editorial_features=true&" +
-                "api=api&",
+                "editorial_features=enabled&" +
+                "api=CPA&",
             callback
         )
 
@@ -76,8 +83,8 @@ class IntentRouterTest {
                     "spaceId",
                     "previewToken",
                     "deliveryToken",
-                    true,
-                    "api"
+                    Enabled,
+                    CPA
                 )
             )
         )
@@ -96,8 +103,8 @@ class IntentRouterTest {
                     "",
                     "",
                     "",
-                    false,
-                    ""
+                    Disabled,
+                    CDA
                 )
             )
         )

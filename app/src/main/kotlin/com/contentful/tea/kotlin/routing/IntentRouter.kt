@@ -1,19 +1,12 @@
 package com.contentful.tea.kotlin.routing
 
-const val parameterRegEx = """(\?.+)?"""
+import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.contentful.toApi
+import com.contentful.tea.kotlin.contentful.toEditorialFeature
+
 const val courseSlugRegEx = """[\w-]+"""
 const val categorySlugRegEx = """[\w-]+"""
 const val lessonSlugRegEx = """[\w-]+"""
-
-data class Parameter(
-    val spaceId: String,
-    val previewToken: String,
-    val deliveryToken: String,
-    val editorialFeatures: Boolean,
-    val api: String
-) {
-    constructor() : this("", "", "", false, "")
-}
 
 open class RouteCallback {
     open fun openHome(parameter: Parameter) {}
@@ -22,38 +15,38 @@ open class RouteCallback {
     open fun goToLesson(courseSlug: String, lessonSlug: String, parameter: Parameter) {}
 }
 
-fun route(uri: String, callback: RouteCallback): Boolean {
-    val parameter = parameter(uri)
+fun route(pathAndParameter: String, callback: RouteCallback): Boolean {
+    val (parameter, path) = separateParameterFromPath(pathAndParameter)
 
     return when {
-        matches(uri, parameterRegEx) -> {
+        path.isEmpty() -> {
             callback.openHome(parameter)
             true
         }
-        matches(uri, "courses/$courseSlugRegEx$parameterRegEx") -> {
+        matches(path, "courses/$courseSlugRegEx") -> {
             callback.goToCourse(
-                courseId(uri),
+                courseId(path),
                 parameter
             )
             true
         }
         matches(
-            uri,
-            "courses/categories/$categorySlugRegEx$parameterRegEx"
+            path,
+            "courses/categories/$categorySlugRegEx"
         ) -> {
             callback.goToCategory(
-                categoryId(uri),
+                categoryId(path),
                 parameter
             )
             true
         }
         matches(
-            uri,
-            "courses/$courseSlugRegEx/lessons/$lessonSlugRegEx$parameterRegEx"
+            path,
+            "courses/$courseSlugRegEx/lessons/$lessonSlugRegEx"
         ) -> {
             callback.goToLesson(
-                courseId(uri),
-                lessonId(uri),
+                courseId(path),
+                lessonId(path),
                 parameter
             )
             true
@@ -77,9 +70,9 @@ fun lessonId(uri: String): String {
     return lessonId
 }
 
-fun parameter(uri: String): Parameter {
+fun separateParameterFromPath(uri: String): Pair<Parameter, String> {
     if (!uri.contains("?")) {
-        return Parameter()
+        return Pair(Parameter(), uri)
     }
 
     val (_, parameter) = uri.split("?")
@@ -91,16 +84,16 @@ fun parameter(uri: String): Parameter {
         .map { Pair(it[0], it[1]) }
         .toMap()
 
-    return Parameter(
-        parameterMap["space_id"].orEmpty(),
-        parameterMap["preview_token"].orEmpty(),
-        parameterMap["delivery_token"].orEmpty(),
-        parameterMap["editorial_features"].orFalse(),
-        parameterMap["api"].orEmpty()
+    return Pair(
+        Parameter(
+            parameterMap["space_id"].orEmpty(),
+            parameterMap["preview_token"].orEmpty(),
+            parameterMap["delivery_token"].orEmpty(),
+            parameterMap["editorial_features"].toEditorialFeature(),
+            parameterMap["api"].toApi()
+        ), uri.substringBefore("?")
     )
 }
-
-fun Any?.orFalse(): Boolean = if (this == null || this !is String) false else this.toBoolean()
 
 fun matches(uri: String, template: String): Boolean {
     return uri.matches(template.toRegex())

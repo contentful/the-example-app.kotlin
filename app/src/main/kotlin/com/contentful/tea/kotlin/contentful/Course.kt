@@ -18,20 +18,24 @@ data class Course(
     val categories: List<Category>
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
-        entry.getField<String>(locale, "title"),
-        entry.getField<String>(locale, "slug"),
-        entry.getField<CDAAsset>(locale, "image")
-            .urlForImageWith(https(), formatOf(webp)),
-        entry.getField<String>(locale, "shortDescription"),
-        entry.getField<String>(locale, "description"),
-        entry.getField<Double>(locale, "duration").toInt(),
-        entry.getField<String>(locale, "skillLevel"),
-        entry.getField<List<CDAEntry>>(locale, "lessons")
+        entry.getField<String?>(locale, "title").orEmpty(),
+        entry.getField<String?>(locale, "slug").orEmpty(),
+        entry.getField<CDAAsset?>(locale, "image")
+            ?.urlForImageWith(https(), formatOf(webp)).orEmpty(),
+        entry.getField<String?>(locale, "shortDescription").orEmpty(),
+        entry.getField<String?>(locale, "description").orEmpty(),
+        entry.getField<Double?>(locale, "duration").or(0.0).toInt(),
+        entry.getField<String?>(locale, "skillLevel").orEmpty(),
+        entry.getField<List<CDAEntry>?>(locale, "lessons")
+            .orEmpty()
             .map { Lesson(it, locale) },
         entry.getField<List<CDAEntry>>(locale, "categories")
+            .orEmpty()
             .map { Category(it, locale) }
     )
 }
+
+private fun Double?.or(default: Double): Double = this ?: default
 
 data class Category(
     val id: String,
@@ -40,7 +44,7 @@ data class Category(
 ) {
     constructor(entry: CDAEntry, locale: String) : this(
         entry.id(),
-        entry.getField<String>(locale, "title"),
-        entry.getField<String>(locale, "slug")
+        entry.getField<String?>(locale, "title").orEmpty(),
+        entry.getField<String?>(locale, "slug").orEmpty()
     )
 }

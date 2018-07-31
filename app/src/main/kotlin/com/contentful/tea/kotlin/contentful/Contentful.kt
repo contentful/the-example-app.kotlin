@@ -3,15 +3,53 @@ package com.contentful.tea.kotlin.contentful
 import android.util.Log
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
+import com.contentful.java.cda.CDASpace
 import com.contentful.tea.kotlin.BuildConfig
-import com.contentful.tea.kotlin.routing.Parameter
+import com.contentful.tea.kotlin.contentful.Api.CDA
+import com.contentful.tea.kotlin.contentful.Api.CPA
+import com.contentful.tea.kotlin.contentful.EditorialFeature.Disabled
+import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
 import kotlinx.coroutines.experimental.launch
 
-class Contentful(
-    val client: CDAClient = CDAClient.builder()
+enum class Api {
+    CDA,
+    CPA
+}
+
+fun String?.toApi(): Api = if (this == null || this.toLowerCase() == "cda") CDA else CPA
+
+enum class EditorialFeature {
+    Enabled,
+    Disabled
+}
+
+fun String?.toEditorialFeature(): EditorialFeature =
+    if (this == null || this.toLowerCase() == "enabled") {
+        Enabled
+    } else {
+        Disabled
+    }
+
+data class Parameter(
+    val spaceId: String = "",
+    val previewToken: String = "",
+    val deliveryToken: String = "",
+    val editorialFeature: EditorialFeature = Disabled,
+    val api: Api = CDA
+)
+
+open class Contentful(
+    var client: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
+    var parameter: Parameter = Parameter(
+        spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
+        deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
+        previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
+        editorialFeature = EditorialFeature.Disabled,
+        api = Api.CDA
+    ),
     private val locale: String = "en-US"
 ) {
     fun fetchHomeLayout(
@@ -129,15 +167,46 @@ class Contentful(
         }
     }
 
-    private fun defaultError(t: Throwable) {
-        Log.e(TAG, "Failure in fetching from Contentful", t)
+    private val tag: String = "Contentful.kt"
+
+    fun applyParameter(
+        incomingParameter: Parameter,
+        errorHandler: (Throwable) -> Unit,
+        successHandler: (CDASpace) -> Unit
+    ) {
+        launch {
+            val incomingClient = createClient(incomingParameter)
+
+            try {
+                val space = incomingClient.fetchSpace()
+                Log.d(tag, """Connected to space "${space.name()}".""")
+                this@Contentful.client = incomingClient
+                this@Contentful.parameter = Parameter(
+                    spaceId = incomingParameter.spaceId.or(parameter.spaceId),
+                    deliveryToken = incomingParameter.deliveryToken.or(parameter.deliveryToken),
+                    previewToken = incomingParameter.previewToken.or(parameter.previewToken),
+                    editorialFeature = incomingParameter.editorialFeature,
+                    api = incomingParameter.api
+                )
+
+                successHandler(space)
+            } catch (throwable: Throwable) {
+                Log.e(tag, "Cannot connect to space.")
+                errorHandler(throwable)
+            }
+        }
     }
 
-    fun applyParameter(parameter: Parameter) {
-        // TODO Use parameters to request "stuff" from contentful
-    }
-
-    companion object {
-        private val TAG: String = Contentful::class.simpleName!!
-    }
+    internal open fun createClient(parameter: Parameter): CDAClient =
+        CDAClient.builder().apply {
+            setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
+            if (parameter.api == CPA) {
+                setToken(parameter.previewToken.or(this@Contentful.parameter.previewToken))
+                preview()
+            } else {
+                setToken(parameter.deliveryToken.or(this@Contentful.parameter.deliveryToken))
+            }
+        }.build()
 }
+
+fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!

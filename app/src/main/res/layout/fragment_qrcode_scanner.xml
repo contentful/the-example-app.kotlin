@@ -8,19 +8,23 @@
         android:orientation="vertical"
         >
 
-    <ImageView
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/about_description_font"
+            android:text="@string/settings_qr_description"
+            android:padding="@dimen/high_border"
+            />
+
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+            android:id="@+id/settings_qr_barcode"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:src="@mipmap/ic_launcher_foreground"
             android:contentDescription="@null"
-            />
+            android:layout_margin="@dimen/high_border"
 
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.3"
-            android:text="@string/sample_text"
             />
 
 </LinearLayout>
