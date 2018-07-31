@@ -1,3 +1,5 @@
+@file:JvmName("FOO")
+
 package com.contentful.tea.kotlin.routing
 
 import com.contentful.tea.kotlin.contentful.Api.CDA

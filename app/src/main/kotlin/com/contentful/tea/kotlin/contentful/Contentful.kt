@@ -31,21 +31,19 @@ fun String?.toEditorialFeature(): EditorialFeature =
     }
 
 data class Parameter(
-    val spaceId: String,
-    val previewToken: String,
-    val deliveryToken: String,
-    val editorialFeature: EditorialFeature,
-    val api: Api
-) {
-    constructor() : this("", "", "", Disabled, CDA)
-}
+    val spaceId: String = "",
+    val previewToken: String = "",
+    val deliveryToken: String = "",
+    val editorialFeature: EditorialFeature = Disabled,
+    val api: Api = CDA
+)
 
-class Contentful(
-    private var client: CDAClient = CDAClient.builder()
+open class Contentful(
+    var client: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
-    private var parameter: Parameter = Parameter(
+    var parameter: Parameter = Parameter(
         spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
         deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
         previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
@@ -169,25 +167,19 @@ class Contentful(
         }
     }
 
+    private val tag: String = "Contentful.kt"
+
     fun applyParameter(
         incomingParameter: Parameter,
         errorHandler: (Throwable) -> Unit,
         successHandler: (CDASpace) -> Unit
     ) {
-        val incomingClient = CDAClient.builder().apply {
-            setSpace(incomingParameter.spaceId.or(parameter.spaceId))
-            if (incomingParameter.api == CPA) {
-                setToken(incomingParameter.previewToken.or(parameter.previewToken))
-                preview()
-            } else {
-                setToken(incomingParameter.deliveryToken.or(parameter.deliveryToken))
-            }
-        }.build()
-
         launch {
+            val incomingClient = createClient(incomingParameter)
+
             try {
                 val space = incomingClient.fetchSpace()
-                Log.d(TAG, """Connected to space "${space.name()}".""")
+                Log.d(tag, """Connected to space "${space.name()}".""")
                 this@Contentful.client = incomingClient
                 this@Contentful.parameter = Parameter(
                     spaceId = incomingParameter.spaceId.or(parameter.spaceId),
@@ -199,15 +191,22 @@ class Contentful(
 
                 successHandler(space)
             } catch (throwable: Throwable) {
-                Log.e(TAG, "Cannot connect to space.")
+                Log.e(tag, "Cannot connect to space.")
                 errorHandler(throwable)
             }
         }
     }
 
-    companion object {
-        private val TAG: String = Contentful::class.simpleName!!
-    }
+    internal open fun createClient(parameter: Parameter): CDAClient =
+        CDAClient.builder().apply {
+            setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
+            if (parameter.api == CPA) {
+                setToken(parameter.previewToken.or(this@Contentful.parameter.previewToken))
+                preview()
+            } else {
+                setToken(parameter.deliveryToken.or(this@Contentful.parameter.deliveryToken))
+            }
+        }.build()
 }
 
 fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!
