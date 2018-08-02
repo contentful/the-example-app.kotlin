@@ -7,6 +7,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CountDownLatch
 import kotlin.test.assertEquals
@@ -16,17 +19,22 @@ import kotlin.test.assertTrue
 class ContentfulTest {
 
     private lateinit var contentful: Contentful
+    private lateinit var deliveryClient: CDAClient
+    private lateinit var previewClient: CDAClient
 
     @Before
     fun setup() {
-        val client = mock(CDAClient::class.java)
+        deliveryClient = mock(CDAClient::class.java, "deliveryClient")
+        `when`(deliveryClient.fetchSpace()).thenReturn(mock(CDASpace::class.java))
 
-        contentful = object : Contentful(client, Parameter()) {
-            override fun createClient(parameter: Parameter): CDAClient =
-                mock(CDAClient::class.java).apply {
-                    `when`(fetchSpace()).thenReturn(mock(CDASpace::class.java))
-                }
-        }
+        previewClient = mock(CDAClient::class.java, "previewClient")
+        `when`(previewClient.fetchSpace()).thenReturn(mock(CDASpace::class.java))
+
+        contentful =
+            object : Contentful(deliveryClient, previewClient, parameter = Parameter()) {
+                override fun createClients(parameter: Parameter): Pair<CDAClient, CDAClient> =
+                    Pair(deliveryClient, previewClient)
+            }
     }
 
     @Test
@@ -202,5 +210,43 @@ class ContentfulTest {
 
         assertEquals(1, results.size, "Parameters not changed, please check exceptions above.")
         assertTrue(results[0])
+    }
+
+    @Test
+    fun checkCPAUsedWhenCPASet() {
+        val results = mutableListOf<Boolean>()
+
+        val applyLatch = CountDownLatch(1)
+        contentful.applyParameter(
+            Parameter(api = Api.CPA),
+            errorHandler = {
+                applyLatch.countDown()
+                throw it
+            }, successHandler = {
+                results.add(true)
+                applyLatch.countDown()
+            })
+        applyLatch.await()
+
+        val fetchLatch = CountDownLatch(1)
+        contentful.fetchSpace(
+            errorCallback = {
+                fetchLatch.countDown()
+                throw it
+            }, successCallback = {
+                results.add(true)
+                fetchLatch.countDown()
+            })
+        fetchLatch.await()
+
+        assertEquals(2, results.size, "Not the right amount of invocations!")
+        assertTrue(results[0])
+        assertTrue(results[1])
+
+        verify(deliveryClient).fetchSpace()
+        verifyNoMoreInteractions(deliveryClient)
+
+        verify(previewClient, times(2)).fetchSpace()
+        verifyNoMoreInteractions(previewClient)
     }
 }

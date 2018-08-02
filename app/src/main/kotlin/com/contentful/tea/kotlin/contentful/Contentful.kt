@@ -39,10 +39,15 @@ data class Parameter(
 )
 
 open class Contentful(
-    var client: CDAClient = CDAClient.builder()
+    var clientDelivery: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
+    var clientPreview: CDAClient = CDAClient.builder()
+        .setToken(BuildConfig.CONTENTFUL_PREVIEW_TOKEN)
+        .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
+        .build(),
+    var client: CDAClient = clientDelivery,
     var parameter: Parameter = Parameter(
         spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
         deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
@@ -167,46 +172,62 @@ open class Contentful(
         }
     }
 
-    private val tag: String = "Contentful.kt"
 
     fun applyParameter(
-        incomingParameter: Parameter,
+        parameter: Parameter,
         errorHandler: (Throwable) -> Unit,
         successHandler: (CDASpace) -> Unit
     ) {
         launch {
-            val incomingClient = createClient(incomingParameter)
+            val (newClientDelivery, newClientPreview) = createClients(parameter)
 
             try {
-                val space = incomingClient.fetchSpace()
-                Log.d(tag, """Connected to space "${space.name()}".""")
-                this@Contentful.client = incomingClient
+                val deliverySpace = newClientDelivery.fetchSpace()
+                val previewSpace = newClientPreview.fetchSpace()
+
+                if (deliverySpace.name() != previewSpace.name()) {
+                    throw IllegalStateException(
+                        "delivery and preview space names cannot be different!"
+                    )
+                }
+                Log.d("Contentful.kt", """Connected to space "${deliverySpace.name()}".""")
+
+                clientDelivery = newClientDelivery
+                clientPreview = newClientPreview
+                client = if (parameter.api == Api.CDA) {
+                    clientDelivery
+                } else {
+                    clientPreview
+                }
+                val currentParameter = this@Contentful.parameter
                 this@Contentful.parameter = Parameter(
-                    spaceId = incomingParameter.spaceId.or(parameter.spaceId),
-                    deliveryToken = incomingParameter.deliveryToken.or(parameter.deliveryToken),
-                    previewToken = incomingParameter.previewToken.or(parameter.previewToken),
-                    editorialFeature = incomingParameter.editorialFeature,
-                    api = incomingParameter.api
+                    spaceId = parameter.spaceId.or(currentParameter.spaceId),
+                    deliveryToken = parameter.deliveryToken.or(currentParameter.deliveryToken),
+                    previewToken = parameter.previewToken.or(currentParameter.previewToken),
+                    editorialFeature = parameter.editorialFeature,
+                    api = parameter.api
                 )
 
-                successHandler(space)
+                successHandler(deliverySpace)
             } catch (throwable: Throwable) {
-                Log.e(tag, "Cannot connect to space.")
+                Log.e("Contentful.kt", "Cannot connect to space.")
                 errorHandler(throwable)
             }
         }
     }
 
-    internal open fun createClient(parameter: Parameter): CDAClient =
-        CDAClient.builder().apply {
-            setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
-            if (parameter.api == CPA) {
+    internal open fun createClients(parameter: Parameter): Pair<CDAClient, CDAClient> =
+        Pair(
+            CDAClient.builder().apply {
+                setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
+                setToken(parameter.deliveryToken.or(this@Contentful.parameter.deliveryToken))
+            }.build(),
+            CDAClient.builder().apply {
+                setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
                 setToken(parameter.previewToken.or(this@Contentful.parameter.previewToken))
                 preview()
-            } else {
-                setToken(parameter.deliveryToken.or(this@Contentful.parameter.deliveryToken))
-            }
-        }.build()
+            }.build()
+        )
 }
 
 fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!
