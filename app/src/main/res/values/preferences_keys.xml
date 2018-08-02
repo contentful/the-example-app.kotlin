@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string translatable="false" name="settings_key_api">api</string>
+    <string translatable="false" name="settings_key_locale">locale</string>
+    <string translatable="false" name="settings_key_editorial">editorial_features</string>
+    <string translatable="false" name="settings_key_space_connect">connect_to_space</string>
+    <string translatable="false" name="settings_key_qr">scan_qr</string>
+    <string translatable="false" name="settings_key_about">about</string>
+    <string translatable="false" name="settings_key_imprint">imprint</string>
+    <string translatable="false" name="settings_key_licences">licences</string>
+</resources>
