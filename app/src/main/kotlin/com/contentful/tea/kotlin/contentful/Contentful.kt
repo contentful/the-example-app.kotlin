@@ -37,27 +37,29 @@ data class Parameter(
     var deliveryToken: String = "",
     var editorialFeature: EditorialFeature = Disabled,
     var api: Api = CDA,
-    var locale: String = ""
+    var locale: String = "en-US"
+)
+
+fun parameterFromBuildConfig(): Parameter = Parameter(
+    spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
+    deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
+    previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
+    editorialFeature = EditorialFeature.Disabled,
+    api = Api.CDA,
+    locale = "en-US"
 )
 
 open class Contentful(
-    var clientDelivery: CDAClient = CDAClient.builder()
+    private var clientDelivery: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
-    var clientPreview: CDAClient = CDAClient.builder()
+    private var clientPreview: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_PREVIEW_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
     var client: CDAClient = clientDelivery,
-    var parameter: Parameter = Parameter(
-        spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
-        deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
-        previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
-        editorialFeature = EditorialFeature.Disabled,
-        api = Api.CDA,
-        locale = "en-US"
-    )
+    var parameter: Parameter = parameterFromBuildConfig()
 ) {
     open fun fetchHomeLayout(
         errorCallback: (Throwable) -> Unit,
@@ -273,3 +275,11 @@ open class Contentful(
 }
 
 fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!
+
+fun Parameter.toUrl(): String =
+    "the-example-app-mobile://" +
+        "?space_id=$spaceId" +
+        "&preview_token=$previewToken" +
+        "&delivery_token=$deliveryToken" +
+        "&editorial_features=${editorialFeature.name.toLowerCase()}" +
+        "&api=${api.name.toLowerCase()}"

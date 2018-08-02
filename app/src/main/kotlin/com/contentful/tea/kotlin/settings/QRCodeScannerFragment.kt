@@ -21,7 +21,7 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import kotlinx.android.synthetic.main.fragment_qrcode_scanner.*
 import kotlinx.android.synthetic.main.fragment_qrcode_scanner.view.*
 
-const val PERMISSION_CAMERA_REQUEST_ID: Int = 1
+private const val PERMISSION_CAMERA_REQUEST_ID: Int = 1
 
 class QRCodeScannerFragment : Fragment() {
 

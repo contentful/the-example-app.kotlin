@@ -54,7 +54,7 @@
     <string name="settings_editorial_label">Enable Editorial Features</string>
     <string name="settings_editorial_summary">Enable to display an edit link and other contextual helpers to authors. You need to have access to the connected space to make this work.</string>
     <string name="settings_category_space_title">Credentials</string>
-    <string name="settings_space_label">Change connected space</string>
+    <string name="settings_space_label">Change connected space …</string>
     <string name="settings_qr_summary">Select preview from any of your entries in the Contentful Webapp and show the resulting QR code to this app.</string>
     <string name="settings_qr_label">Scan QR code to connect</string>
     <string name="settings_about_label">About</string>
@@ -62,4 +62,13 @@
     <string name="settings_licences_label">Licences</string>
     <string name="error_could_not_fetch_locales">Could not fetch locales. Please check parameters …</string>
     <string name="error_settings_reset">Reset …</string>
+    <string name="settings_credentials_title">Credentials</string>
+    <string name="settings_credentials_space_id_label">Change space id</string>
+    <string name="settings_credentials_space_title">Space Settings</string>
+    <string name="settings_credentials_space_connected">Connected to space</string>
+    <string name="settings_credentials_delivery_token_label">Change delivery token</string>
+    <string name="settings_credentials_preview_token_label">Change preview token</string>
+    <string name="settings_credentials_reset_button">Reset credentials</string>
+    <string name="settings_credentials_reset_description">Reset credentials to default settings, losing all the entered credentials.</string>
+    <string name="settings_share_qr_label">Share current configuration …</string>
 </resources>

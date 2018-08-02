@@ -1,10 +1,15 @@
 package com.contentful.tea.kotlin.settings
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.ListPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.contentful.java.cda.CDALocale
@@ -12,12 +17,14 @@ import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Api
 import com.contentful.tea.kotlin.contentful.EditorialFeature
 import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.contentful.toUrl
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.showError
-import com.contentful.tea.kotlin.extensions.toHtml
 import com.contentful.tea.kotlin.extensions.toast
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.zxing.BarcodeFormat
+import com.journeyapps.barcodescanner.BarcodeEncoder
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -71,10 +78,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             entries = Api.values().map { it.toString() }.toTypedArray()
             entryValues = entries
 
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 parameter.api = Api.valueOf(newValue as String)
                 summary = newValue
-                preferenceChanged(preference, newValue)
+                preferenceChanged()
             }
         }
 
@@ -89,10 +96,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }, successCallback = { locales ->
                 entries = locales.map(CDALocale::code).toTypedArray()
                 entryValues = entries
-                setOnPreferenceChangeListener { preference, newValue ->
+                setOnPreferenceChangeListener { _, newValue ->
                     parameter.locale = newValue as String
                     summary = newValue
-                    preferenceChanged(preference, newValue)
+                    preferenceChanged()
                 }
             })
         }
@@ -104,25 +111,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
         switchPreference.apply {
             isChecked = currentParameter.editorialFeature == EditorialFeature.Enabled
 
-            setOnPreferenceChangeListener { preference, newValue ->
+            setOnPreferenceChangeListener { _, newValue ->
                 parameter.editorialFeature =
                     if (newValue == true) EditorialFeature.Enabled else EditorialFeature.Disabled
-                preferenceChanged(preference, newValue)
+                preferenceChanged()
             }
         }
 
-    private fun preferenceChanged(preference: Preference, newValue: Any?): Boolean {
+    private fun preferenceChanged(): Boolean {
         dependencies.contentful.applyParameter(
             parameter = parameter,
             errorHandler = {
-                activity?.showError(
-                    message = "${getString(R.string.error_settings_cannot_change)}<br/>" +
-                        "<tt>${it.message}</tt>",
-                    moreTitle = getString(R.string.error_settings_reset),
-                    moreHandler = {
-                        fillPreferences()
-                    }
-                )
+                activity?.runOnUiThread {
+                    activity?.showError(
+                        message = "${getString(R.string.error_settings_cannot_change)}<br/>" +
+                            "<tt>${it.message}</tt>",
+                        moreTitle = getString(R.string.error_settings_reset),
+                        moreHandler = {
+                            fillPreferences()
+                        }
+                    )
+                }
             },
             successHandler = { space ->
                 activity?.runOnUiThread {
@@ -130,7 +139,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         getString(
                             R.string.settings_connected_successfully_to_space,
                             space.name()
-                        ).toHtml(),
+                        ),
                         false
                     )
 
@@ -145,7 +154,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun setupStaticRoutes() {
         val navController = NavHostFragment.findNavController(this)
-        findPreference("licences")?.apply {
+        findPreference(getString(R.string.settings_key_licences))?.apply {
             setOnPreferenceClickListener {
                 startActivity(
                     Intent(
@@ -156,29 +165,73 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
         }
-        findPreference("imprint")?.apply {
+
+        findPreference(getString(R.string.settings_key_imprint))?.apply {
             setOnPreferenceClickListener {
                 navController.navigate(SettingsFragmentDirections.openImprint())
                 true
             }
         }
-        findPreference("about")?.apply {
+
+        findPreference(getString(R.string.settings_key_about))?.apply {
             setOnPreferenceClickListener {
                 navController.navigate(SettingsFragmentDirections.openAbout())
                 true
             }
         }
-        findPreference("connect_to_space")?.apply {
+
+        findPreference(getString(R.string.settings_key_space_connect))?.apply {
             setOnPreferenceClickListener {
                 navController.navigate(SettingsFragmentDirections.openSpaceSettings())
                 true
             }
         }
-        findPreference("scan_qr")?.apply {
+
+        findPreference(getString(R.string.settings_key_qr))?.apply {
             setOnPreferenceClickListener {
                 navController.navigate(SettingsFragmentDirections.openScanQR())
                 true
             }
         }
+
+        findPreference(getString(R.string.settings_key_share_qr))?.apply {
+            setOnPreferenceClickListener {
+                shareQrCode()
+                true
+            }
+        }
     }
+
+    private fun shareQrCode() {
+        if (ContextCompat.checkSelfPermission(
+                activity!!.applicationContext,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity!!,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_WRITE_EXTERNAL_REQUEST_ID
+            )
+        } else {
+            val encoder = BarcodeEncoder()
+            val bitmap = encoder.encodeBitmap(encodeSettings(), BarcodeFormat.QR_CODE, 512, 512)
+
+            val path = MediaStore.Images.Media.insertImage(
+                activity?.contentResolver,
+                bitmap,
+                "QR Code TEA",
+                "QR Code encapsulating settings from Contentful."
+            )
+
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "image/jpeg"
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(path))
+            startActivity(Intent.createChooser(intent, "Share QR Code"))
+        }
+    }
+
+    private fun encodeSettings(): String = dependencies.contentful.parameter.toUrl()
 }
+
+private const val PERMISSION_WRITE_EXTERNAL_REQUEST_ID: Int = 2

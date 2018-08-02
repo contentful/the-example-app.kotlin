@@ -21,6 +21,7 @@
                 android:title="@string/settings_editorial_label"
                 android:key="@string/settings_key_editorial"
                 android:summary="@string/settings_editorial_summary"
+                android:enabled="false"
                 />
     </PreferenceCategory>
 
@@ -35,6 +36,13 @@
                 android:title="@string/settings_qr_label"
                 android:key="@string/settings_key_qr"
                 android:summary="@string/settings_qr_summary"
+                android:icon="@drawable/qr"
+                >
+        </Preference>
+        <Preference
+                android:title="@string/settings_share_qr_label"
+                android:key="@string/settings_key_share_qr"
+                android:icon="@android:drawable/ic_menu_share"
                 >
         </Preference>
     </PreferenceCategory>

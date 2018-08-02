@@ -76,5 +76,6 @@ fun Context.saveToClipboard(label: CharSequence, content: CharSequence) {
 }
 
 fun Activity.toast(message: CharSequence, long: Boolean = true) = this.runOnUiThread {
-    Toast.makeText(this, message, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
+    val length = if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
+    Toast.makeText(this, message.toHtml(), length).show()
 }

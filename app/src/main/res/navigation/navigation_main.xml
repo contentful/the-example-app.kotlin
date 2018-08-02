@@ -208,7 +208,7 @@
     </fragment>
     <fragment
             android:id="@+id/spaceSettings"
-            android:name="com.contentful.tea.kotlin.settings.SpaceSettingsFragment"
+            android:name="com.contentful.tea.kotlin.settings.SettingsCredentialsFragment"
             android:label="fragment_space_settings"
             >
         <action

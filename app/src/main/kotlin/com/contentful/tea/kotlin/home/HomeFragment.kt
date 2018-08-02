@@ -3,6 +3,7 @@ package com.contentful.tea.kotlin.home
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Api
 import com.contentful.tea.kotlin.contentful.Contentful
@@ -23,7 +25,6 @@ import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
 import com.contentful.tea.kotlin.extensions.showError
-import com.contentful.tea.kotlin.extensions.toHtml
 import com.contentful.tea.kotlin.extensions.toast
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -175,18 +176,31 @@ class HomeFragment : Fragment() {
                     Api.CDA.name
                 )
             ),
-            locale = preferences.getString(getString(R.string.settings_key_locale), "en-US")
+            locale = preferences.getString(getString(R.string.settings_key_locale), "en-US"),
+            spaceId = preferences.getString(
+                getString(R.string.settings_key_space_id),
+                BuildConfig.CONTENTFUL_SPACE_ID
+            ),
+            deliveryToken = preferences.getString(
+                getString(R.string.settings_key_delivery_token),
+                BuildConfig.CONTENTFUL_DELIVERY_TOKEN
+            ),
+            previewToken = preferences.getString(
+                getString(R.string.settings_key_preview_token),
+                BuildConfig.CONTENTFUL_PREVIEW_TOKEN
+            )
         )
 
         applyParameter(
             parameter,
             errorHandler = { activity?.toast(getString(R.string.error_settings_cannot_change)) },
             successHandler = { space ->
-                activity?.toast(
+                Log.d(
+                    "HomeFragment.kt",
                     getString(
                         R.string.settings_connected_successfully_to_space,
                         space.name()
-                    ).toHtml()
+                    )
                 )
 
                 successCallback()
