@@ -75,6 +75,6 @@ fun Context.saveToClipboard(label: CharSequence, content: CharSequence) {
     clipboard.primaryClip = data
 }
 
-fun Context.toast(message: CharSequence) {
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+fun Activity.toast(message: CharSequence, long: Boolean = true) = this.runOnUiThread {
+    Toast.makeText(this, message, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
 }
