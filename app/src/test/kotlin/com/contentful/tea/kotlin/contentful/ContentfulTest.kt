@@ -60,6 +60,7 @@ class ContentfulTest {
                 assertEquals("deliveryToken", contentful.parameter.deliveryToken)
                 assertEquals("", contentful.parameter.previewToken)
                 assertEquals("", contentful.parameter.spaceId)
+                assertEquals("en-US", contentful.parameter.locale)
                 assertEquals(Api.CDA, contentful.parameter.api)
                 assertEquals(EditorialFeature.Disabled, contentful.parameter.editorialFeature)
 
@@ -87,6 +88,7 @@ class ContentfulTest {
                 assertEquals("", contentful.parameter.deliveryToken)
                 assertEquals("previewToken", contentful.parameter.previewToken)
                 assertEquals("", contentful.parameter.spaceId)
+                assertEquals("en-US", contentful.parameter.locale)
                 assertEquals(Api.CDA, contentful.parameter.api)
                 assertEquals(EditorialFeature.Disabled, contentful.parameter.editorialFeature)
 
@@ -114,6 +116,35 @@ class ContentfulTest {
                 assertEquals("", contentful.parameter.deliveryToken)
                 assertEquals("", contentful.parameter.previewToken)
                 assertEquals("spaceId", contentful.parameter.spaceId)
+                assertEquals("en-US", contentful.parameter.locale)
+                assertEquals(Api.CDA, contentful.parameter.api)
+                assertEquals(EditorialFeature.Disabled, contentful.parameter.editorialFeature)
+
+                results.add(true)
+                latch.countDown()
+            })
+
+        latch.await()
+
+        assertEquals(1, results.size, "Parameters not changed, please check exceptions above.")
+        assertTrue(results[0])
+    }
+
+    @Test
+    fun checkLocaleChanging() {
+        val latch = CountDownLatch(1)
+        val results = mutableListOf<Boolean>()
+
+        contentful.applyParameter(Parameter(locale = "de-DE"),
+            errorHandler = {
+                latch.countDown()
+                throw it
+            },
+            successHandler = {
+                assertEquals("", contentful.parameter.deliveryToken)
+                assertEquals("", contentful.parameter.previewToken)
+                assertEquals("", contentful.parameter.spaceId)
+                assertEquals("de-DE", contentful.parameter.locale)
                 assertEquals(Api.CDA, contentful.parameter.api)
                 assertEquals(EditorialFeature.Disabled, contentful.parameter.editorialFeature)
 
@@ -141,6 +172,7 @@ class ContentfulTest {
                 assertEquals("", contentful.parameter.deliveryToken)
                 assertEquals("", contentful.parameter.previewToken)
                 assertEquals("", contentful.parameter.spaceId)
+                assertEquals("en-US", contentful.parameter.locale)
                 assertEquals(Api.CPA, contentful.parameter.api)
                 assertEquals(EditorialFeature.Disabled, contentful.parameter.editorialFeature)
 
@@ -168,6 +200,7 @@ class ContentfulTest {
                 assertEquals("", contentful.parameter.deliveryToken)
                 assertEquals("", contentful.parameter.previewToken)
                 assertEquals("", contentful.parameter.spaceId)
+                assertEquals("en-US", contentful.parameter.locale)
                 assertEquals(Api.CDA, contentful.parameter.api)
                 assertEquals(EditorialFeature.Enabled, contentful.parameter.editorialFeature)
 
@@ -191,7 +224,8 @@ class ContentfulTest {
             previewToken = "previewToken",
             deliveryToken = "deliveryToken",
             editorialFeature = EditorialFeature.Enabled,
-            api = Api.CPA
+            api = Api.CPA,
+            locale = "fr-FR"
         ), errorHandler = {
             latch.countDown()
             throw it
@@ -199,6 +233,7 @@ class ContentfulTest {
             assertEquals("deliveryToken", contentful.parameter.deliveryToken)
             assertEquals("previewToken", contentful.parameter.previewToken)
             assertEquals("spaceId", contentful.parameter.spaceId)
+            assertEquals("fr-FR", contentful.parameter.locale)
             assertEquals(Api.CPA, contentful.parameter.api)
             assertEquals(EditorialFeature.Enabled, contentful.parameter.editorialFeature)
 
