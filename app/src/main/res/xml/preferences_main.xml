@@ -1,69 +1,61 @@
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:title="TITLE"
+        android:title="@string/settings_title"
         >
+
     <PreferenceCategory
-            android:title="Fetch Content">
+            android:title="@string/settings_category_content_title">
         <ListPreference
-                android:title="Pick your favourite api"
-                android:key="api"
-                android:summary="@array/api_keys_readable"
-                android:defaultValue="0"
-                android:entries="@array/api_keys_readable"
-                android:entryValues="@array/api_keys_stored"
+                android:title="@string/settings_api_label"
+                android:key="@string/settings_key_api"
                 />
         <ListPreference
-                android:title="Select your language"
-                android:summary="spanish"
-                android:key="locale"
-                android:defaultValue="1"
-                android:entries="@array/locales_readable"
-                android:entryValues="@array/locales_stored"
+                android:title="@string/settings_locale_label"
+                android:key="@string/settings_key_locale"
                 />
     </PreferenceCategory>
 
     <PreferenceCategory
-            android:title="Credentials">
-        <Preference
-                android:title="Connect to space"
-                android:summary="[prod] foo bar"
-                android:key="connect_to_space"
-                >
-        </Preference>
-        <Preference
-                android:title="Scan QR code to connect"
-                android:key="scan_qr"
-                android:summary="Select preview from any of your entries in the Contentful Webapp and show the resulting QR code to this app."
-                >
-        </Preference>
-    </PreferenceCategory>
-
-    <PreferenceCategory
-            android:title="Editorial Features">
+            android:title="@string/settings_category_editorial_title">
         <SwitchPreference
-                android:title="Enable Editorial Features"
-                android:key="editorial_features"
-                android:summary="Enable to display an edit link and other contextual helpers to authors. You need to have access to the connected space to make this work."
+                android:title="@string/settings_editorial_label"
+                android:key="@string/settings_key_editorial"
+                android:summary="@string/settings_editorial_summary"
                 />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="@string/settings_category_space_title">
+        <Preference
+                android:title="@string/settings_space_label"
+                android:key="@string/settings_key_space_connect"
+                >
+        </Preference>
+        <Preference
+                android:title="@string/settings_qr_label"
+                android:key="@string/settings_key_qr"
+                android:summary="@string/settings_qr_summary"
+                >
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory>
 
         <Preference
-                android:title="About"
-                android:key="about"
+                android:title="@string/settings_about_label"
+                android:key="@string/settings_key_about"
                 >
         </Preference>
 
         <Preference
-                android:title="Imprint"
-                android:key="imprint"
+                android:title="@string/settings_imprint_label"
+                android:key="@string/settings_key_imprint"
                 >
         </Preference>
 
         <Preference
-                android:title="Licences"
-                android:key="licences"
+                android:title="@string/settings_licences_label"
+                android:key="@string/settings_key_licences"
                 >
         </Preference>
     </PreferenceCategory>

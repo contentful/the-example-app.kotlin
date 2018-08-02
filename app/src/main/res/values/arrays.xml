@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="api_keys_readable">
-        <item>Delivery Api</item>
-        <item>Preview Api</item>
-    </string-array>
-    <string-array name="api_keys_stored">
-        <item>CDA</item>
-        <item>CPA</item>
-    </string-array>
-    <string-array name="locales_readable">
-        <item>English</item>
-        <item>German</item>
-    </string-array>
-    <string-array name="locales_stored">
-        <item>en-US</item>
-        <item>de-DE</item>
-    </string-array>
-    <string-array name="code_languages">
+\    <string-array name="code_languages">
         <item>JavaAndroid</item>
         <item>Java</item>
         <item>Swift</item>
