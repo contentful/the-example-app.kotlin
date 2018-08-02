@@ -8,7 +8,7 @@ This Kotlin example app teaches the very basics of how to work with Contentful f
 
 The app demonstrates how decoupling content from its presentation enables greater flexibility and facilitates shipping higher quality software more quickly.
 
-<img src="assets/styled_course_cards.png" alt="Screenshot of the example app"/>
+<img src="assets/styled_course_cards.png" alt="Screenshot of the example app" width="100"/>
 
 Installing the app can be done through this link: <a href="https://play.google.com/store/apps/details?id=com.contentful.tea.kotlin" target="_blank">The Kotlin example app on the play store</a>.
 
