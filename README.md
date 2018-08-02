@@ -1,4 +1,4 @@
-![header](assets/EngineeringHistory.png)
+![header](assets/store_feature_graphic.png)
 
 ## The Kotlin example app
 
@@ -10,7 +10,7 @@ This Kotlin example app teaches the very basics of how to work with Contentful f
 
 The app demonstrates how decoupling content from its presentation enables greater flexibility and facilitates shipping higher quality software more quickly.
 
-<img src="assets/styled_course_cards.png" alt="Screenshot of the example app" width="200"/>
+<img src="assets/styled_course_cards.png" width="200"/><img src="assets/styled_lesson.png" width="200"/><img src="assets/md_lesson_with_images.png" width="200"/><img src="assets/qr_scanning_in_progress.png" width="200"/>
 
 Installing the app can be done through this link: <a href="https://play.google.com/store/apps/details?id=com.contentful.tea.kotlin" target="_blank">The Kotlin example app on the play store</a>.
 
@@ -76,3 +76,5 @@ buildConfigField("String", "CONTENTFUL_SPACE_ID", "\"SPACE_ID\"")
 ```
 
 Step 7: Open `the-example-app.kotlin` in Android Studio and run the app on an emulator or device and take a look around the app.
+
+<b>Enjoy exploring the app and feel free to leave <a href="https://github.com/contentful/the-example-app.kotlin/issues/new">feedback</a>.</b>
