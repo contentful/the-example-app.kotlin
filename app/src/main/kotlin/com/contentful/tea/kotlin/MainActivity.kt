@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import com.contentful.tea.kotlin.contentful.EditorialFeature
 import com.contentful.tea.kotlin.contentful.Parameter
@@ -53,6 +54,11 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
                 errorHandler = { routingError(pathAndParameter) },
                 successHandler = {
                     parameter.storeInSharedPreferences()
+                    Navigation.findNavController(
+                        this@MainActivity,
+                        R.id.navigation_host_fragment
+                    ).popBackStack(R.id.home, false)
+
                     if (!route(path, parameter, routeCallback)) {
                         routingError(pathAndParameter)
                     }
