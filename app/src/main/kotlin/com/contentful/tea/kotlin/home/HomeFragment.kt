@@ -1,7 +1,9 @@
 package com.contentful.tea.kotlin.home
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -102,18 +104,26 @@ class HomeFragment : Fragment() {
                 }
 
                 view.setOnClickListener(l)
+                view.card_call_to_action.visibility = View.VISIBLE
                 view.card_call_to_action.setOnClickListener(l)
             }
             is LayoutModule.HeroImage -> {
                 view.card_title.text = parser.parse(module.title)
                 view.card_background.setImageResourceFromUrl(module.backgroundImage)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
+                view.card_call_to_action.visibility = View.GONE
             }
             is LayoutModule.Copy -> {
                 view.card_title.text = parser.parse(module.headline)
                 view.card_description.text = parser.parse(module.copy)
                 view.card_background.setBackgroundResource(android.R.color.transparent)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
+
+                view.card_call_to_action.visibility = View.VISIBLE
+                view.card_call_to_action.text = module.ctaTitle
+                view.card_call_to_action.setOnClickListener {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(module.ctaLink)))
+                }
             }
         }
     }
