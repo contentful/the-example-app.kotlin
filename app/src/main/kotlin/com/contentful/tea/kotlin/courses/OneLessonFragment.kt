@@ -66,6 +66,10 @@ class OneLessonFragment : Fragment() {
     }
 
     private fun updateData(course: Course) {
+        if (lesson_next_button == null) {
+            return
+        }
+
         val selectedLesson = course.lessons.firstOrNull { it.slug == lessonSlug }
         if (selectedLesson == null) {
             lessonNotFound(
