@@ -1,5 +1,7 @@
 ![header](assets/store_feature_graphic.png)
 
+[![Build Status](https://app.bitrise.io/app/d9922c89cca44e0e/status.svg?token=g9feDMh1LMpKLlokvETXcg)](https://app.bitrise.io/app/d9922c89cca44e0e)
+
 ## The Kotlin example app
 
 This Kotlin example app teaches the very basics of how to work with Contentful for Android:
