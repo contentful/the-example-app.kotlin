@@ -15,8 +15,7 @@ open class RouteCallback {
     open fun goToLesson(courseSlug: String, lessonSlug: String, parameter: Parameter) {}
 }
 
-fun route(pathAndParameter: String, callback: RouteCallback): Boolean {
-    val (parameter, path) = separateParameterFromPath(pathAndParameter)
+fun route(path: String, parameter: Parameter, callback: RouteCallback): Boolean {
 
     return when {
         path.isEmpty() -> {

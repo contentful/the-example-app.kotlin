@@ -2,9 +2,7 @@
 
 package com.contentful.tea.kotlin.routing
 
-import com.contentful.tea.kotlin.contentful.Api.CDA
 import com.contentful.tea.kotlin.contentful.Api.CPA
-import com.contentful.tea.kotlin.contentful.EditorialFeature.Disabled
 import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
 import com.contentful.tea.kotlin.contentful.Parameter
 import org.junit.Test
@@ -12,6 +10,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoMoreInteractions
+import kotlin.test.assertEquals
 
 class IntentRouterTest {
 
@@ -19,7 +18,7 @@ class IntentRouterTest {
     fun testHomeRoute() {
         val callback = mock(RouteCallback::class.java)
 
-        route("", callback)
+        route("", Parameter(), callback)
 
         verify(callback).openHome(any())
         verifyNoMoreInteractions(callback)
@@ -29,7 +28,7 @@ class IntentRouterTest {
     fun testGarbageRoute() {
         val callback = mock(RouteCallback::class.java)
 
-        route("garbage", callback)
+        route("garbage", Parameter(), callback)
 
         verifyNoMoreInteractions(callback)
     }
@@ -38,7 +37,7 @@ class IntentRouterTest {
     fun testCoursesRoute() {
         val callback = mock(RouteCallback::class.java)
 
-        route("courses/someCourseId", callback)
+        route("courses/someCourseId", Parameter(), callback)
 
         verify(callback).goToCourse(eq("someCourseId"), any())
         verifyNoMoreInteractions(callback)
@@ -48,7 +47,7 @@ class IntentRouterTest {
     fun testCategoryRoute() {
         val callback = mock(RouteCallback::class.java)
 
-        route("courses/categories/someCategoryId", callback)
+        route("courses/categories/someCategoryId", Parameter(), callback)
 
         verify(callback).goToCategory(eq("someCategoryId"), any())
         verifyNoMoreInteractions(callback)
@@ -58,7 +57,7 @@ class IntentRouterTest {
     fun testLessonRoute() {
         val callback = mock(RouteCallback::class.java)
 
-        route("courses/someCourseId/lessons/someLessonId", callback)
+        route("courses/someCourseId/lessons/someLessonId", Parameter(), callback)
 
         verify(callback).goToLesson(eq("someCourseId"), eq("someLessonId"), any())
         verifyNoMoreInteractions(callback)
@@ -66,48 +65,28 @@ class IntentRouterTest {
 
     @Test
     fun testParameterParsing() {
-        val callback = mock(RouteCallback::class.java)
-
-        route(
+        val (parameter, path) = separateParameterFromPath(
             "?space_id=spaceId&" +
                 "preview_token=previewToken&" +
                 "delivery_token=deliveryToken&" +
                 "editorial_features=enabled&" +
-                "api=CPA&",
-            callback
+                "api=CPA&"
         )
 
-        verify(callback).openHome(
-            eq(
-                Parameter(
-                    "spaceId",
-                    "previewToken",
-                    "deliveryToken",
-                    Enabled,
-                    CPA
-                )
-            )
+        assertEquals(
+            parameter,
+            Parameter("spaceId", "previewToken", "deliveryToken", Enabled, CPA)
         )
-        verifyNoMoreInteractions(callback)
+        assertEquals("", path)
     }
 
     @Test
     fun testNoParameterGiven() {
         val callback = mock(RouteCallback::class.java)
 
-        route("", callback)
+        route("", Parameter(), callback)
 
-        verify(callback).openHome(
-            eq(
-                Parameter(
-                    "",
-                    "",
-                    "",
-                    Disabled,
-                    CDA
-                )
-            )
-        )
+        verify(callback).openHome(eq(Parameter()))
         verifyNoMoreInteractions(callback)
     }
 

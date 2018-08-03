@@ -79,6 +79,10 @@ class CoursesFragment : Fragment() {
     }
 
     private fun updateSingleCategory(categories: List<Category>) {
+        if (courses_bottom_navigation == null) {
+            return
+        }
+
         val category = categories.find { it.slug == categorySlug }
         if (category != null) {
             fetchFromCategory(category)
@@ -105,6 +109,10 @@ class CoursesFragment : Fragment() {
     private fun isAllCategory() = categorySlug.isEmpty() || categorySlug == "all"
 
     private fun updateCourses(courses: List<Course>) {
+        if (courses_container == null) {
+            return
+        }
+
         val navController =
             Navigation.findNavController(activity!!, R.id.navigation_host_fragment)
 
@@ -139,6 +147,10 @@ class CoursesFragment : Fragment() {
     }
 
     private fun updateCategories(categories: List<Category>) {
+        if (courses_top_navigation == null) {
+            return
+        }
+
         courses_top_navigation.addTab(
             courses_top_navigation
                 .newTab()

@@ -61,6 +61,10 @@ class CourseOverviewFragment : Fragment() {
     }
 
     private fun updateData(course: Course) {
+        if (overview_title == null) {
+            return
+        }
+
         firstLessonSlug = if (course.lessons.isNotEmpty()) course.lessons.first().slug else null
         val parser = dependencies.markdown
 

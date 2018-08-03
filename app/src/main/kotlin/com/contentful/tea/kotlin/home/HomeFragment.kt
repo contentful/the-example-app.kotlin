@@ -1,6 +1,11 @@
 package com.contentful.tea.kotlin.home
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -10,13 +15,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.contentful.Api
+import com.contentful.tea.kotlin.contentful.Contentful
+import com.contentful.tea.kotlin.contentful.EditorialFeature
 import com.contentful.tea.kotlin.contentful.Layout
 import com.contentful.tea.kotlin.contentful.LayoutModule
+import com.contentful.tea.kotlin.contentful.Parameter
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
 import com.contentful.tea.kotlin.extensions.showError
+import com.contentful.tea.kotlin.extensions.toast
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -44,19 +55,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dependencies
-            .contentful
-            .fetchHomeLayout(errorCallback = ::errorFetchingLayout) { layout: Layout ->
-                layout.contentModules.forEach { module ->
-                    activity?.runOnUiThread {
-                        layoutInflater.inflate(R.layout.course_card, home_courses, false).apply {
-                            updateModuleView(this, module)
-                            home_courses?.addView(this)
-                        }
-                    }
-                }
-            }
-
         main_bottom_navigation.setOnNavigationItemSelectedListener {
             if (activity != null) {
                 bottomNavigationItemSelected(it)
@@ -65,6 +63,30 @@ class HomeFragment : Fragment() {
                 false
             }
         }
+
+        activity?.apply {
+            val preferences =
+                getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
+            dependencies.contentful.applyParameterFromSharedPreferences(preferences) {
+                loadHomeView()
+            }
+        }
+    }
+
+    private fun loadHomeView() {
+        dependencies
+            .contentful
+            .fetchHomeLayout(errorCallback = ::errorFetchingLayout) { layout: Layout ->
+                layout.contentModules.forEach { module ->
+                    activity?.runOnUiThread {
+                        layoutInflater.inflate(R.layout.course_card, home_courses, false)
+                            .apply {
+                                updateModuleView(this, module)
+                                home_courses?.addView(this)
+                            }
+                    }
+                }
+            }
     }
 
     private fun updateModuleView(view: View, module: LayoutModule) {
@@ -82,18 +104,26 @@ class HomeFragment : Fragment() {
                 }
 
                 view.setOnClickListener(l)
+                view.card_call_to_action.visibility = View.VISIBLE
                 view.card_call_to_action.setOnClickListener(l)
             }
             is LayoutModule.HeroImage -> {
                 view.card_title.text = parser.parse(module.title)
                 view.card_background.setImageResourceFromUrl(module.backgroundImage)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
+                view.card_call_to_action.visibility = View.GONE
             }
             is LayoutModule.Copy -> {
                 view.card_title.text = parser.parse(module.headline)
                 view.card_description.text = parser.parse(module.copy)
                 view.card_background.setBackgroundResource(android.R.color.transparent)
                 view.card_scrim.setBackgroundResource(android.R.color.transparent)
+
+                view.card_call_to_action.visibility = View.VISIBLE
+                view.card_call_to_action.text = module.ctaTitle
+                view.card_call_to_action.setOnClickListener {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(module.ctaLink)))
+                }
             }
         }
     }
@@ -137,5 +167,54 @@ class HomeFragment : Fragment() {
                 }
             )
         }
+    }
+
+    private fun Contentful.applyParameterFromSharedPreferences(
+        preferences: SharedPreferences,
+        successCallback: () -> Unit
+    ) {
+        val parameter = Parameter(
+            editorialFeature =
+            if (preferences.getBoolean(getString(R.string.settings_key_editorial), false)) {
+                EditorialFeature.Enabled
+            } else {
+                EditorialFeature.Disabled
+            },
+            api = Api.valueOf(
+                preferences.getString(
+                    getString(R.string.settings_key_api),
+                    Api.CDA.name
+                )
+            ),
+            locale = preferences.getString(getString(R.string.settings_key_locale), "en-US"),
+            spaceId = preferences.getString(
+                getString(R.string.settings_key_space_id),
+                BuildConfig.CONTENTFUL_SPACE_ID
+            ),
+            deliveryToken = preferences.getString(
+                getString(R.string.settings_key_delivery_token),
+                BuildConfig.CONTENTFUL_DELIVERY_TOKEN
+            ),
+            previewToken = preferences.getString(
+                getString(R.string.settings_key_preview_token),
+                BuildConfig.CONTENTFUL_PREVIEW_TOKEN
+            )
+        )
+
+        applyParameter(
+            parameter,
+            errorHandler = { activity?.toast(getString(R.string.error_settings_cannot_change)) },
+            successHandler = { space ->
+                Log.d(
+                    "HomeFragment.kt",
+                    getString(
+                        R.string.settings_connected_successfully_to_space,
+                        space.name()
+                    )
+                )
+
+                successCallback()
+            }
+        )
     }
 }

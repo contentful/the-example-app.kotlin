@@ -3,6 +3,7 @@ package com.contentful.tea.kotlin.contentful
 import android.util.Log
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
+import com.contentful.java.cda.CDALocale
 import com.contentful.java.cda.CDASpace
 import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.contentful.Api.CDA
@@ -31,28 +32,36 @@ fun String?.toEditorialFeature(): EditorialFeature =
     }
 
 data class Parameter(
-    val spaceId: String = "",
-    val previewToken: String = "",
-    val deliveryToken: String = "",
-    val editorialFeature: EditorialFeature = Disabled,
-    val api: Api = CDA
+    var spaceId: String = "",
+    var previewToken: String = "",
+    var deliveryToken: String = "",
+    var editorialFeature: EditorialFeature = Disabled,
+    var api: Api = CDA,
+    var locale: String = "en-US"
+)
+
+fun parameterFromBuildConfig(): Parameter = Parameter(
+    spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
+    deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
+    previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
+    editorialFeature = EditorialFeature.Disabled,
+    api = Api.CDA,
+    locale = "en-US"
 )
 
 open class Contentful(
-    var client: CDAClient = CDAClient.builder()
+    private var clientDelivery: CDAClient = CDAClient.builder()
         .setToken(BuildConfig.CONTENTFUL_DELIVERY_TOKEN)
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
-    var parameter: Parameter = Parameter(
-        spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
-        deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
-        previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
-        editorialFeature = EditorialFeature.Disabled,
-        api = Api.CDA
-    ),
-    private val locale: String = "en-US"
+    private var clientPreview: CDAClient = CDAClient.builder()
+        .setToken(BuildConfig.CONTENTFUL_PREVIEW_TOKEN)
+        .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
+        .build(),
+    var client: CDAClient = clientDelivery,
+    var parameter: Parameter = parameterFromBuildConfig()
 ) {
-    fun fetchHomeLayout(
+    open fun fetchHomeLayout(
         errorCallback: (Throwable) -> Unit,
         successCallback: (Layout) -> Unit
     ) {
@@ -61,10 +70,11 @@ open class Contentful(
                 val layout = client
                     .fetch(CDAEntry::class.java)
                     .withContentType("layout")
+                    .where("locale", parameter.locale)
                     .include(10)
                     .all()
                     .items()
-                    .map { Layout(it as CDAEntry, locale) }
+                    .map { Layout(it as CDAEntry, parameter.locale) }
                     .first { it.contentModules.isNotEmpty() }
 
                 successCallback(layout)
@@ -85,12 +95,13 @@ open class Contentful(
                     client
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
+                        .where("locale", parameter.locale)
                         .include(10)
                         .where("fields.slug", coursesSlug)
                         .all()
                         .items()
                         .first() as CDAEntry,
-                    locale
+                    parameter.locale
                 )
 
                 successCallback(course)
@@ -111,11 +122,12 @@ open class Contentful(
                     client
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
+                        .where("locale", parameter.locale)
                         .linksToEntryId(categoryId)
                         .include(10)
                         .all()
                         .items()
-                        .map { Course(it as CDAEntry, locale) }
+                        .map { Course(it as CDAEntry, parameter.locale) }
 
                 successCallback(courses)
             } catch (throwable: Throwable) {
@@ -134,10 +146,11 @@ open class Contentful(
                     client
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
+                        .where("locale", parameter.locale)
                         .include(10)
                         .all()
                         .items()
-                        .map { Course(it as CDAEntry, locale) }
+                        .map { Course(it as CDAEntry, parameter.locale) }
 
                 successCallback(courses)
             } catch (throwable: Throwable) {
@@ -155,10 +168,11 @@ open class Contentful(
                 val categories = client
                     .fetch(CDAEntry::class.java)
                     .withContentType("category")
+                    .where("locale", parameter.locale)
                     .include(10)
                     .all()
                     .items()
-                    .map { Category(it as CDAEntry, locale) }
+                    .map { Category(it as CDAEntry, parameter.locale) }
 
                 successCallback(categories)
             } catch (throwable: Throwable) {
@@ -167,46 +181,105 @@ open class Contentful(
         }
     }
 
-    private val tag: String = "Contentful.kt"
+    fun fetchSpace(
+        errorCallback: (Throwable) -> Unit,
+        successCallback: (CDASpace) -> Unit
+    ) {
+        launch {
+            try {
+                val space = client.fetchSpace()
+
+                successCallback(space)
+            } catch (throwable: Throwable) {
+                errorCallback(throwable)
+            }
+        }
+    }
+
+    fun fetchAllLocales(
+        errorCallback: (Throwable) -> Unit,
+        successCallback: (List<CDALocale>) -> Unit
+    ) {
+        launch {
+            try {
+                val categories = client
+                    .fetch(CDALocale::class.java)
+                    .all()
+                    .items()
+                    .map { it as CDALocale }
+
+                successCallback(categories)
+            } catch (throwable: Throwable) {
+                errorCallback(throwable)
+            }
+        }
+    }
 
     fun applyParameter(
-        incomingParameter: Parameter,
+        parameter: Parameter,
         errorHandler: (Throwable) -> Unit,
         successHandler: (CDASpace) -> Unit
     ) {
         launch {
-            val incomingClient = createClient(incomingParameter)
+            val (newClientDelivery, newClientPreview) = createClients(parameter)
 
             try {
-                val space = incomingClient.fetchSpace()
-                Log.d(tag, """Connected to space "${space.name()}".""")
-                this@Contentful.client = incomingClient
+                val deliverySpace = newClientDelivery.fetchSpace()
+                val previewSpace = newClientPreview.fetchSpace()
+
+                if (deliverySpace.name() != previewSpace.name()) {
+                    throw IllegalStateException(
+                        "delivery and preview space names cannot be different!"
+                    )
+                }
+                Log.d("Contentful.kt", """Connected to space "${deliverySpace.name()}".""")
+
+                clientDelivery = newClientDelivery
+                clientPreview = newClientPreview
+                client = if (parameter.api == Api.CDA) {
+                    clientDelivery
+                } else {
+                    clientPreview
+                }
+
+                val currentParameter = this@Contentful.parameter
                 this@Contentful.parameter = Parameter(
-                    spaceId = incomingParameter.spaceId.or(parameter.spaceId),
-                    deliveryToken = incomingParameter.deliveryToken.or(parameter.deliveryToken),
-                    previewToken = incomingParameter.previewToken.or(parameter.previewToken),
-                    editorialFeature = incomingParameter.editorialFeature,
-                    api = incomingParameter.api
+                    spaceId = parameter.spaceId.or(currentParameter.spaceId),
+                    deliveryToken = parameter.deliveryToken.or(currentParameter.deliveryToken),
+                    previewToken = parameter.previewToken.or(currentParameter.previewToken),
+                    locale = parameter.locale.or(currentParameter.locale),
+                    editorialFeature = parameter.editorialFeature,
+                    api = parameter.api
                 )
 
-                successHandler(space)
+                successHandler(deliverySpace)
             } catch (throwable: Throwable) {
-                Log.e(tag, "Cannot connect to space.")
+                Log.e("Contentful.kt", "Cannot connect to space.")
                 errorHandler(throwable)
             }
         }
     }
 
-    internal open fun createClient(parameter: Parameter): CDAClient =
-        CDAClient.builder().apply {
-            setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
-            if (parameter.api == CPA) {
+    internal open fun createClients(parameter: Parameter): Pair<CDAClient, CDAClient> =
+        Pair(
+            CDAClient.builder().apply {
+                setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
+                setToken(parameter.deliveryToken.or(this@Contentful.parameter.deliveryToken))
+            }.build(),
+            CDAClient.builder().apply {
+                setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
                 setToken(parameter.previewToken.or(this@Contentful.parameter.previewToken))
                 preview()
-            } else {
-                setToken(parameter.deliveryToken.or(this@Contentful.parameter.deliveryToken))
-            }
-        }.build()
+            }.build()
+        )
 }
 
 fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!
+
+fun Parameter.toUrl(): String =
+    "the-example-app-mobile://" +
+        "?space_id=$spaceId" +
+        "&preview_token=$previewToken" +
+        "&delivery_token=$deliveryToken" +
+        "&editorial_features=${editorialFeature.name.toLowerCase()}" +
+        "&api=${api.name.toLowerCase()}"
