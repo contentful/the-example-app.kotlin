@@ -81,50 +81,35 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
                     findPreference(getString(R.string.settings_key_space_information))
                         .summary = space.name()
 
-                    setSpaceId(findPreference(R.string.settings_key_space_id))
-                    setDeliveryToken(findPreference(R.string.settings_key_delivery_token))
-                    setPreviewToken(findPreference(R.string.settings_key_preview_token))
+                    setEditPreference(
+                        R.string.settings_key_space_id,
+                        dependencies.contentful.parameter.spaceId
+                    ) { parameter.spaceId = it }
+                    setEditPreference(
+                        R.string.settings_key_delivery_token,
+                        dependencies.contentful.parameter.deliveryToken
+                    ) { parameter.deliveryToken = it }
+                    setEditPreference(
+                        R.string.settings_key_preview_token,
+                        dependencies.contentful.parameter.previewToken
+                    ) { parameter.previewToken = it }
                 }
             }
         )
     }
 
-    private fun setSpaceId(preference: EditTextPreference) {
-        parameter.spaceId = dependencies.contentful.parameter.spaceId
+    private fun setEditPreference(
+        @StringRes preferenceId: Int,
+        value: String,
+        update: (String) -> Unit
+    ) {
+        val preference: EditTextPreference = findPreference(preferenceId)
+        update(value)
 
-        preference.summary = dependencies.contentful.parameter.spaceId
-        preference.text = dependencies.contentful.parameter.spaceId
-
+        preference.summary = value
+        preference.text = value
         preference.setOnPreferenceChangeListener { _, newValue ->
-            parameter.spaceId = newValue.toString()
-
-            checkNewParameter(preference, newValue)
-            true
-        }
-    }
-
-    private fun setDeliveryToken(preference: EditTextPreference) {
-        parameter.deliveryToken = dependencies.contentful.parameter.deliveryToken
-
-        preference.summary = dependencies.contentful.parameter.deliveryToken
-        preference.text = dependencies.contentful.parameter.deliveryToken
-
-        preference.setOnPreferenceChangeListener { _, newValue ->
-            parameter.deliveryToken = newValue.toString()
-
-            checkNewParameter(preference, newValue)
-            true
-        }
-    }
-
-    private fun setPreviewToken(preference: EditTextPreference) {
-        parameter.previewToken = dependencies.contentful.parameter.previewToken
-
-        preference.summary = dependencies.contentful.parameter.previewToken
-        preference.text = dependencies.contentful.parameter.previewToken
-
-        preference.setOnPreferenceChangeListener { _, newValue ->
-            parameter.previewToken = newValue.toString()
+            update(newValue.toString())
 
             checkNewParameter(preference, newValue)
             true
