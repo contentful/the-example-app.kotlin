@@ -5,6 +5,7 @@ package com.contentful.tea.kotlin.routing
 import com.contentful.tea.kotlin.contentful.Api.CPA
 import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
 import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.separateParameterFromPath
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
@@ -70,12 +71,22 @@ class IntentRouterTest {
                 "preview_token=previewToken&" +
                 "delivery_token=deliveryToken&" +
                 "editorial_features=enabled&" +
-                "api=CPA&"
+                "locale=fr-FR&" +
+                "host=example.com&" +
+                "api=CPA"
         )
 
         assertEquals(
             parameter,
-            Parameter("spaceId", "previewToken", "deliveryToken", Enabled, CPA)
+            Parameter(
+                "spaceId",
+                "previewToken",
+                "deliveryToken",
+                Enabled,
+                CPA,
+                "fr-FR",
+                "example.com"
+            )
         )
         assertEquals("", path)
     }

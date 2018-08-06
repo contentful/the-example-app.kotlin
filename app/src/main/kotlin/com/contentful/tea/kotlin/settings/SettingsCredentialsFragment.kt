@@ -93,6 +93,10 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
                         R.string.settings_key_preview_token,
                         dependencies.contentful.parameter.previewToken
                     ) { parameter.previewToken = it }
+                    setEditPreference(
+                        R.string.settings_key_host,
+                        dependencies.contentful.parameter.host
+                    ) { parameter.host = it }
                 }
             }
         )

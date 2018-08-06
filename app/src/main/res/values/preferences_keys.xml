@@ -12,6 +12,7 @@
     <string translatable="false" name="settings_key_space_information">space</string>
     <string translatable="false" name="settings_key_delivery_token">delivery_token</string>
     <string translatable="false" name="settings_key_preview_token">preview_token</string>
+    <string translatable="false" name="settings_key_host">host</string>
     <string translatable="false" name="settings_key_reset">reset</string>
     <string translatable="false" name="settings_key_share_qr">qr_code_share</string>
 </resources>

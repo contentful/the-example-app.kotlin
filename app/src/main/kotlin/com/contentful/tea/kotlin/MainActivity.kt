@@ -10,6 +10,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import com.contentful.tea.kotlin.contentful.EditorialFeature
 import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.contentful.toApi
+import com.contentful.tea.kotlin.contentful.toEditorialFeature
 import com.contentful.tea.kotlin.courses.CoursesFragmentDirections
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
@@ -17,7 +19,6 @@ import com.contentful.tea.kotlin.extensions.showError
 import com.contentful.tea.kotlin.routing.MainRouteCallback
 import com.contentful.tea.kotlin.routing.RouteCallback
 import com.contentful.tea.kotlin.routing.route
-import com.contentful.tea.kotlin.routing.separateParameterFromPath
 
 class MainActivity : AppCompatActivity(), DependenciesProvider {
 
@@ -76,6 +77,7 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
             putString(getString(R.string.settings_key_delivery_token), deliveryToken)
             putString(getString(R.string.settings_key_api), api.name)
             putString(getString(R.string.settings_key_locale), locale)
+            putString(getString(R.string.settings_key_host), host)
             putBoolean(
                 getString(R.string.settings_key_editorial),
                 editorialFeature == EditorialFeature.Enabled
@@ -121,4 +123,31 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
 
         return dependencies as Dependencies
     }
+}
+
+fun separateParameterFromPath(uri: String): Pair<Parameter, String> {
+    if (!uri.contains("?")) {
+        return Pair(Parameter(), uri)
+    }
+
+    val (_, parameter) = uri.split("?")
+
+    val parameterMap = parameter
+        .split("&")
+        .map { it.split("=") }
+        .filter { it.size == 2 }
+        .map { Pair(it[0], it[1]) }
+        .toMap()
+
+    return Pair(
+        Parameter(
+            spaceId = parameterMap["space_id"].orEmpty(),
+            api = parameterMap["api"].toApi(),
+            previewToken = parameterMap["preview_token"].orEmpty(),
+            deliveryToken = parameterMap["delivery_token"].orEmpty(),
+            editorialFeature = parameterMap["editorial_features"].toEditorialFeature(),
+            locale = parameterMap["locale"].orEmpty(),
+            host = parameterMap["host"].orEmpty()
+        ), uri.substringBefore("?")
+    )
 }
