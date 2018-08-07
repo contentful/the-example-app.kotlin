@@ -215,6 +215,35 @@ class ContentfulTest {
     }
 
     @Test
+    fun checkChangingHost() {
+        val latch = CountDownLatch(1)
+        val results = mutableListOf<Boolean>()
+
+        contentful.applyParameter(Parameter(host = "example.com"),
+            errorHandler = {
+                latch.countDown()
+                throw it
+            },
+            successHandler = {
+                assertEquals("", contentful.parameter.deliveryToken)
+                assertEquals("", contentful.parameter.previewToken)
+                assertEquals("", contentful.parameter.spaceId)
+                assertEquals("en-US", contentful.parameter.locale)
+                assertEquals(Api.CDA, contentful.parameter.api)
+                assertEquals("example.com", contentful.parameter.host)
+                assertEquals(EditorialFeature.Disabled, contentful.parameter.editorialFeature)
+
+                results.add(true)
+                latch.countDown()
+            })
+
+        latch.await()
+
+        assertEquals(1, results.size, "Parameters not changed, please check exceptions above.")
+        assertTrue(results[0])
+    }
+
+    @Test
     fun checkChangingAllSettings() {
         val latch = CountDownLatch(1)
         val results = mutableListOf<Boolean>()

@@ -37,7 +37,8 @@ data class Parameter(
     var deliveryToken: String = "",
     var editorialFeature: EditorialFeature = Disabled,
     var api: Api = CDA,
-    var locale: String = "en-US"
+    var locale: String = "en-US",
+    var host: String = ""
 )
 
 fun parameterFromBuildConfig(): Parameter = Parameter(
@@ -45,6 +46,7 @@ fun parameterFromBuildConfig(): Parameter = Parameter(
     deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
     previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
     editorialFeature = EditorialFeature.Disabled,
+    host = BuildConfig.CONTENTFUL_HOST,
     api = Api.CDA,
     locale = "en-US"
 )
@@ -248,13 +250,14 @@ open class Contentful(
                     deliveryToken = parameter.deliveryToken.or(currentParameter.deliveryToken),
                     previewToken = parameter.previewToken.or(currentParameter.previewToken),
                     locale = parameter.locale.or(currentParameter.locale),
+                    host = parameter.host.or(currentParameter.host),
                     editorialFeature = parameter.editorialFeature,
                     api = parameter.api
                 )
 
                 successHandler(deliverySpace)
             } catch (throwable: Throwable) {
-                Log.e("Contentful.kt", "Cannot connect to space.")
+                Log.e("Contentful.kt", "Cannot connect to space.", throwable)
                 errorHandler(throwable)
             }
         }
@@ -265,13 +268,30 @@ open class Contentful(
             CDAClient.builder().apply {
                 setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
                 setToken(parameter.deliveryToken.or(this@Contentful.parameter.deliveryToken))
+                setEndpoint(endpoint(parameter, false))
             }.build(),
             CDAClient.builder().apply {
                 setSpace(parameter.spaceId.or(this@Contentful.parameter.spaceId))
                 setToken(parameter.previewToken.or(this@Contentful.parameter.previewToken))
                 preview()
+                setEndpoint(endpoint(parameter, true))
             }.build()
         )
+
+    private fun endpoint(parameter: Parameter, preview: Boolean): String {
+        val host = if (areSomeSpaceParameterSet(parameter))
+            parameter.host.or(this@Contentful.parameter.host)
+        else
+            this@Contentful.parameter.host
+
+        val subdomain = if (preview) "preview" else "cdn"
+        return "https://$subdomain.$host/"
+    }
+
+    private fun areSomeSpaceParameterSet(parameter: Parameter): Boolean =
+        parameter.spaceId.isNotEmpty() ||
+            parameter.deliveryToken.isNotEmpty() ||
+            parameter.previewToken.isNotEmpty()
 }
 
 fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!
@@ -282,4 +302,5 @@ fun Parameter.toUrl(): String =
         "&preview_token=$previewToken" +
         "&delivery_token=$deliveryToken" +
         "&editorial_features=${editorialFeature.name.toLowerCase()}" +
-        "&api=${api.name.toLowerCase()}"
+        "&api=${api.name.toLowerCase()}" +
+        "&host=$host"

@@ -169,7 +169,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun Contentful.applyParameterFromSharedPreferences(
+    fun Contentful.applyParameterFromSharedPreferences(
         preferences: SharedPreferences,
         successCallback: () -> Unit
     ) {
@@ -198,6 +198,10 @@ class HomeFragment : Fragment() {
             previewToken = preferences.getString(
                 getString(R.string.settings_key_preview_token),
                 BuildConfig.CONTENTFUL_PREVIEW_TOKEN
+            ),
+            host = preferences.getString(
+                getString(R.string.settings_key_host),
+                BuildConfig.CONTENTFUL_HOST
             )
         )
 

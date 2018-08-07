@@ -1,8 +1,6 @@
 package com.contentful.tea.kotlin.routing
 
 import com.contentful.tea.kotlin.contentful.Parameter
-import com.contentful.tea.kotlin.contentful.toApi
-import com.contentful.tea.kotlin.contentful.toEditorialFeature
 
 const val courseSlugRegEx = """[\w-]+"""
 const val categorySlugRegEx = """[\w-]+"""
@@ -67,31 +65,6 @@ fun categoryId(uri: String): String {
 fun lessonId(uri: String): String {
     val (_, _, _, lessonId) = uri.split("/")
     return lessonId
-}
-
-fun separateParameterFromPath(uri: String): Pair<Parameter, String> {
-    if (!uri.contains("?")) {
-        return Pair(Parameter(), uri)
-    }
-
-    val (_, parameter) = uri.split("?")
-
-    val parameterMap = parameter
-        .split("&")
-        .map { it.split("=") }
-        .filter { it.size == 2 }
-        .map { Pair(it[0], it[1]) }
-        .toMap()
-
-    return Pair(
-        Parameter(
-            parameterMap["space_id"].orEmpty(),
-            parameterMap["preview_token"].orEmpty(),
-            parameterMap["delivery_token"].orEmpty(),
-            parameterMap["editorial_features"].toEditorialFeature(),
-            parameterMap["api"].toApi()
-        ), uri.substringBefore("?")
-    )
 }
 
 fun matches(uri: String, template: String): Boolean {

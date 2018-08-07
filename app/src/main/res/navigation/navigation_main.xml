@@ -238,6 +238,10 @@
                 android:id="@+id/openLesson"
                 app:destination="@id/lesson"
                 />
+        <action
+                android:id="@+id/openSettings"
+                app:destination="@id/settings"
+                />
     </fragment>
     <fragment
             android:id="@+id/aboutFragment"
