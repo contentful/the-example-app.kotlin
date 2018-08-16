@@ -16,16 +16,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-            android:title="@string/settings_category_editorial_title">
-        <SwitchPreference
-                android:title="@string/settings_editorial_label"
-                android:key="@string/settings_key_editorial"
-                android:summary="@string/settings_editorial_summary"
-                android:enabled="false"
-                />
-    </PreferenceCategory>
-
-    <PreferenceCategory
             android:title="@string/settings_category_space_title">
         <Preference
                 android:title="@string/settings_space_label"

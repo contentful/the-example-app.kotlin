@@ -6,17 +6,16 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import com.contentful.java.cda.CDALocale
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Api
-import com.contentful.tea.kotlin.contentful.EditorialFeature
 import com.contentful.tea.kotlin.contentful.Parameter
 import com.contentful.tea.kotlin.contentful.toUrl
 import com.contentful.tea.kotlin.dependencies.Dependencies
@@ -61,11 +60,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference(getString(R.string.settings_key_locale)) as ListPreference
         )
 
-        fillInEditorials(
-            currentParameter,
-            findPreference(getString(R.string.settings_key_editorial)) as SwitchPreference
-        )
-
         dependencies.contentful.fetchSpace(errorCallback = {}) { space ->
             activity?.runOnUiThread {
                 findPreference(getString(R.string.settings_key_space_connect))?.summary =
@@ -106,20 +100,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     preferenceChanged()
                 }
             })
-        }
-
-    private fun fillInEditorials(
-        currentParameter: Parameter,
-        switchPreference: SwitchPreference
-    ) =
-        switchPreference.apply {
-            isChecked = currentParameter.editorialFeature == EditorialFeature.Enabled
-
-            setOnPreferenceChangeListener { _, newValue ->
-                parameter.editorialFeature =
-                    if (newValue == true) EditorialFeature.Enabled else EditorialFeature.Disabled
-                preferenceChanged()
-            }
         }
 
     private fun preferenceChanged(): Boolean {

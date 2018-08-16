@@ -48,9 +48,6 @@
     <string name="settings_title">settings</string>
     <string name="settings_api_label">API to use</string>
     <string name="settings_locale_label">Use locale</string>
-    <string name="settings_category_editorial_title">Editorial Features</string>
-    <string name="settings_editorial_label">Enable Editorial Features</string>
-    <string name="settings_editorial_summary">Enable to display an edit link and other contextual helpers to authors. You need to have access to the connected space to make this work.</string>
     <string name="settings_category_space_title">Credentials</string>
     <string name="settings_space_label">Change connected space …</string>
     <string name="settings_qr_summary">Select preview from any of your entries in the Contentful Webapp and show the resulting QR code to this app.</string>
