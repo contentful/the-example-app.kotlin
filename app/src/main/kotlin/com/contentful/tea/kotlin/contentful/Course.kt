@@ -20,8 +20,12 @@ data class Course(
     constructor(entry: CDAEntry, locale: String) : this(
         entry.getField<String?>(locale, "title").orEmpty(),
         entry.getField<String?>(locale, "slug").orEmpty(),
-        entry.getField<CDAAsset?>(locale, "image")
-            ?.urlForImageWith(https(), formatOf(webp)).orEmpty(),
+        try {
+            entry.getField<CDAAsset?>(locale, "image")
+                ?.urlForImageWith(https(), formatOf(webp)).orEmpty()
+        } catch (_: Throwable) {
+            ""
+        },
         entry.getField<String?>(locale, "shortDescription").orEmpty(),
         entry.getField<String?>(locale, "description").orEmpty(),
         entry.getField<Double?>(locale, "duration").or(0.0).toInt(),

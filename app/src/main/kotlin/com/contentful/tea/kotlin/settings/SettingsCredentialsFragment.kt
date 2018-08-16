@@ -1,7 +1,9 @@
 package com.contentful.tea.kotlin.settings
 
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.StringRes
+import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -31,6 +33,11 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
         setupStaticRoutes()
 
         setupCurrentValues()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.apply {
+            findViewById<View>(R.id.logo_image)
+                ?.setOnClickListener { goToParent() }
+        }
     }
 
     private fun setupStaticRoutes() {
@@ -107,7 +114,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
         value: String,
         update: (String) -> Unit
     ) {
-        val preference: EditTextPreference = findPreference(preferenceId)
+        val preference = findPreference(getString(preferenceId)) as EditTextPreference
         update(value)
 
         preference.summary = value
@@ -149,6 +156,8 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
         )
     }
 
-    private fun <T : Preference> findPreference(@StringRes id: Int): T =
-        findPreference(getString(id)) as T
+    private fun goToParent() {
+        val navController = NavHostFragment.findNavController(this)
+        navController.popBackStack()
+    }
 }

@@ -36,6 +36,13 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
         }
 
         rerouteIfNeeded()
+
+        findNavController(
+            this,
+            R.id.navigation_host_fragment
+        ).addOnNavigatedListener { _, _ ->
+            invalidateOptionsMenu()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -47,7 +54,7 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
 
     private fun rerouteIfNeeded() {
         if (intent != null && intent.action == Intent.ACTION_VIEW) {
-            val pathAndParameter = intent.dataString.substringAfter("://")
+            val pathAndParameter = intent?.dataString.orEmpty().substringAfter("://")
             val (parameter, path) = separateParameterFromPath(pathAndParameter)
 
             dependencies().contentful.applyParameter(
@@ -99,12 +106,21 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.apply { clear() }
-        menuInflater.inflate(R.menu.menu_main, menu)
+        val navController = findNavController(this, R.id.navigation_host_fragment)
+        if (
+            navController.currentDestination?.label != "fragment_settings" &&
+            navController.currentDestination?.label != "fragment_qrcode_scanner" &&
+            navController.currentDestination?.label != "fragment_space_settings"
+        ) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_settings -> openSettings()
+        R.id.action_refresh -> reload()
+
         else -> false
     }
 
@@ -113,8 +129,20 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
         return true
     }
 
-    override fun onSupportNavigateUp() =
-        findNavController(this, R.id.navigation_host_fragment).navigateUp()
+    private fun reload(): Boolean {
+        recreate()
+        return true
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        invalidateOptionsMenu()
+        return findNavController(this, R.id.navigation_host_fragment).navigateUp()
+    }
+
+    override fun onBackPressed() {
+        invalidateOptionsMenu()
+        super.onBackPressed()
+    }
 
     override fun dependencies(): Dependencies {
         if (dependencies == null) {

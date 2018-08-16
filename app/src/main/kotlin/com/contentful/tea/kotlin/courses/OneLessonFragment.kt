@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
@@ -14,9 +15,11 @@ import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.contentful.LessonModule
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
+import com.contentful.tea.kotlin.extensions.isNetworkError
 import com.contentful.tea.kotlin.extensions.saveToClipboard
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
 import com.contentful.tea.kotlin.extensions.showError
+import com.contentful.tea.kotlin.extensions.showNetworkError
 import com.contentful.tea.kotlin.extensions.toast
 import kotlinx.android.synthetic.main.fragment_lesson.*
 import kotlinx.android.synthetic.main.lesson_module_code.view.*
@@ -44,6 +47,9 @@ class OneLessonFragment : Fragment() {
         }
 
         dependencies = (activity as DependenciesProvider).dependencies()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goToParent() }
 
         return inflater.inflate(R.layout.fragment_lesson, container, false)
     }
@@ -111,7 +117,7 @@ class OneLessonFragment : Fragment() {
         val codeView = inflater.inflate(R.layout.lesson_module_code, lesson_module_container, false)
 
         val languageAdapter = ArrayAdapter<String>(
-            activity,
+            activity!!,
             R.layout.item_language_spinner,
             R.id.language_item_name,
             resources.getStringArray(R.array.code_languages)
@@ -189,21 +195,31 @@ class OneLessonFragment : Fragment() {
         navController.navigate(action)
     }
 
+    private fun goToParent() {
+        val navController = NavHostFragment.findNavController(this)
+        val action = CourseOverviewFragmentDirections.openCourseOverview(courseSlug!!)
+        navController.navigate(action)
+    }
+
     private fun lessonNotFound(throwable: Throwable) {
         activity?.apply {
-            val navController = NavHostFragment.findNavController(this@OneLessonFragment)
-            showError(
-                message = getString(R.string.error_lesson_id_not_found, courseSlug, lessonSlug),
-                moreTitle = getString(R.string.error_open_settings_button),
-                error = throwable,
-                moreHandler = {
-                    val action = OneLessonFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
-            )
+            if (throwable.isNetworkError()) {
+                showNetworkError()
+            } else {
+                val navController = NavHostFragment.findNavController(this@OneLessonFragment)
+                showError(
+                    message = getString(R.string.error_lesson_id_not_found, courseSlug, lessonSlug),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    error = throwable,
+                    moreHandler = {
+                        val action = OneLessonFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    },
+                    okHandler = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 }

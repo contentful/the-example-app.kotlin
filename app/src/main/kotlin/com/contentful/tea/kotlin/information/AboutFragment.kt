@@ -88,13 +88,14 @@ class AboutFragment : Fragment() {
         platforms.map { platform ->
             inflater.inflate(R.layout.item_about_others, root.about_others, false).apply {
                 this.about_others_logo.setBackgroundResource(platform.logo)
-                this.about_others_github.setOnClickListener { openLink(platform.gitHub) }
-
-                if (platform.hosted.isEmpty()) {
-                    this.about_others_hosted.visibility = View.GONE
-                } else {
-                    this.about_others_hosted.setOnClickListener { openLink(platform.hosted) }
+                this.about_others_logo.setOnClickListener {
+                    if (platform.hosted.isEmpty()) {
+                        openLink(platform.gitHub)
+                    } else {
+                        openLink(platform.hosted)
+                    }
                 }
+
                 root.about_others.addView(this)
             }
         }

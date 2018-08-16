@@ -1,7 +1,5 @@
 <resources>
     <string name="about_description"><![CDATA[This is "The Android Example App in Kotlin". While building your own apps with Contentful, you can reference this app\'s code, found on <a href="https://github.com/contentful/the-example-app.kotlin">GitHub<a>.<br/><br/>You can also edit the content in the app by cloning the Contentful space to your own Contentful account by following the instructions <a href="https://github.com/contentful/content-models/blob/master/the-example-app/README.md">here</a>.<br/><br/>This app is also available in the following platforms and languages:]]></string>
-    <string name="about_others_github_label">GitHub</string>
-    <string name="about_others_hosted_label">WWW</string>
     <string name="about_title">A reference for Android developers using Contentful</string>
     <string name="action_settings">Settings</string>
     <string name="app_bar_courses">Courses</string>
@@ -19,6 +17,7 @@
     <string name="error_open_settings_button">Change Settings …</string>
     <string name="error_parsing_route"><![CDATA[Could not find route <tt>%s</tt>.<br/><br/>To mitigate, please try the following<ul><li>Make sure the content you are trying to access exists and is published.</li><li>Check if the content model has changed. Did you delete a content type or a required field?</li><li>Check if the content is in a draft or pending changes state (Content Delivery API), or if it has been deleted (Content Preview API & Content Delivery API).</li><li>Check if all required fields have content for this locale.</li><li>Verify that your space id and access tokens are correct and up to date.</li></ul>]]></string>
     <string name="error_settings_cannot_change"><![CDATA[Cannot change settings, new settings contain invalid values.<br/>To mitigate, please try the following<ul><li>Make sure the content you are trying to access exists and is published.</li><li>Check if the content model has changed. Did you delete a content type or a required field?</li><li>Check if the content is in a draft or pending changes state (Content Delivery API), or if it has been deleted (Content Preview API & Content Delivery API).</li><li>Check if all required fields have content for this locale.</li><li>Verify that your space id and access tokens are correct and up to date.</li></ul>]]></string>
+    <string name="error_no_internet_connection"><![CDATA[Could not reach <b>Contentful</b>.<br/><br/>To mitigate, please try to connect to the <b>internet</b> and try again.]]></string>
     <string name="imprint_company">Contentful GmbH</string>
     <string name="imprint_company_label">Company</string>
     <string name="imprint_court">Berlin-Charlottenburg HRB 155607 B</string>
@@ -50,9 +49,6 @@
     <string name="settings_title">settings</string>
     <string name="settings_api_label">API to use</string>
     <string name="settings_locale_label">Use locale</string>
-    <string name="settings_category_editorial_title">Editorial Features</string>
-    <string name="settings_editorial_label">Enable Editorial Features</string>
-    <string name="settings_editorial_summary">Enable to display an edit link and other contextual helpers to authors. You need to have access to the connected space to make this work.</string>
     <string name="settings_category_space_title">Credentials</string>
     <string name="settings_space_label">Change connected space …</string>
     <string name="settings_qr_summary">Select preview from any of your entries in the Contentful Webapp and show the resulting QR code to this app.</string>
