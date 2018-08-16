@@ -64,11 +64,15 @@ sealed class LessonModule {
         constructor(entry: CDAEntry, locale: String) : this(
             entry.getField<String?>(locale, "title").orEmpty(),
             entry.getField<String?>(locale, "caption").orEmpty(),
-            entry.getField<CDAAsset?>(locale, "image")
-                ?.urlForImageWith(
-                    ImageOption.https(),
-                    ImageOption.formatOf(ImageOption.Format.webp)
-                ).orEmpty()
+            try {
+                entry.getField<CDAAsset?>(locale, "image")
+                    ?.urlForImageWith(
+                        ImageOption.https(),
+                        ImageOption.formatOf(ImageOption.Format.webp)
+                    ).orEmpty()
+            } catch (_: Throwable) {
+                ""
+            }
         )
     }
 

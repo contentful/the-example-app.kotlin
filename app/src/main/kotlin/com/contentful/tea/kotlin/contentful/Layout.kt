@@ -63,10 +63,12 @@ sealed class LayoutModule {
         constructor(entry: CDAEntry, locale: String) : this(
             entry.getField<String?>(locale, "title").orEmpty(),
             entry.getField<String?>(locale, "headline").orEmpty(),
-            entry.getField<CDAAsset?>(locale, "backgroundImage")?.urlForImageWith(
-                https(),
-                formatOf(webp)
-            ).orEmpty()
+            try {
+                entry.getField<CDAAsset?>(locale, "backgroundImage")
+                    ?.urlForImageWith(https(), formatOf(webp)).orEmpty()
+            } catch (_: Throwable) {
+                ""
+            }
         )
     }
 
