@@ -25,9 +25,10 @@ import com.contentful.tea.kotlin.contentful.LayoutModule
 import com.contentful.tea.kotlin.contentful.Parameter
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
+import com.contentful.tea.kotlin.extensions.isNetworkError
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
 import com.contentful.tea.kotlin.extensions.showError
-import com.contentful.tea.kotlin.extensions.toast
+import com.contentful.tea.kotlin.extensions.showNetworkError
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -153,23 +154,27 @@ class HomeFragment : Fragment() {
 
     private fun errorFetchingLayout(throwable: Throwable) {
         activity?.apply {
-            val navController = NavHostFragment.findNavController(this@HomeFragment)
-            showError(
-                message = getString(R.string.error_fetching_layout),
-                moreTitle = getString(R.string.error_open_settings_button),
-                error = throwable,
-                moreHandler = {
-                    val action = HomeFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
-            )
+            if (throwable.isNetworkError()) {
+                showNetworkError()
+            } else {
+                val navController = NavHostFragment.findNavController(this@HomeFragment)
+                showError(
+                    message = getString(R.string.error_fetching_layout),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    error = throwable,
+                    moreHandler = {
+                        val action = HomeFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    },
+                    okHandler = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 
-    fun Contentful.applyParameterFromSharedPreferences(
+    private fun Contentful.applyParameterFromSharedPreferences(
         preferences: SharedPreferences,
         successCallback: () -> Unit
     ) {
@@ -207,7 +212,7 @@ class HomeFragment : Fragment() {
 
         applyParameter(
             parameter,
-            errorHandler = { activity?.toast(getString(R.string.error_settings_cannot_change)) },
+            errorHandler = { },
             successHandler = { space ->
                 Log.d(
                     "HomeFragment.kt",

@@ -15,9 +15,11 @@ import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.contentful.LessonModule
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
+import com.contentful.tea.kotlin.extensions.isNetworkError
 import com.contentful.tea.kotlin.extensions.saveToClipboard
 import com.contentful.tea.kotlin.extensions.setImageResourceFromUrl
 import com.contentful.tea.kotlin.extensions.showError
+import com.contentful.tea.kotlin.extensions.showNetworkError
 import com.contentful.tea.kotlin.extensions.toast
 import kotlinx.android.synthetic.main.fragment_lesson.*
 import kotlinx.android.synthetic.main.lesson_module_code.view.*
@@ -201,19 +203,23 @@ class OneLessonFragment : Fragment() {
 
     private fun lessonNotFound(throwable: Throwable) {
         activity?.apply {
-            val navController = NavHostFragment.findNavController(this@OneLessonFragment)
-            showError(
-                message = getString(R.string.error_lesson_id_not_found, courseSlug, lessonSlug),
-                moreTitle = getString(R.string.error_open_settings_button),
-                error = throwable,
-                moreHandler = {
-                    val action = OneLessonFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
-            )
+            if (throwable.isNetworkError()) {
+                showNetworkError()
+            } else {
+                val navController = NavHostFragment.findNavController(this@OneLessonFragment)
+                showError(
+                    message = getString(R.string.error_lesson_id_not_found, courseSlug, lessonSlug),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    error = throwable,
+                    moreHandler = {
+                        val action = OneLessonFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    },
+                    okHandler = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 }

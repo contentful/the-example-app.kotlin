@@ -16,7 +16,9 @@ import com.contentful.tea.kotlin.contentful.Category
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
+import com.contentful.tea.kotlin.extensions.isNetworkError
 import com.contentful.tea.kotlin.extensions.showError
+import com.contentful.tea.kotlin.extensions.showNetworkError
 import com.contentful.tea.kotlin.home.HomeFragmentDirections
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.course_card.view.*
@@ -221,58 +223,70 @@ class CoursesFragment : Fragment() {
 
     private fun errorFetchingAllCategories(throwable: Throwable) {
         activity?.apply {
-            val navController = NavHostFragment.findNavController(this@CoursesFragment)
-            showError(
-                message = getString(R.string.error_no_categories_found),
-                moreTitle = getString(R.string.error_open_settings_button),
-                error = throwable,
-                moreHandler = {
-                    val action = CoursesFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
-            )
+            if (throwable.isNetworkError()) {
+                showNetworkError()
+            } else {
+                val navController = NavHostFragment.findNavController(this@CoursesFragment)
+                showError(
+                    message = getString(R.string.error_no_categories_found),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    error = throwable,
+                    moreHandler = {
+                        val action = CoursesFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    },
+                    okHandler = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 
     private fun errorFetchingAllCourses(throwable: Throwable) {
         activity?.apply {
-            val navController = NavHostFragment.findNavController(this@CoursesFragment)
-            showError(
-                message = getString(R.string.error_fetching_all_courses),
-                moreTitle = getString(R.string.error_open_settings_button),
-                error = throwable,
-                moreHandler = {
-                    val action = CoursesFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
-            )
+            if (throwable.isNetworkError()) {
+                showNetworkError()
+            } else {
+                val navController = NavHostFragment.findNavController(this@CoursesFragment)
+                showError(
+                    message = getString(R.string.error_fetching_all_courses),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    error = throwable,
+                    moreHandler = {
+                        val action = CoursesFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    },
+                    okHandler = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 
     private fun errorFetchingAllCoursesFromOneCategory(category: Category, throwable: Throwable) {
         activity?.apply {
-            val navController = NavHostFragment.findNavController(this@CoursesFragment)
-            showError(
-                message = getString(
-                    R.string.error_fetching_all_courses_from_category,
-                    category.slug
-                ),
-                moreTitle = getString(R.string.error_open_settings_button),
-                error = throwable,
-                moreHandler = {
-                    val action = CoursesFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
-            )
+            if (throwable.isNetworkError()) {
+                showNetworkError()
+            } else {
+                val navController = NavHostFragment.findNavController(this@CoursesFragment)
+                showError(
+                    message = getString(
+                        R.string.error_fetching_all_courses_from_category,
+                        category.slug
+                    ),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    error = throwable,
+                    moreHandler = {
+                        val action = CoursesFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    },
+                    okHandler = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 

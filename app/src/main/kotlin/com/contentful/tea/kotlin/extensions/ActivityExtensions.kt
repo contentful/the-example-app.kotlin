@@ -45,6 +45,12 @@ fun Activity.showError(
     }
 }
 
+fun Activity.showNetworkError() {
+    showError(
+        message = getString(R.string.error_no_internet_connection)
+    )
+}
+
 private fun extractMessage(error: Throwable?, message: CharSequence): CharSequence =
     if (error != null) {
         if (message.isEmpty()) {

@@ -11,7 +11,9 @@ import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
+import com.contentful.tea.kotlin.extensions.isNetworkError
 import com.contentful.tea.kotlin.extensions.showError
+import com.contentful.tea.kotlin.extensions.showNetworkError
 import kotlinx.android.synthetic.main.fragment_course_overview.*
 import kotlinx.android.synthetic.main.item_lesson.view.*
 
@@ -111,19 +113,23 @@ class CourseOverviewFragment : Fragment() {
 
     private fun errorFetchingCourseBySlug(throwable: Throwable) {
         activity?.apply {
-            val navController = NavHostFragment.findNavController(this@CourseOverviewFragment)
-            showError(
-                message = getString(R.string.error_fetching_course_from_slug, courseSlug),
-                moreTitle = getString(R.string.error_open_settings_button),
-                error = throwable,
-                moreHandler = {
-                    val action = CourseOverviewFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
-            )
+            if (throwable.isNetworkError()) {
+                showNetworkError()
+            } else {
+                val navController = NavHostFragment.findNavController(this@CourseOverviewFragment)
+                showError(
+                    message = getString(R.string.error_fetching_course_from_slug, courseSlug),
+                    moreTitle = getString(R.string.error_open_settings_button),
+                    error = throwable,
+                    moreHandler = {
+                        val action = CourseOverviewFragmentDirections.openSettings()
+                        navController.navigate(action)
+                    },
+                    okHandler = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 
