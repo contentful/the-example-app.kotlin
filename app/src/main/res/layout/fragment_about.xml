@@ -27,20 +27,22 @@
             android:text="@string/about_description"
             />
 
-    <HorizontalScrollView
+    <ScrollView
             android:layout_below="@id/about_description"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             >
 
-        <LinearLayout
+        <GridLayout
+                android:layout_gravity="center"
+                android:columnCount="4"
                 android:id="@+id/about_others"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 tools:items="@id/item_about_others"
                 >
-        </LinearLayout>
-    </HorizontalScrollView>
+        </GridLayout>
+    </ScrollView>
 
 </RelativeLayout>
