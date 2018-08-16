@@ -25,31 +25,42 @@ private const val PERMISSION_CAMERA_REQUEST_ID: Int = 1
 
 class QRCodeScannerFragment : Fragment() {
 
+    private var showingError: Boolean = false
+
     private val decodeCallback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult?) {
-            result?.let {
-                settings_qr_barcode.pause()
+            if (!showingError &&
+                result != null &&
+                settings_qr_barcode != null
+            ) {
+
+                settings_qr_barcode.pauseAndWait()
 
                 if (result.text.startsWith("the-example-app-mobile://")) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.text)))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(result.text)))
                 } else {
-                    activity?.showError(
-                        message = getString(R.string.settings_qr_non_tea_url, result.text),
-                        moreTitle = getString(R.string.settings_qr_non_tea_more),
-                        moreHandler = {
-                            startActivity(
-                                Intent.createChooser(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse(result.text)
-                                    ), getString(R.string.settings_qr_non_tea_chooser_title)
+                    if (activity != null) {
+                        showingError = true
+                        activity?.showError(
+                            message = getString(R.string.settings_qr_non_tea_url, result.text),
+                            moreTitle = getString(R.string.settings_qr_non_tea_more),
+                            moreHandler = {
+                                startActivity(
+                                    Intent.createChooser(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse(result.text)
+                                        ), getString(R.string.settings_qr_non_tea_chooser_title)
+                                    )
                                 )
-                            )
-                        },
-                        okHandler = {
-                            settings_qr_barcode.resume()
-                        }
-                    )
+                                showingError = false
+                            },
+                            okHandler = {
+                                settings_qr_barcode.resume()
+                                showingError = false
+                            }
+                        )
+                    }
                 }
             }
         }

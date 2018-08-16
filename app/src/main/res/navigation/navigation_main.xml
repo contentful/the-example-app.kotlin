@@ -203,7 +203,7 @@
                 />
         <action
                 android:id="@+id/openScanQR"
-                app:destination="@id/QRCodeScanner"
+                app:destination="@id/qrCodeSettings"
                 />
     </fragment>
     <fragment
@@ -213,11 +213,11 @@
             >
         <action
                 android:id="@+id/openScanQR"
-                app:destination="@id/QRCodeScanner"
+                app:destination="@id/qrCodeSettings"
                 />
     </fragment>
     <fragment
-            android:id="@+id/QRCodeScanner"
+            android:id="@+id/qrCodeSettings"
             android:name="com.contentful.tea.kotlin.settings.QRCodeScannerFragment"
             android:label="fragment_qrcode_scanner"
             tools:layout="@layout/fragment_qrcode_scanner"
