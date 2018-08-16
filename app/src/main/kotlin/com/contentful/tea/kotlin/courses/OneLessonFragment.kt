@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
@@ -44,6 +45,9 @@ class OneLessonFragment : Fragment() {
         }
 
         dependencies = (activity as DependenciesProvider).dependencies()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goToParent() }
 
         return inflater.inflate(R.layout.fragment_lesson, container, false)
     }
@@ -186,6 +190,12 @@ class OneLessonFragment : Fragment() {
     private fun nextLessonClicked(lessonSlug: String) {
         val navController = NavHostFragment.findNavController(this)
         val action = CourseOverviewFragmentDirections.openLesson(courseSlug!!, lessonSlug)
+        navController.navigate(action)
+    }
+
+    private fun goToParent() {
+        val navController = NavHostFragment.findNavController(this)
+        val action = CourseOverviewFragmentDirections.openCourseOverview(courseSlug!!)
         navController.navigate(action)
     }
 

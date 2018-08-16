@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -43,6 +44,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         fillPreferences()
 
         setupStaticRoutes()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goToParent() }
     }
 
     private fun fillPreferences() {
@@ -232,6 +236,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun encodeSettings(): String = dependencies.contentful.parameter.toUrl()
+
+    private fun goToParent() {
+        val navController = NavHostFragment.findNavController(this)
+        navController.navigateUp()
+    }
 }
 
 private const val PERMISSION_WRITE_EXTERNAL_REQUEST_ID: Int = 2

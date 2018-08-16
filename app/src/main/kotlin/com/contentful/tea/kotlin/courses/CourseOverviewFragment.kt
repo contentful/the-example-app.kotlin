@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
@@ -29,6 +30,9 @@ class CourseOverviewFragment : Fragment() {
         if (activity !is DependenciesProvider) {
             throw IllegalStateException("Activity must implement Dependency provider.")
         }
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goToParent() }
 
         dependencies = (activity as DependenciesProvider).dependencies()
     }
@@ -121,5 +125,11 @@ class CourseOverviewFragment : Fragment() {
                 }
             )
         }
+    }
+
+    private fun goToParent() {
+        val navController = NavHostFragment.findNavController(this)
+        val action = CourseOverviewFragmentDirections.openHome()
+        navController.navigate(action)
     }
 }

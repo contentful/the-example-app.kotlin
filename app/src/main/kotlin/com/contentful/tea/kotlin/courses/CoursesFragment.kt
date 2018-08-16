@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -40,6 +41,9 @@ class CoursesFragment : Fragment() {
         }
 
         dependencies = (activity as DependenciesProvider).dependencies()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goToParent() }
 
         return inflater.inflate(R.layout.fragment_courses, container, false)
     }
@@ -287,6 +291,12 @@ class CoursesFragment : Fragment() {
                 }
             )
         }
+    }
+
+    private fun goToParent() {
+        val navController = NavHostFragment.findNavController(this)
+        val action = CoursesFragmentDirections.openHome()
+        navController.navigate(action)
     }
 }
 
