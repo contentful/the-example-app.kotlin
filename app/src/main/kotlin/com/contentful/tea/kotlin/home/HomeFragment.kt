@@ -144,7 +144,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateIfNotAlreadyThere(navController: NavController, @IdRes id: Int): Boolean =
-        if (navController.currentDestination.id != id) {
+        if (navController.currentDestination?.id != id) {
             navController.navigate(id)
             true
         } else {
@@ -184,25 +184,25 @@ class HomeFragment : Fragment() {
                 preferences.getString(
                     getString(R.string.settings_key_api),
                     Api.CDA.name
-                )
+                )!!
             ),
-            locale = preferences.getString(getString(R.string.settings_key_locale), "en-US"),
+            locale = preferences.getString(getString(R.string.settings_key_locale), "en-US")!!,
             spaceId = preferences.getString(
                 getString(R.string.settings_key_space_id),
                 BuildConfig.CONTENTFUL_SPACE_ID
-            ),
+            )!!,
             deliveryToken = preferences.getString(
                 getString(R.string.settings_key_delivery_token),
                 BuildConfig.CONTENTFUL_DELIVERY_TOKEN
-            ),
+            )!!,
             previewToken = preferences.getString(
                 getString(R.string.settings_key_preview_token),
                 BuildConfig.CONTENTFUL_PREVIEW_TOKEN
-            ),
+            )!!,
             host = preferences.getString(
                 getString(R.string.settings_key_host),
                 BuildConfig.CONTENTFUL_HOST
-            )
+            )!!
         )
 
         applyParameter(

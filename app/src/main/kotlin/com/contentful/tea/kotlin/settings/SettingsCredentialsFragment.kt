@@ -1,6 +1,7 @@
 package com.contentful.tea.kotlin.settings
 
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
@@ -113,7 +114,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
         value: String,
         update: (String) -> Unit
     ) {
-        val preference: EditTextPreference = findPreference(preferenceId)
+        val preference = findPreference(getString(preferenceId)) as EditTextPreference
         update(value)
 
         preference.summary = value
@@ -159,6 +160,4 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
         val navController = NavHostFragment.findNavController(this)
         navController.popBackStack()
     }
-    private fun <T : Preference> findPreference(@StringRes id: Int): T =
-        findPreference(getString(id)) as T
 }

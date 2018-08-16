@@ -115,7 +115,7 @@ class OneLessonFragment : Fragment() {
         val codeView = inflater.inflate(R.layout.lesson_module_code, lesson_module_container, false)
 
         val languageAdapter = ArrayAdapter<String>(
-            activity,
+            activity!!,
             R.layout.item_language_spinner,
             R.id.language_item_name,
             resources.getStringArray(R.array.code_languages)

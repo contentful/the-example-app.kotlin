@@ -212,7 +212,7 @@ class CoursesFragment : Fragment() {
     }
 
     private fun navigateIfNotAlreadyThere(navController: NavController, @IdRes id: Int): Boolean =
-        if (navController.currentDestination.id != id) {
+        if (navController.currentDestination?.id != id) {
             navController.navigate(id)
             true
         } else {
