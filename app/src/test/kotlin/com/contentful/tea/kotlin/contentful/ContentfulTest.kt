@@ -34,6 +34,8 @@ class ContentfulTest {
             object : Contentful(deliveryClient, previewClient, parameter = Parameter()) {
                 override fun createClients(parameter: Parameter): Pair<CDAClient, CDAClient> =
                     Pair(deliveryClient, previewClient)
+
+                override fun lookUpSuitableLocale() = parameter.locale
             }
     }
 

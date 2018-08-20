@@ -11,6 +11,7 @@ import com.contentful.tea.kotlin.contentful.Api.CPA
 import com.contentful.tea.kotlin.contentful.EditorialFeature.Disabled
 import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
 import kotlinx.coroutines.experimental.launch
+import java.util.NoSuchElementException
 
 enum class Api {
     CDA,
@@ -255,11 +256,28 @@ open class Contentful(
                     api = parameter.api
                 )
 
+                // look if current configured locale is available in space
+                parameter.locale = lookUpSuitableLocale()
+
                 successHandler(deliverySpace)
             } catch (throwable: Throwable) {
                 Log.e("Contentful.kt", "Cannot connect to space.", throwable)
                 errorHandler(throwable)
             }
+        }
+    }
+
+    internal open fun lookUpSuitableLocale(): String {
+        val locales = client
+            .fetch(CDALocale::class.java)
+            .all()
+            .items()
+            .map { it as CDALocale }
+
+        return try {
+            locales.first { it.code() == parameter.locale }.code()
+        } catch (_: NoSuchElementException) {
+            locales.first { it.isDefaultLocale }.code()
         }
     }
 
