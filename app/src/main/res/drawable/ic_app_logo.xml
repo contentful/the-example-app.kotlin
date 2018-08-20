@@ -4,6 +4,7 @@
         android:height="43dp"
         android:viewportWidth="171"
         android:viewportHeight="43"
+        tools:ignore="VectorRaster"
         >
     <path
             android:pathData="M3.75,39l0,-7.1l24.25,0l0,7.1z"
