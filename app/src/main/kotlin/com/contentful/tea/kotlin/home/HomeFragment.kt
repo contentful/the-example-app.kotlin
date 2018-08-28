@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -72,6 +73,13 @@ class HomeFragment : Fragment() {
                 loadHomeView()
             }
         }
+    }
+
+    override fun onResume() {
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { navigateUp() }
+
+        super.onResume()
     }
 
     private fun loadHomeView() {
@@ -226,4 +234,6 @@ class HomeFragment : Fragment() {
             }
         )
     }
+
+    private fun navigateUp() {}
 }

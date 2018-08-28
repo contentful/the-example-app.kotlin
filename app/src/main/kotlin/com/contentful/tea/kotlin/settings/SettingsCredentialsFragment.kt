@@ -1,9 +1,7 @@
 package com.contentful.tea.kotlin.settings
 
 import android.os.Bundle
-import android.view.View
 import androidx.annotation.StringRes
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -33,11 +31,6 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
         setupStaticRoutes()
 
         setupCurrentValues()
-
-        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.apply {
-            findViewById<View>(R.id.logo_image)
-                ?.setOnClickListener { goToParent() }
-        }
     }
 
     private fun setupStaticRoutes() {

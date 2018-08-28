@@ -43,9 +43,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         fillPreferences()
 
         setupStaticRoutes()
+    }
 
+    override fun onResume() {
         activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
             ?.setOnClickListener { goToParent() }
+
+        super.onResume()
     }
 
     private fun fillPreferences() {

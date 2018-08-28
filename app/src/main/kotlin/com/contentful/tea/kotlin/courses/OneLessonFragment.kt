@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.contentful.Course
@@ -48,10 +49,14 @@ class OneLessonFragment : Fragment() {
 
         dependencies = (activity as DependenciesProvider).dependencies()
 
-        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
-            ?.setOnClickListener { goToParent() }
-
         return inflater.inflate(R.layout.fragment_lesson, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goToCourse() }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -195,10 +200,11 @@ class OneLessonFragment : Fragment() {
         navController.navigate(action)
     }
 
-    private fun goToParent() {
+    private fun goToCourse() {
+        val navOptions = NavOptions.Builder().setLaunchSingleTop(true).build()
         val navController = NavHostFragment.findNavController(this)
         val action = CourseOverviewFragmentDirections.openCourseOverview(courseSlug!!)
-        navController.navigate(action)
+        navController.navigate(action, navOptions)
     }
 
     private fun lessonNotFound(throwable: Throwable) {
