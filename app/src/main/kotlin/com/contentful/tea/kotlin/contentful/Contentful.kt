@@ -298,9 +298,11 @@ open class Contentful(
 
     private fun endpoint(parameter: Parameter, preview: Boolean): String {
         val host = if (areSomeSpaceParameterSet(parameter))
-            parameter.host.or(this@Contentful.parameter.host)
+            parameter.host.or(BuildConfig.CONTENTFUL_HOST)
         else
             this@Contentful.parameter.host
+
+        this@Contentful.parameter.host = host
 
         val subdomain = if (preview) "preview" else "cdn"
         return "https://$subdomain.$host/"
