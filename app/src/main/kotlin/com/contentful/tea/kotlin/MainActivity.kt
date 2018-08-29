@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
+import com.contentful.tea.kotlin.contentful.Api
 import com.contentful.tea.kotlin.contentful.EditorialFeature
 import com.contentful.tea.kotlin.contentful.Parameter
 import com.contentful.tea.kotlin.contentful.toApi
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
             putString(getString(R.string.settings_key_space_id), spaceId)
             putString(getString(R.string.settings_key_preview_token), previewToken)
             putString(getString(R.string.settings_key_delivery_token), deliveryToken)
-            putString(getString(R.string.settings_key_api), api.name)
+            putString(getString(R.string.settings_key_api), (api ?: Api.CDA).name)
             putString(getString(R.string.settings_key_locale), locale)
             putString(getString(R.string.settings_key_host), host)
             putBoolean(

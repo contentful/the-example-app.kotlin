@@ -13,6 +13,7 @@ import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CountDownLatch
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @RunWith(MockitoJUnitRunner::class)
@@ -35,7 +36,7 @@ class ContentfulTest {
                 override fun createClients(parameter: Parameter): Pair<CDAClient, CDAClient> =
                     Pair(deliveryClient, previewClient)
 
-                override fun lookUpSuitableLocale() = parameter.locale
+                override fun lookUpSuitableLocale() = parameter.locale!!
             }
     }
 
@@ -44,7 +45,7 @@ class ContentfulTest {
         assertEquals("", contentful.parameter.deliveryToken)
         assertEquals("", contentful.parameter.previewToken)
         assertEquals("", contentful.parameter.spaceId)
-        assertEquals(Api.CDA, contentful.parameter.api)
+        assertNull(contentful.parameter.api)
         assertEquals(EditorialFeature.Disabled, contentful.parameter.editorialFeature)
     }
 

@@ -53,14 +53,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun fillPreferences() {
-        val currentParameter = dependencies.contentful.parameter
+        parameter = dependencies.contentful.parameter.copy()
         fillInApi(
-            currentParameter,
             findPreference(getString(R.string.settings_key_api)) as ListPreference
         )
 
         fillInLocales(
-            currentParameter,
             findPreference(getString(R.string.settings_key_locale)) as ListPreference
         )
 
@@ -72,11 +70,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun fillInApi(currentParameter: Parameter, listPreference: ListPreference) =
+    private fun fillInApi(listPreference: ListPreference) =
         listPreference.apply {
-            setDefaultValue(currentParameter.api.name)
-            summary = currentParameter.api.name
-            value = currentParameter.api.name
+            val apiName = (parameter.api ?: Api.CDA).name
+            setDefaultValue(apiName)
+            summary = apiName
+            value = apiName
             entries = Api.values().map { it.toString() }.toTypedArray()
             entryValues = entries
 
@@ -87,11 +86,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-    private fun fillInLocales(currentParameter: Parameter, listPreference: ListPreference) =
+    private fun fillInLocales(listPreference: ListPreference) =
         listPreference.apply {
-            setDefaultValue(currentParameter.locale)
-            summary = currentParameter.locale
-            value = currentParameter.locale
+            setDefaultValue(parameter.locale)
+            summary = parameter.locale
+            value = parameter.locale
 
             dependencies.contentful.fetchAllLocales(errorCallback = { _ ->
                 activity?.toast(getString(R.string.error_could_not_fetch_locales))

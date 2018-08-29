@@ -37,10 +37,12 @@ data class Parameter(
     var previewToken: String = "",
     var deliveryToken: String = "",
     var editorialFeature: EditorialFeature = Disabled,
-    var api: Api = CDA,
-    var locale: String = "en-US",
+    var api: Api? = null,
+    var locale: String? = null,
     var host: String = ""
 )
+
+private const val DEFAULT_LOCALE = "en-US"
 
 fun parameterFromBuildConfig(): Parameter = Parameter(
     spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
@@ -77,7 +79,7 @@ open class Contentful(
                     .include(10)
                     .all()
                     .items()
-                    .map { Layout(it as CDAEntry, parameter.locale) }
+                    .map { Layout(it as CDAEntry, parameter.locale.or(DEFAULT_LOCALE)) }
                     .first { it.contentModules.isNotEmpty() }
 
                 successCallback(layout)
@@ -98,13 +100,13 @@ open class Contentful(
                     client
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
-                        .where("locale", parameter.locale)
+                        .where("locale", parameter.locale.or(DEFAULT_LOCALE))
                         .include(10)
                         .where("fields.slug", coursesSlug)
                         .all()
                         .items()
                         .first() as CDAEntry,
-                    parameter.locale
+                    parameter.locale ?: DEFAULT_LOCALE
                 )
 
                 successCallback(course)
@@ -125,12 +127,12 @@ open class Contentful(
                     client
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
-                        .where("locale", parameter.locale)
+                        .where("locale", parameter.locale ?: DEFAULT_LOCALE)
                         .linksToEntryId(categoryId)
                         .include(10)
                         .all()
                         .items()
-                        .map { Course(it as CDAEntry, parameter.locale) }
+                        .map { Course(it as CDAEntry, parameter.locale ?: DEFAULT_LOCALE) }
 
                 successCallback(courses)
             } catch (throwable: Throwable) {
@@ -149,11 +151,11 @@ open class Contentful(
                     client
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
-                        .where("locale", parameter.locale)
+                        .where("locale", parameter.locale ?: DEFAULT_LOCALE)
                         .include(10)
                         .all()
                         .items()
-                        .map { Course(it as CDAEntry, parameter.locale) }
+                        .map { Course(it as CDAEntry, parameter.locale ?: DEFAULT_LOCALE) }
 
                 successCallback(courses)
             } catch (throwable: Throwable) {
@@ -171,11 +173,11 @@ open class Contentful(
                 val categories = client
                     .fetch(CDAEntry::class.java)
                     .withContentType("category")
-                    .where("locale", parameter.locale)
+                    .where("locale", parameter.locale ?: DEFAULT_LOCALE)
                     .include(10)
                     .all()
                     .items()
-                    .map { Category(it as CDAEntry, parameter.locale) }
+                    .map { Category(it as CDAEntry, parameter.locale ?: DEFAULT_LOCALE) }
 
                 successCallback(categories)
             } catch (throwable: Throwable) {
@@ -239,7 +241,7 @@ open class Contentful(
 
                 clientDelivery = newClientDelivery
                 clientPreview = newClientPreview
-                client = if (parameter.api == Api.CDA) {
+                client = if (parameter.api == null || parameter.api == Api.CDA) {
                     clientDelivery
                 } else {
                     clientPreview
@@ -250,10 +252,10 @@ open class Contentful(
                     spaceId = parameter.spaceId.or(currentParameter.spaceId),
                     deliveryToken = parameter.deliveryToken.or(currentParameter.deliveryToken),
                     previewToken = parameter.previewToken.or(currentParameter.previewToken),
-                    locale = parameter.locale.or(currentParameter.locale),
+                    locale = parameter.locale.or(currentParameter.locale.or(DEFAULT_LOCALE)),
                     host = parameter.host.or(currentParameter.host),
                     editorialFeature = parameter.editorialFeature,
-                    api = parameter.api
+                    api = parameter.api ?: Api.CDA
                 )
 
                 // look if current configured locale is available in space
@@ -322,5 +324,5 @@ fun Parameter.toUrl(): String =
         "&preview_token=$previewToken" +
         "&delivery_token=$deliveryToken" +
         "&editorial_features=${editorialFeature.name.toLowerCase()}" +
-        "&api=${api.name.toLowerCase()}" +
+        "&api=${(if (api == null) CDA.name else api!!.name).toLowerCase()}" +
         "&host=$host"
