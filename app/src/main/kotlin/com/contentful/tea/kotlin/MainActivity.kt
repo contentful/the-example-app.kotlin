@@ -3,6 +3,7 @@ package com.contentful.tea.kotlin
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -130,7 +131,24 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
     }
 
     private fun reload(): Boolean {
-        recreate()
+        val controller = findNavController(this, R.id.navigation_host_fragment)
+        val destination =
+            controller.currentDestination
+
+        if (destination != null) {
+            val parentFragment = supportFragmentManager.fragments[0]
+            val childFragment = parentFragment.childFragmentManager.fragments[0]
+
+            if (childFragment is Reloadable) {
+                childFragment.reload()
+            } else {
+                Log.e(
+                    "Contentful",
+                    "Fragment is not reloadable! Please make fragment " +
+                        "'${childFragment?.javaClass}' implement ReloadableFragment"
+                )
+            }
+        }
         return true
     }
 

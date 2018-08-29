@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.Reloadable
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.contentful.LessonModule
 import com.contentful.tea.kotlin.dependencies.Dependencies
@@ -27,7 +28,7 @@ import kotlinx.android.synthetic.main.lesson_module_code.view.*
 import kotlinx.android.synthetic.main.lesson_module_copy.view.*
 import kotlinx.android.synthetic.main.lesson_module_image.view.*
 
-class OneLessonFragment : Fragment() {
+class OneLessonFragment : Fragment(), Reloadable {
     private var courseSlug: String? = null
     private var lessonSlug: String? = null
 
@@ -61,7 +62,15 @@ class OneLessonFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadViews()
+    }
 
+    override fun reload() {
+        lesson_module_container.removeAllViews()
+        loadViews()
+    }
+
+    private fun loadViews() {
         courseSlug?.apply {
             dependencies
                 .contentful
@@ -87,7 +96,6 @@ class OneLessonFragment : Fragment() {
                 IllegalStateException("""Lesson "$lessonSlug" in "$courseSlug" not found.""")
             )
         } else {
-
             val nextIndex = course.lessons.indexOf(selectedLesson) + 1
             if (nextIndex >= course.lessons.lastIndex) {
                 lesson_next_button?.hide()

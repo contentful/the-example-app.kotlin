@@ -13,6 +13,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.Reloadable
 import com.contentful.tea.kotlin.contentful.Category
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.dependencies.Dependencies
@@ -25,7 +26,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_courses.*
 
-class CoursesFragment : Fragment() {
+class CoursesFragment : Fragment(), Reloadable {
     private var categorySlug: String = ""
 
     private lateinit var dependencies: Dependencies
@@ -57,7 +58,16 @@ class CoursesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadCurses()
+    }
 
+    override fun reload() {
+        courses_container.removeAllViews()
+        courses_top_navigation.removeAllTabs()
+        loadCurses()
+    }
+
+    private fun loadCurses() {
         dependencies
             .contentful
             .fetchAllCategories(errorCallback = ::errorFetchingAllCategories) { categories ->

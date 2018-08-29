@@ -18,6 +18,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.Reloadable
 import com.contentful.tea.kotlin.contentful.Api
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.EditorialFeature
@@ -37,7 +38,8 @@ import kotlinx.android.synthetic.main.fragment_home.*
  * This fragment will be the actual starting point of the app: Showing modules and offering
  * settings.
  */
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), Reloadable {
+
     private lateinit var dependencies: Dependencies
 
     override fun onCreateView(
@@ -236,4 +238,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateUp() {}
+
+    override fun reload() {
+        home_courses.removeAllViews()
+        loadHomeView()
+    }
 }

@@ -31,7 +31,6 @@
     <string name="imprint_vat_label">VAT Number</string>
     <string name="lesson_duration">Duration: %d min • Skill level: %s</string>
     <string name="lesson_number">Lesson %d</string>
-    <string name="lessons">Lessons</string>
     <string name="module_code_select_language"><![CDATA[<Please select a language>]]></string>
     <string name="module_code_source_copied">Copied to clipboard …</string>
     <string name="settings_connected_successfully_to_space"><![CDATA[Successfully connected to space <tt>%s</tt>.]]></string>
