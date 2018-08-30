@@ -96,12 +96,12 @@ class OneLessonFragment : Fragment(), Reloadable {
                 IllegalStateException("""Lesson "$lessonSlug" in "$courseSlug" not found.""")
             )
         } else {
-            val nextIndex = course.lessons.indexOf(selectedLesson) + 1
-            if (nextIndex >= course.lessons.lastIndex) {
+            val currentIndex = course.lessons.indexOf(selectedLesson)
+            if (currentIndex == course.lessons.lastIndex) {
                 lesson_next_button?.hide()
             } else {
                 lesson_next_button?.setOnClickListener {
-                    nextLessonClicked(course.lessons[nextIndex].slug)
+                    nextLessonClicked(course.lessons[currentIndex + 1].slug)
                 }
             }
 
