@@ -11,12 +11,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.Reloadable
 import com.contentful.tea.kotlin.contentful.Api
 import com.contentful.tea.kotlin.contentful.Contentful
 import com.contentful.tea.kotlin.contentful.EditorialFeature
@@ -36,7 +38,8 @@ import kotlinx.android.synthetic.main.fragment_home.*
  * This fragment will be the actual starting point of the app: Showing modules and offering
  * settings.
  */
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), Reloadable {
+
     private lateinit var dependencies: Dependencies
 
     override fun onCreateView(
@@ -72,6 +75,13 @@ class HomeFragment : Fragment() {
                 loadHomeView()
             }
         }
+    }
+
+    override fun onResume() {
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { navigateUp() }
+
+        super.onResume()
     }
 
     private fun loadHomeView() {
@@ -225,5 +235,12 @@ class HomeFragment : Fragment() {
                 successCallback()
             }
         )
+    }
+
+    private fun navigateUp() {}
+
+    override fun reload() {
+        home_courses.removeAllViews()
+        loadHomeView()
     }
 }

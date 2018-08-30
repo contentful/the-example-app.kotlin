@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.Reloadable
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
@@ -17,7 +19,7 @@ import com.contentful.tea.kotlin.extensions.showNetworkError
 import kotlinx.android.synthetic.main.fragment_course_overview.*
 import kotlinx.android.synthetic.main.item_lesson.view.*
 
-class CourseOverviewFragment : Fragment() {
+class CourseOverviewFragment : Fragment(), Reloadable {
     private var courseSlug: String? = null
     private var firstLessonSlug: String? = null
 
@@ -33,10 +35,14 @@ class CourseOverviewFragment : Fragment() {
             throw IllegalStateException("Activity must implement Dependency provider.")
         }
 
-        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
-            ?.setOnClickListener { goToParent() }
-
         dependencies = (activity as DependenciesProvider).dependencies()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goHome() }
     }
 
     override fun onCreateView(
@@ -51,6 +57,16 @@ class CourseOverviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         overview_next.setOnClickListener { onNextButtonClicked() }
 
+        updateViews()
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun reload() {
+        overview_container.removeAllViews()
+        updateViews()
+    }
+
+    private fun updateViews() {
         courseSlug?.let {
             dependencies
                 .contentful
@@ -63,7 +79,6 @@ class CourseOverviewFragment : Fragment() {
                     }
                 }
         }
-        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun updateData(course: Course) {
@@ -133,9 +148,10 @@ class CourseOverviewFragment : Fragment() {
         }
     }
 
-    private fun goToParent() {
+    private fun goHome() {
+        val navOptions = NavOptions.Builder().setLaunchSingleTop(true).build()
         val navController = NavHostFragment.findNavController(this)
         val action = CourseOverviewFragmentDirections.openHome()
-        navController.navigate(action)
+        navController.navigate(action, navOptions)
     }
 }

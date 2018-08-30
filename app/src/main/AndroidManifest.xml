@@ -19,6 +19,7 @@
         <activity
                 android:name=".MainActivity"
                 android:launchMode="singleTop"
+                android:screenOrientation="portrait"
                 >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -29,7 +30,9 @@
                 <data android:scheme="the-example-app-mobile"/>
             </intent-filter>
         </activity>
-        <activity android:name=".home.StartupActivity">
+        <activity
+                android:name=".home.StartupActivity"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

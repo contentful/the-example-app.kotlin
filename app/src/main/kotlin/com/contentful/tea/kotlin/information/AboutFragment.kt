@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
+import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.R
 import kotlinx.android.synthetic.main.fragment_about.view.*
 import kotlinx.android.synthetic.main.item_about_others.view.*
@@ -99,6 +100,9 @@ class AboutFragment : Fragment() {
                 root.about_others.addView(this)
             }
         }
+
+        @SuppressWarnings("SetTextI18n")
+        root.about_version.text = "v${BuildConfig.VERSION_NAME}"
 
         return root
     }

@@ -31,15 +31,12 @@
     <string name="imprint_vat_label">VAT Number</string>
     <string name="lesson_duration">Duration: %d min • Skill level: %s</string>
     <string name="lesson_number">Lesson %d</string>
-    <string name="lessons">Lessons</string>
     <string name="module_code_select_language"><![CDATA[<Please select a language>]]></string>
     <string name="module_code_source_copied">Copied to clipboard …</string>
     <string name="settings_connected_successfully_to_space"><![CDATA[Successfully connected to space <tt>%s</tt>.]]></string>
     <string name="settings_qr_description">Open \"Preview\" for this platform from any of your entries. Scan the resulting QR code here.</string>
     <string name="settings_qr_finder_status_text">Place a qr code inside this rectangle to scan it.</string>
-    <string name="settings_qr_non_tea_chooser_title">open non tea qr code</string>
-    <string name="settings_qr_non_tea_more">Try different app …</string>
-    <string name="settings_qr_non_tea_url"><![CDATA[Found qr code content <tt>%s</tt> does not belong to this app. Do you want to open this qr code with another app?]]></string>
+    <string name="settings_qr_non_tea_url"><![CDATA[Found qr code content <tt>%s</tt> does not belong to this app. Please try a different QR code.]]></string>
     <string name="startup_built">built by</string>
     <string name="startup_description_app_logo">The logo of the example app.</string>
     <string name="startup_description_contentful_logo">Contentful Logo</string>

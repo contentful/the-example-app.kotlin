@@ -3,11 +3,13 @@ package com.contentful.tea.kotlin
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
+import com.contentful.tea.kotlin.contentful.Api
 import com.contentful.tea.kotlin.contentful.EditorialFeature
 import com.contentful.tea.kotlin.contentful.Parameter
 import com.contentful.tea.kotlin.contentful.toApi
@@ -82,7 +84,7 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
             putString(getString(R.string.settings_key_space_id), spaceId)
             putString(getString(R.string.settings_key_preview_token), previewToken)
             putString(getString(R.string.settings_key_delivery_token), deliveryToken)
-            putString(getString(R.string.settings_key_api), api.name)
+            putString(getString(R.string.settings_key_api), (api ?: Api.CDA).name)
             putString(getString(R.string.settings_key_locale), locale)
             putString(getString(R.string.settings_key_host), host)
             putBoolean(
@@ -130,7 +132,24 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
     }
 
     private fun reload(): Boolean {
-        recreate()
+        val controller = findNavController(this, R.id.navigation_host_fragment)
+        val destination =
+            controller.currentDestination
+
+        if (destination != null) {
+            val parentFragment = supportFragmentManager.fragments[0]
+            val childFragment = parentFragment.childFragmentManager.fragments[0]
+
+            if (childFragment is Reloadable) {
+                childFragment.reload()
+            } else {
+                Log.e(
+                    "Contentful",
+                    "Fragment is not reloadable! Please make fragment " +
+                        "'${childFragment?.javaClass}' implement ReloadableFragment"
+                )
+            }
+        }
         return true
     }
 

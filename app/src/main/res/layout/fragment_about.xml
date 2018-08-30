@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".information.AboutFragment"
-                android:padding="@dimen/mid_border"
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".information.AboutFragment"
+        android:padding="@dimen/mid_border"
+        android:orientation="vertical"
         >
 
     <TextView
@@ -21,16 +23,15 @@
             android:id="@+id/about_description"
             android:paddingTop="@dimen/mid_border"
             android:paddingBottom="@dimen/mid_border"
-            android:layout_below="@id/about_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/about_description"
             />
 
     <ScrollView
-            android:layout_below="@id/about_description"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             >
 
         <GridLayout
@@ -45,4 +46,13 @@
         </GridLayout>
     </ScrollView>
 
-</RelativeLayout>
+    <TextView
+            android:id="@+id/about_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textStyle="italic"
+            tools:text="v1.2.3"
+            />
+
+</LinearLayout>

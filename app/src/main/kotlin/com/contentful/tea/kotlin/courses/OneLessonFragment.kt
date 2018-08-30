@@ -9,8 +9,10 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.Reloadable
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.contentful.LessonModule
 import com.contentful.tea.kotlin.dependencies.Dependencies
@@ -26,7 +28,7 @@ import kotlinx.android.synthetic.main.lesson_module_code.view.*
 import kotlinx.android.synthetic.main.lesson_module_copy.view.*
 import kotlinx.android.synthetic.main.lesson_module_image.view.*
 
-class OneLessonFragment : Fragment() {
+class OneLessonFragment : Fragment(), Reloadable {
     private var courseSlug: String? = null
     private var lessonSlug: String? = null
 
@@ -48,15 +50,27 @@ class OneLessonFragment : Fragment() {
 
         dependencies = (activity as DependenciesProvider).dependencies()
 
-        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
-            ?.setOnClickListener { goToParent() }
-
         return inflater.inflate(R.layout.fragment_lesson, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goToCourse() }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadViews()
+    }
 
+    override fun reload() {
+        lesson_module_container.removeAllViews()
+        loadViews()
+    }
+
+    private fun loadViews() {
         courseSlug?.apply {
             dependencies
                 .contentful
@@ -82,13 +96,12 @@ class OneLessonFragment : Fragment() {
                 IllegalStateException("""Lesson "$lessonSlug" in "$courseSlug" not found.""")
             )
         } else {
-
-            val nextIndex = course.lessons.indexOf(selectedLesson) + 1
-            if (nextIndex >= course.lessons.lastIndex) {
+            val currentIndex = course.lessons.indexOf(selectedLesson)
+            if (currentIndex == course.lessons.lastIndex) {
                 lesson_next_button?.hide()
             } else {
                 lesson_next_button?.setOnClickListener {
-                    nextLessonClicked(course.lessons[nextIndex].slug)
+                    nextLessonClicked(course.lessons[currentIndex + 1].slug)
                 }
             }
 
@@ -195,10 +208,11 @@ class OneLessonFragment : Fragment() {
         navController.navigate(action)
     }
 
-    private fun goToParent() {
+    private fun goToCourse() {
+        val navOptions = NavOptions.Builder().setLaunchSingleTop(true).build()
         val navController = NavHostFragment.findNavController(this)
         val action = CourseOverviewFragmentDirections.openCourseOverview(courseSlug!!)
-        navController.navigate(action)
+        navController.navigate(action, navOptions)
     }
 
     private fun lessonNotFound(throwable: Throwable) {

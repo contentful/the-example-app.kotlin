@@ -9,9 +9,11 @@ import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
+import com.contentful.tea.kotlin.Reloadable
 import com.contentful.tea.kotlin.contentful.Category
 import com.contentful.tea.kotlin.contentful.Course
 import com.contentful.tea.kotlin.dependencies.Dependencies
@@ -24,7 +26,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_courses.*
 
-class CoursesFragment : Fragment() {
+class CoursesFragment : Fragment(), Reloadable {
     private var categorySlug: String = ""
 
     private lateinit var dependencies: Dependencies
@@ -44,15 +46,28 @@ class CoursesFragment : Fragment() {
 
         dependencies = (activity as DependenciesProvider).dependencies()
 
-        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
-            ?.setOnClickListener { goToParent() }
-
         return inflater.inflate(R.layout.fragment_courses, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        activity?.findViewById<Toolbar>(R.id.main_toolbar)?.findViewById<View>(R.id.logo_image)
+            ?.setOnClickListener { goHome() }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadCurses()
+    }
 
+    override fun reload() {
+        courses_container.removeAllViews()
+        courses_top_navigation.removeAllTabs()
+        loadCurses()
+    }
+
+    private fun loadCurses() {
         dependencies
             .contentful
             .fetchAllCategories(errorCallback = ::errorFetchingAllCategories) { categories ->
@@ -307,10 +322,11 @@ class CoursesFragment : Fragment() {
         }
     }
 
-    private fun goToParent() {
+    private fun goHome() {
+        val navOptions = NavOptions.Builder().setLaunchSingleTop(true).build()
         val navController = NavHostFragment.findNavController(this)
         val action = CoursesFragmentDirections.openHome()
-        navController.navigate(action)
+        navController.navigate(action, navOptions)
     }
 }
 
