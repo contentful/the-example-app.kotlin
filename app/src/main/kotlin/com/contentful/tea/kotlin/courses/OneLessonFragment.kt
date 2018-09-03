@@ -13,8 +13,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.Reloadable
-import com.contentful.tea.kotlin.contentful.Course
-import com.contentful.tea.kotlin.contentful.LessonModule
+import com.contentful.tea.kotlin.content.Course
+import com.contentful.tea.kotlin.content.LessonModule
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.isNetworkError
@@ -73,7 +73,7 @@ class OneLessonFragment : Fragment(), Reloadable {
     private fun loadViews() {
         courseSlug?.apply {
             dependencies
-                .contentful
+                .contentInfrastructure
                 .fetchCourseBySlug(
                     this,
                     ::lessonNotFound

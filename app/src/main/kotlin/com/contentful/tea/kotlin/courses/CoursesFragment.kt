@@ -14,8 +14,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.Reloadable
-import com.contentful.tea.kotlin.contentful.Category
-import com.contentful.tea.kotlin.contentful.Course
+import com.contentful.tea.kotlin.content.Category
+import com.contentful.tea.kotlin.content.Course
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.isNetworkError
@@ -69,7 +69,7 @@ class CoursesFragment : Fragment(), Reloadable {
 
     private fun loadCurses() {
         dependencies
-            .contentful
+            .contentInfrastructure
             .fetchAllCategories(errorCallback = ::errorFetchingAllCategories) { categories ->
                 activity?.runOnUiThread {
                     updateCategories(categories)
@@ -81,7 +81,7 @@ class CoursesFragment : Fragment(), Reloadable {
 
         if (isAllCategory()) {
             dependencies
-                .contentful
+                .contentInfrastructure
                 .fetchAllCourses(errorCallback = ::errorFetchingAllCourses) { courses ->
                     activity?.runOnUiThread {
                         updateCourses(courses)
@@ -114,7 +114,7 @@ class CoursesFragment : Fragment(), Reloadable {
 
     private fun fetchFromCategory(category: Category) {
         dependencies
-            .contentful
+            .contentInfrastructure
             .fetchAllCoursesOfCategoryId(
                 category.id,
                 errorCallback = { throwable ->

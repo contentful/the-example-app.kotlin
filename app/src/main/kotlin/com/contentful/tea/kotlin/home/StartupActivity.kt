@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.contentful.tea.kotlin.MainActivity
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Contentful
+import com.contentful.tea.kotlin.content.rest.Contentful
 import com.contentful.tea.kotlin.extensions.isNetworkError
 import com.contentful.tea.kotlin.extensions.showError
 import com.contentful.tea.kotlin.extensions.showNetworkError

@@ -10,7 +10,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.Reloadable
-import com.contentful.tea.kotlin.contentful.Course
+import com.contentful.tea.kotlin.content.Course
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.isNetworkError
@@ -69,7 +69,7 @@ class CourseOverviewFragment : Fragment(), Reloadable {
     private fun updateViews() {
         courseSlug?.let {
             dependencies
-                .contentful
+                .contentInfrastructure
                 .fetchCourseBySlug(
                     courseSlug!!,
                     errorCallback = ::errorFetchingCourseBySlug

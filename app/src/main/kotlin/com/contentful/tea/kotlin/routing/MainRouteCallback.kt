@@ -4,7 +4,7 @@ import android.app.Activity
 import android.widget.Toast
 import androidx.navigation.Navigation
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.content.Parameter
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.showError
 import com.contentful.tea.kotlin.extensions.toHtml
@@ -20,7 +20,7 @@ class MainRouteCallback(private val activity: Activity) : RouteCallback() {
 
     private fun applyParameter(parameter: Parameter, successHandler: () -> Unit) {
         val dependencies = (activity as DependenciesProvider).dependencies()
-        dependencies.contentful.applyParameter(parameter, ::error) {
+        dependencies.contentInfrastructure.applyParameter(parameter, ::error) {
             activity.runOnUiThread {
                 Toast.makeText(
                     activity,

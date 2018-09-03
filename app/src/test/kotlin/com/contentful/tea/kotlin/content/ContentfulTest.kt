@@ -1,7 +1,8 @@
-package com.contentful.tea.kotlin.contentful
+package com.contentful.tea.kotlin.content
 
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDASpace
+import com.contentful.tea.kotlin.content.rest.Contentful
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -7,8 +7,8 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Parameter
-import com.contentful.tea.kotlin.contentful.parameterFromBuildConfig
+import com.contentful.tea.kotlin.content.Parameter
+import com.contentful.tea.kotlin.content.parameterFromBuildConfig
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.showError
@@ -53,7 +53,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
     private fun resetParameter() {
         parameter = parameterFromBuildConfig()
 
-        dependencies.contentful.applyParameter(
+        dependencies.contentInfrastructure.applyParameter(
             parameter = parameter,
             errorHandler = {
                 activity?.showError(getString(R.string.error_settings_cannot_change))
@@ -72,7 +72,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupCurrentValues() {
-        dependencies.contentful.fetchSpace(
+        dependencies.contentInfrastructure.fetchSpace(
             errorCallback = {
                 activity?.showError(getString(R.string.error_settings_cannot_change))
             },
@@ -83,19 +83,19 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
 
                     setEditPreference(
                         R.string.settings_key_space_id,
-                        dependencies.contentful.parameter.spaceId
+                        dependencies.contentInfrastructure.parameter.spaceId
                     ) { parameter.spaceId = it }
                     setEditPreference(
                         R.string.settings_key_delivery_token,
-                        dependencies.contentful.parameter.deliveryToken
+                        dependencies.contentInfrastructure.parameter.deliveryToken
                     ) { parameter.deliveryToken = it }
                     setEditPreference(
                         R.string.settings_key_preview_token,
-                        dependencies.contentful.parameter.previewToken
+                        dependencies.contentInfrastructure.parameter.previewToken
                     ) { parameter.previewToken = it }
                     setEditPreference(
                         R.string.settings_key_host,
-                        dependencies.contentful.parameter.host
+                        dependencies.contentInfrastructure.parameter.host
                     ) { parameter.host = it }
                 }
             }
@@ -123,7 +123,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
     private fun checkNewParameter(preference: Preference, newValue: Any) {
         preference.summary = newValue.toString()
 
-        dependencies.contentful.applyParameter(
+        dependencies.contentInfrastructure.applyParameter(
             parameter = parameter,
             errorHandler = {
                 highlightError(preference)

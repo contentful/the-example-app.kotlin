@@ -1,4 +1,4 @@
-package com.contentful.tea.kotlin.contentful
+package com.contentful.tea.kotlin.content.rest
 
 import android.util.Log
 import com.contentful.java.cda.CDAClient
@@ -6,53 +6,17 @@ import com.contentful.java.cda.CDAEntry
 import com.contentful.java.cda.CDALocale
 import com.contentful.java.cda.CDASpace
 import com.contentful.tea.kotlin.BuildConfig
-import com.contentful.tea.kotlin.contentful.Api.CDA
-import com.contentful.tea.kotlin.contentful.Api.CPA
-import com.contentful.tea.kotlin.contentful.EditorialFeature.Disabled
-import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
+import com.contentful.tea.kotlin.content.Api
+import com.contentful.tea.kotlin.content.Category
+import com.contentful.tea.kotlin.content.ContentInfrastructure
+import com.contentful.tea.kotlin.content.Course
+import com.contentful.tea.kotlin.content.Layout
+import com.contentful.tea.kotlin.content.Parameter
+import com.contentful.tea.kotlin.content.parameterFromBuildConfig
 import kotlinx.coroutines.experimental.launch
 import java.util.NoSuchElementException
 
-enum class Api {
-    CDA,
-    CPA
-}
-
-fun String?.toApi(): Api = if (this == null || this.toLowerCase() == "cda") CDA else CPA
-
-enum class EditorialFeature {
-    Enabled,
-    Disabled
-}
-
-fun String?.toEditorialFeature(): EditorialFeature =
-    if (this == null || this.toLowerCase() == "enabled") {
-        Enabled
-    } else {
-        Disabled
-    }
-
-data class Parameter(
-    var spaceId: String = "",
-    var previewToken: String = "",
-    var deliveryToken: String = "",
-    var editorialFeature: EditorialFeature = Disabled,
-    var api: Api? = null,
-    var locale: String? = null,
-    var host: String = ""
-)
-
 private const val DEFAULT_LOCALE = "en-US"
-
-fun parameterFromBuildConfig(): Parameter = Parameter(
-    spaceId = BuildConfig.CONTENTFUL_SPACE_ID,
-    deliveryToken = BuildConfig.CONTENTFUL_DELIVERY_TOKEN,
-    previewToken = BuildConfig.CONTENTFUL_PREVIEW_TOKEN,
-    editorialFeature = EditorialFeature.Disabled,
-    host = BuildConfig.CONTENTFUL_HOST,
-    api = Api.CDA,
-    locale = "en-US"
-)
 
 open class Contentful(
     private var clientDelivery: CDAClient = CDAClient.builder()
@@ -64,9 +28,9 @@ open class Contentful(
         .setSpace(BuildConfig.CONTENTFUL_SPACE_ID)
         .build(),
     var client: CDAClient = clientDelivery,
-    var parameter: Parameter = parameterFromBuildConfig()
-) {
-    open fun fetchHomeLayout(
+    override var parameter: Parameter = parameterFromBuildConfig()
+) : ContentInfrastructure {
+    override fun fetchHomeLayout(
         errorCallback: (Throwable) -> Unit,
         successCallback: (Layout) -> Unit
     ) {
@@ -79,7 +43,12 @@ open class Contentful(
                     .include(10)
                     .all()
                     .items()
-                    .map { Layout(it as CDAEntry, parameter.locale.or(DEFAULT_LOCALE)) }
+                    .map {
+                        Layout.fromRestEntry(
+                            it as CDAEntry,
+                            parameter.locale.or(DEFAULT_LOCALE)
+                        )
+                    }
                     .first { it.contentModules.isNotEmpty() }
 
                 successCallback(layout)
@@ -89,18 +58,21 @@ open class Contentful(
         }
     }
 
-    fun fetchCourseBySlug(
+    override fun fetchCourseBySlug(
         coursesSlug: String,
         errorCallback: (Throwable) -> Unit,
         successCallback: (Course) -> Unit
     ) {
         launch {
             try {
-                val course = Course(
+                val course = Course.fromRestEntry(
                     client
                         .fetch(CDAEntry::class.java)
                         .withContentType("course")
-                        .where("locale", parameter.locale.or(DEFAULT_LOCALE))
+                        .where(
+                            "locale",
+                            parameter.locale.or(DEFAULT_LOCALE)
+                        )
                         .include(10)
                         .where("fields.slug", coursesSlug)
                         .all()
@@ -116,7 +88,7 @@ open class Contentful(
         }
     }
 
-    fun fetchAllCoursesOfCategoryId(
+    override fun fetchAllCoursesOfCategoryId(
         categoryId: String,
         errorCallback: (Throwable) -> Unit,
         successCallback: (List<Course>) -> Unit
@@ -132,7 +104,13 @@ open class Contentful(
                         .include(10)
                         .all()
                         .items()
-                        .map { Course(it as CDAEntry, parameter.locale ?: DEFAULT_LOCALE) }
+                        .map {
+                            Course.fromRestEntry(
+                                it as CDAEntry,
+                                parameter.locale
+                                    ?: DEFAULT_LOCALE
+                            )
+                        }
 
                 successCallback(courses)
             } catch (throwable: Throwable) {
@@ -141,7 +119,7 @@ open class Contentful(
         }
     }
 
-    fun fetchAllCourses(
+    override fun fetchAllCourses(
         errorCallback: (Throwable) -> Unit,
         successCallback: (List<Course>) -> Unit
     ) {
@@ -155,7 +133,13 @@ open class Contentful(
                         .include(10)
                         .all()
                         .items()
-                        .map { Course(it as CDAEntry, parameter.locale ?: DEFAULT_LOCALE) }
+                        .map {
+                            Course.fromRestEntry(
+                                it as CDAEntry,
+                                parameter.locale
+                                    ?: DEFAULT_LOCALE
+                            )
+                        }
 
                 successCallback(courses)
             } catch (throwable: Throwable) {
@@ -164,7 +148,7 @@ open class Contentful(
         }
     }
 
-    fun fetchAllCategories(
+    override fun fetchAllCategories(
         errorCallback: (Throwable) -> Unit,
         successCallback: (List<Category>) -> Unit
     ) {
@@ -177,7 +161,13 @@ open class Contentful(
                     .include(10)
                     .all()
                     .items()
-                    .map { Category(it as CDAEntry, parameter.locale ?: DEFAULT_LOCALE) }
+                    .map {
+                        Category.fromRestEntry(
+                            it as CDAEntry,
+                            parameter.locale
+                                ?: DEFAULT_LOCALE
+                        )
+                    }
 
                 successCallback(categories)
             } catch (throwable: Throwable) {
@@ -186,7 +176,7 @@ open class Contentful(
         }
     }
 
-    fun fetchSpace(
+    override fun fetchSpace(
         errorCallback: (Throwable) -> Unit,
         successCallback: (CDASpace) -> Unit
     ) {
@@ -201,7 +191,7 @@ open class Contentful(
         }
     }
 
-    fun fetchAllLocales(
+    override fun fetchAllLocales(
         errorCallback: (Throwable) -> Unit,
         successCallback: (List<CDALocale>) -> Unit
     ) {
@@ -220,7 +210,7 @@ open class Contentful(
         }
     }
 
-    fun applyParameter(
+    override fun applyParameter(
         parameter: Parameter,
         errorHandler: (Throwable) -> Unit,
         successHandler: (CDASpace) -> Unit
@@ -317,12 +307,3 @@ open class Contentful(
 }
 
 fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!
-
-fun Parameter.toUrl(): String =
-    "the-example-app-mobile://" +
-        "?space_id=$spaceId" +
-        "&preview_token=$previewToken" +
-        "&delivery_token=$deliveryToken" +
-        "&editorial_features=${editorialFeature.name.toLowerCase()}" +
-        "&api=${(if (api == null) CDA.name else api!!.name).toLowerCase()}" +
-        "&host=$host"

@@ -1,6 +1,6 @@
 package com.contentful.tea.kotlin.routing
 
-import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.content.Parameter
 
 const val courseSlugRegEx = """[\w-]+"""
 const val categorySlugRegEx = """[\w-]+"""

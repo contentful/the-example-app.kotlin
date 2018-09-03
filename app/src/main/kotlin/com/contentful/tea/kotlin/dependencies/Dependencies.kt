@@ -1,11 +1,12 @@
 package com.contentful.tea.kotlin.dependencies
 
 import android.content.Context
-import com.contentful.tea.kotlin.contentful.Contentful
+import com.contentful.tea.kotlin.content.ContentInfrastructure
+import com.contentful.tea.kotlin.content.rest.Contentful
 import com.contentful.tea.kotlin.markdown.MarkdownProcessor
 
 class Dependencies(
-    val contentful: Contentful,
+    val contentInfrastructure: ContentInfrastructure,
     val markdown: MarkdownProcessor
 ) {
 

@@ -2,9 +2,9 @@
 
 package com.contentful.tea.kotlin.routing
 
-import com.contentful.tea.kotlin.contentful.Api.CPA
-import com.contentful.tea.kotlin.contentful.EditorialFeature.Enabled
-import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.content.Api.CPA
+import com.contentful.tea.kotlin.content.EditorialFeature.Enabled
+import com.contentful.tea.kotlin.content.Parameter
 import com.contentful.tea.kotlin.separateParameterFromPath
 import org.junit.Test
 import org.mockito.Mockito

@@ -9,11 +9,11 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
-import com.contentful.tea.kotlin.contentful.Api
-import com.contentful.tea.kotlin.contentful.EditorialFeature
-import com.contentful.tea.kotlin.contentful.Parameter
-import com.contentful.tea.kotlin.contentful.toApi
-import com.contentful.tea.kotlin.contentful.toEditorialFeature
+import com.contentful.tea.kotlin.content.Api
+import com.contentful.tea.kotlin.content.EditorialFeature
+import com.contentful.tea.kotlin.content.Parameter
+import com.contentful.tea.kotlin.content.toApi
+import com.contentful.tea.kotlin.content.toEditorialFeature
 import com.contentful.tea.kotlin.courses.CoursesFragmentDirections
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), DependenciesProvider {
             val pathAndParameter = intent?.dataString.orEmpty().substringAfter("://")
             val (parameter, path) = separateParameterFromPath(pathAndParameter)
 
-            dependencies().contentful.applyParameter(
+            dependencies().contentInfrastructure.applyParameter(
                 parameter = parameter,
                 errorHandler = { routingError(pathAndParameter) },
                 successHandler = {

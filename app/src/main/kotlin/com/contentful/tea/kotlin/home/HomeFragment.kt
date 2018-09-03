@@ -19,12 +19,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.Reloadable
-import com.contentful.tea.kotlin.contentful.Api
-import com.contentful.tea.kotlin.contentful.Contentful
-import com.contentful.tea.kotlin.contentful.EditorialFeature
-import com.contentful.tea.kotlin.contentful.Layout
-import com.contentful.tea.kotlin.contentful.LayoutModule
-import com.contentful.tea.kotlin.contentful.Parameter
+import com.contentful.tea.kotlin.content.Api
+import com.contentful.tea.kotlin.content.ContentInfrastructure
+import com.contentful.tea.kotlin.content.EditorialFeature
+import com.contentful.tea.kotlin.content.Layout
+import com.contentful.tea.kotlin.content.LayoutModule
+import com.contentful.tea.kotlin.content.Parameter
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.isNetworkError
@@ -71,7 +71,7 @@ class HomeFragment : Fragment(), Reloadable {
         activity?.apply {
             val preferences =
                 getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
-            dependencies.contentful.applyParameterFromSharedPreferences(preferences) {
+            dependencies.contentInfrastructure.applyParameterFromSharedPreferences(preferences) {
                 loadHomeView()
             }
         }
@@ -86,7 +86,7 @@ class HomeFragment : Fragment(), Reloadable {
 
     private fun loadHomeView() {
         dependencies
-            .contentful
+            .contentInfrastructure
             .fetchHomeLayout(errorCallback = ::errorFetchingLayout) { layout: Layout ->
                 layout.contentModules.forEach { module ->
                     activity?.runOnUiThread {
@@ -184,7 +184,7 @@ class HomeFragment : Fragment(), Reloadable {
         }
     }
 
-    private fun Contentful.applyParameterFromSharedPreferences(
+    private fun ContentInfrastructure.applyParameterFromSharedPreferences(
         preferences: SharedPreferences,
         successCallback: () -> Unit
     ) {

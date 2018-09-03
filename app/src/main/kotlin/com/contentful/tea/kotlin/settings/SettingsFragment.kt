@@ -15,9 +15,9 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.contentful.java.cda.CDALocale
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.contentful.Api
-import com.contentful.tea.kotlin.contentful.Parameter
-import com.contentful.tea.kotlin.contentful.toUrl
+import com.contentful.tea.kotlin.content.Api
+import com.contentful.tea.kotlin.content.Parameter
+import com.contentful.tea.kotlin.content.toUrl
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.showError
@@ -53,7 +53,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun fillPreferences() {
-        parameter = dependencies.contentful.parameter.copy()
+        parameter = dependencies.contentInfrastructure.parameter.copy()
         fillInApi(
             findPreference(getString(R.string.settings_key_api)) as ListPreference
         )
@@ -62,7 +62,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference(getString(R.string.settings_key_locale)) as ListPreference
         )
 
-        dependencies.contentful.fetchSpace(errorCallback = {}) { space ->
+        dependencies.contentInfrastructure.fetchSpace(errorCallback = {}) { space ->
             activity?.runOnUiThread {
                 findPreference(getString(R.string.settings_key_space_connect))?.summary =
                     space.name()
@@ -92,7 +92,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             summary = parameter.locale
             value = parameter.locale
 
-            dependencies.contentful.fetchAllLocales(errorCallback = { _ ->
+            dependencies.contentInfrastructure.fetchAllLocales(errorCallback = { _ ->
                 activity?.toast(getString(R.string.error_could_not_fetch_locales))
             }, successCallback = { locales ->
                 entries = locales.map(CDALocale::code).toTypedArray()
@@ -106,7 +106,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
     private fun preferenceChanged(): Boolean {
-        dependencies.contentful.applyParameter(
+        dependencies.contentInfrastructure.applyParameter(
             parameter = parameter,
             errorHandler = {
                 activity?.runOnUiThread {
@@ -218,7 +218,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun encodeSettings(): String = dependencies.contentful.parameter.toUrl()
+    private fun encodeSettings(): String = dependencies.contentInfrastructure.parameter.toUrl()
 
     private fun goToParent() {
         val navController = NavHostFragment.findNavController(this)
