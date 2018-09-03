@@ -3,17 +3,18 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'androidx.navigation.safeargs'
 apply plugin: 'com.google.gms.oss.licenses.plugin'
+apply plugin: 'com.apollographql.android'
 
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.2'
 
     defaultConfig {
-        applicationId "com.contentful.tea.kotlin"
+        applicationId "com.contentful.tea.kotlin.graphql"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 5
-        versionName "2.0.0"
+        versionCode 1
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -23,7 +24,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         all {
-            buildConfigField("String", "CONTENTFUL_HOST", "\"contentful.com\"")
             buildConfigField("String", "CONTENTFUL_DELIVERY_TOKEN", "\"580d5944194846b690dd89b630a1cb98a0eef6a19b860ef71efc37ee8076ddb8\"")
             buildConfigField("String", "CONTENTFUL_PREVIEW_TOKEN", "\"e8fc39d9661c7468d0285a7ff949f7a23539dd2e686fcb7bd84dc01b392d698b\"")
             buildConfigField("String", "CONTENTFUL_SPACE_ID", "\"qz0n5cdakyl9\"")
@@ -64,23 +64,12 @@ dependencies {
 
     implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha05"
     implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha05"
-    implementation 'com.google.android.gms:play-services-oss-licenses:16.0.0'
-
-    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
 
     implementation 'com.github.bumptech.glide:glide:4.8.0'
 
-    implementation 'com.contentful.java:java-sdk:10.1.0'
-
     implementation 'com.atlassian.commonmark:commonmark:0.11.0'
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.jetbrains.kotlin:kotlin-stdlib:1.2.61'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:1.2.61'
-    testImplementation 'org.mockito:mockito-core:2.21.0'
-
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    implementation 'com.apollographql.apollo:apollo-runtime:1.0.0-alpha2'
 }
 
 afterEvaluate {

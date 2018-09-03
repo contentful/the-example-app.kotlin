@@ -177,7 +177,6 @@ class CoursesFragment : Fragment(), Reloadable {
                 .newTab()
                 .setText(R.string.categories_all)
                 .setTag("")
-
         )
 
         categories.forEach { category ->
@@ -244,15 +243,8 @@ class CoursesFragment : Fragment(), Reloadable {
                 val navController = NavHostFragment.findNavController(this@CoursesFragment)
                 showError(
                     message = getString(R.string.error_no_categories_found),
-                    moreTitle = getString(R.string.error_open_settings_button),
                     error = throwable,
-                    moreHandler = {
-                        val action = CoursesFragmentDirections.openSettings()
-                        navController.navigate(action)
-                    },
-                    okHandler = {
-                        navController.popBackStack()
-                    }
+                    okHandler = { navController.popBackStack() }
                 )
             }
         }
@@ -266,15 +258,8 @@ class CoursesFragment : Fragment(), Reloadable {
                 val navController = NavHostFragment.findNavController(this@CoursesFragment)
                 showError(
                     message = getString(R.string.error_fetching_all_courses),
-                    moreTitle = getString(R.string.error_open_settings_button),
                     error = throwable,
-                    moreHandler = {
-                        val action = CoursesFragmentDirections.openSettings()
-                        navController.navigate(action)
-                    },
-                    okHandler = {
-                        navController.popBackStack()
-                    }
+                    okHandler = { navController.popBackStack() }
                 )
             }
         }
@@ -291,15 +276,8 @@ class CoursesFragment : Fragment(), Reloadable {
                         R.string.error_fetching_all_courses_from_category,
                         category.slug
                     ),
-                    moreTitle = getString(R.string.error_open_settings_button),
                     error = throwable,
-                    moreHandler = {
-                        val action = CoursesFragmentDirections.openSettings()
-                        navController.navigate(action)
-                    },
-                    okHandler = {
-                        navController.popBackStack()
-                    }
+                    okHandler = { navController.popBackStack() }
                 )
             }
         }
@@ -310,14 +288,7 @@ class CoursesFragment : Fragment(), Reloadable {
             val navController = NavHostFragment.findNavController(this@CoursesFragment)
             showError(
                 message = getString(R.string.error_category_not_found, categorySlug),
-                moreTitle = getString(R.string.error_open_settings_button),
-                moreHandler = {
-                    val action = CoursesFragmentDirections.openSettings()
-                    navController.navigate(action)
-                },
-                okHandler = {
-                    navController.popBackStack()
-                }
+                okHandler = { navController.popBackStack() }
             )
         }
     }

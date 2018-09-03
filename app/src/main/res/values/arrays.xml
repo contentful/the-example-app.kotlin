@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-\    <string-array name="code_languages">
+    <string-array name="code_languages">
         <item>JavaAndroid</item>
         <item>Java</item>
         <item>Swift</item>

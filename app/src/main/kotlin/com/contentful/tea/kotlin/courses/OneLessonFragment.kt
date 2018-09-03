@@ -223,12 +223,7 @@ class OneLessonFragment : Fragment(), Reloadable {
                 val navController = NavHostFragment.findNavController(this@OneLessonFragment)
                 showError(
                     message = getString(R.string.error_lesson_id_not_found, courseSlug, lessonSlug),
-                    moreTitle = getString(R.string.error_open_settings_button),
                     error = throwable,
-                    moreHandler = {
-                        val action = OneLessonFragmentDirections.openSettings()
-                        navController.navigate(action)
-                    },
                     okHandler = {
                         navController.popBackStack()
                     }

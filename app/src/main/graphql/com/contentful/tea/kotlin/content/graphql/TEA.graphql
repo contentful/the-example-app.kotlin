@@ -1,0 +1,261 @@
+#
+# GraphQL routes, generating models through apollo.
+#
+# @see https://graphql.contentful.com/content/v1/spaces/qz0n5cdakyl9/explore?access_token=580d5944194846b690dd89b630a1cb98a0eef6a19b860ef71efc37ee8076ddb8
+# @see https://www.apollographql.com/docs/android/
+#
+
+query Home {
+  layoutCollection(limit: 1) {
+    items {
+      title
+      slug
+      contentModulesCollection {
+        items {
+          ... on LayoutHighlightedCourse {
+            course {
+              ...HightlightedCourseFragment
+            }
+          }
+          ... on LayoutCopy {
+            title
+            headline
+            copy
+            ctaTitle
+            ctaLink
+            visualStyle
+          }
+          ... on LayoutHeroImage {
+            title
+            headline
+            backgroundImage {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query CourseBySlug($slug: String!) {
+  courseCollection(where: {slug: $slug}) {
+    items {
+      ...CourseFragment
+    }
+  }
+}
+
+query CoursesOfCategoryId($categoryId: String!) {
+  category(id: $categoryId) {
+    linkedFrom {
+      entryCollection {
+        items {
+          ...CourseFragment
+        }
+      }
+    }
+  }
+}
+
+query Courses {
+  courseCollection {
+    items {
+      ...CourseFragment
+    }
+  }
+}
+
+query Categories {
+  categoryCollection {
+    items {
+      ...CategoryFragment
+    }
+  }
+}
+
+fragment HightlightedCourseFragment on Course {
+  sys {
+     id
+  }
+  slug
+  title
+  shortDescription
+  image {
+    url
+  }
+}
+
+fragment CourseFragment on Course {
+  sys {
+    id
+  }
+  title
+  slug
+  image {
+    url
+  }
+  lessonsCollection {
+    items {
+      ...LessonFragment
+    }
+  }
+  categoriesCollection {
+    items {
+      ...CategoryFragment
+    }
+  }
+  shortDescription
+  description
+  duration
+  skillLevel
+}
+
+fragment LessonFragment on Lesson {
+  title
+  slug
+  modulesCollection {
+    items {
+      ...LessonCodeSnippetFragment
+      ...LessonImageFragment
+      ...LessonCopyFragment
+    }
+  }
+}
+
+fragment LessonCodeSnippetFragment on LessonCodeSnippets {
+  title
+  curl
+  dotNet
+  javascript
+  java
+  javaAndroid
+  php
+  python
+  ruby
+  swift
+}
+
+fragment LessonImageFragment on LessonImage {
+  title
+  caption
+  image {
+    url
+  }
+}
+
+fragment LessonCopyFragment on LessonCopy {
+  title
+  copy
+}
+
+fragment CategoryFragment on Category {
+  sys {
+   id
+  }
+  title
+  slug
+}
+
+#
+# This is here for legacy reasons. If you can't use `apollo`-cli, use this one.
+#
+query IntrospectionQuery {
+  __schema {
+    queryType {
+      name
+    }
+    mutationType {
+      name
+    }
+    subscriptionType {
+      name
+    }
+    types {
+      ...FullType
+    }
+    directives {
+      name
+      description
+      locations
+      args {
+        ...InputValue
+      }
+    }
+  }
+}
+
+fragment FullType on __Type {
+  kind
+  name
+  description
+  fields(includeDeprecated: true) {
+    name
+    description
+    args {
+      ...InputValue
+    }
+    type {
+      ...TypeRef
+    }
+    isDeprecated
+    deprecationReason
+  }
+  inputFields {
+    ...InputValue
+  }
+  interfaces {
+    ...TypeRef
+  }
+  enumValues(includeDeprecated: true) {
+    name
+    description
+    isDeprecated
+    deprecationReason
+  }
+  possibleTypes {
+    ...TypeRef
+  }
+}
+
+fragment InputValue on __InputValue {
+  name
+  description
+  type {
+    ...TypeRef
+  }
+  defaultValue
+}
+
+fragment TypeRef on __Type {
+  kind
+  name
+  ofType {
+    kind
+    name
+    ofType {
+      kind
+      name
+      ofType {
+        kind
+        name
+        ofType {
+          kind
+          name
+          ofType {
+            kind
+            name
+            ofType {
+              kind
+              name
+              ofType {
+                kind
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -134,12 +134,7 @@ class CourseOverviewFragment : Fragment(), Reloadable {
                 val navController = NavHostFragment.findNavController(this@CourseOverviewFragment)
                 showError(
                     message = getString(R.string.error_fetching_course_from_slug, courseSlug),
-                    moreTitle = getString(R.string.error_open_settings_button),
                     error = throwable,
-                    moreHandler = {
-                        val action = CourseOverviewFragmentDirections.openSettings()
-                        navController.navigate(action)
-                    },
                     okHandler = {
                         navController.popBackStack()
                     }

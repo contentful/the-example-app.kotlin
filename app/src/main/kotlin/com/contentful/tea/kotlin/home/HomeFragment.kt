@@ -1,11 +1,8 @@
 package com.contentful.tea.kotlin.home
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -16,15 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.Reloadable
-import com.contentful.tea.kotlin.content.Api
-import com.contentful.tea.kotlin.content.ContentInfrastructure
-import com.contentful.tea.kotlin.content.EditorialFeature
 import com.contentful.tea.kotlin.content.Layout
 import com.contentful.tea.kotlin.content.LayoutModule
-import com.contentful.tea.kotlin.content.Parameter
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
 import com.contentful.tea.kotlin.extensions.isNetworkError
@@ -34,10 +26,6 @@ import com.contentful.tea.kotlin.extensions.showNetworkError
 import kotlinx.android.synthetic.main.course_card.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 
-/**
- * This fragment will be the actual starting point of the app: Showing modules and offering
- * settings.
- */
 class HomeFragment : Fragment(), Reloadable {
 
     private lateinit var dependencies: Dependencies
@@ -68,13 +56,7 @@ class HomeFragment : Fragment(), Reloadable {
             }
         }
 
-        activity?.apply {
-            val preferences =
-                getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
-            dependencies.contentInfrastructure.applyParameterFromSharedPreferences(preferences) {
-                loadHomeView()
-            }
-        }
+        loadHomeView()
     }
 
     override fun onResume() {
@@ -170,71 +152,13 @@ class HomeFragment : Fragment(), Reloadable {
                 val navController = NavHostFragment.findNavController(this@HomeFragment)
                 showError(
                     message = getString(R.string.error_fetching_layout),
-                    moreTitle = getString(R.string.error_open_settings_button),
                     error = throwable,
-                    moreHandler = {
-                        val action = HomeFragmentDirections.openSettings()
-                        navController.navigate(action)
-                    },
                     okHandler = {
                         navController.popBackStack()
                     }
                 )
             }
         }
-    }
-
-    private fun ContentInfrastructure.applyParameterFromSharedPreferences(
-        preferences: SharedPreferences,
-        successCallback: () -> Unit
-    ) {
-        val parameter = Parameter(
-            editorialFeature =
-            if (preferences.getBoolean(getString(R.string.settings_key_editorial), false)) {
-                EditorialFeature.Enabled
-            } else {
-                EditorialFeature.Disabled
-            },
-            api = Api.valueOf(
-                preferences.getString(
-                    getString(R.string.settings_key_api),
-                    Api.CDA.name
-                )!!
-            ),
-            locale = preferences.getString(getString(R.string.settings_key_locale), "en-US")!!,
-            spaceId = preferences.getString(
-                getString(R.string.settings_key_space_id),
-                BuildConfig.CONTENTFUL_SPACE_ID
-            )!!,
-            deliveryToken = preferences.getString(
-                getString(R.string.settings_key_delivery_token),
-                BuildConfig.CONTENTFUL_DELIVERY_TOKEN
-            )!!,
-            previewToken = preferences.getString(
-                getString(R.string.settings_key_preview_token),
-                BuildConfig.CONTENTFUL_PREVIEW_TOKEN
-            )!!,
-            host = preferences.getString(
-                getString(R.string.settings_key_host),
-                BuildConfig.CONTENTFUL_HOST
-            )!!
-        )
-
-        applyParameter(
-            parameter,
-            errorHandler = { },
-            successHandler = { space ->
-                Log.d(
-                    "HomeFragment.kt",
-                    getString(
-                        R.string.settings_connected_successfully_to_space,
-                        space.name()
-                    )
-                )
-
-                successCallback()
-            }
-        )
     }
 
     private fun navigateUp() {}

@@ -45,10 +45,6 @@
                 android:id="@+id/openHome"
                 app:destination="@id/home"
                 />
-        <action
-                android:id="@+id/openSettings"
-                app:destination="@id/settings"
-                />
     </fragment>
     <fragment
             android:id="@+id/courses"
@@ -82,10 +78,6 @@
                     />
         </action>
         <action
-                android:id="@+id/openSettings"
-                app:destination="@id/settings"
-                />
-        <action
                 android:id="@+id/openHome"
                 app:destination="@id/home"
                 />
@@ -118,11 +110,6 @@
                     app:argType="string"
                     />
         </action>
-        <action
-                android:id="@+id/openSettings"
-                app:destination="@id/settings"
-                />
-
         <action
                 android:id="@+id/openHome"
                 app:destination="@id/home"
@@ -166,11 +153,6 @@
                     />
         </action>
         <action
-                android:id="@+id/openSettings"
-                app:destination="@id/settings"
-                />
-
-        <action
                 android:id="@+id/openHome"
                 app:destination="@id/home"
                 />
@@ -183,70 +165,5 @@
                 android:id="@+id/openCategory"
                 app:destination="@id/courses"
                 />
-    </fragment>
-    <fragment
-            android:id="@+id/settings"
-            android:name="com.contentful.tea.kotlin.settings.SettingsFragment"
-            android:label="fragment_settings"
-            >
-        <action
-                android:id="@+id/openSpaceSettings"
-                app:destination="@id/spaceSettings"
-                />
-        <action
-                android:id="@+id/openAbout"
-                app:destination="@id/aboutFragment"
-                />
-        <action
-                android:id="@+id/openImprint"
-                app:destination="@id/imprintFragment"
-                />
-        <action
-                android:id="@+id/openScanQR"
-                app:destination="@id/qrCodeSettings"
-                />
-    </fragment>
-    <fragment
-            android:id="@+id/spaceSettings"
-            android:name="com.contentful.tea.kotlin.settings.SettingsCredentialsFragment"
-            android:label="preferences_credentials"
-            tools:layout="@xml/preferences_credentials"
-            />
-    <fragment
-            android:id="@+id/qrCodeSettings"
-            android:name="com.contentful.tea.kotlin.settings.QRCodeScannerFragment"
-            android:label="fragment_qrcode_scanner"
-            tools:layout="@layout/fragment_qrcode_scanner"
-            >
-        <action
-                android:id="@+id/openCategory"
-                app:destination="@id/courses"
-                />
-        <action
-                android:id="@+id/openCourseOverview"
-                app:destination="@id/course_overview"
-                />
-        <action
-                android:id="@+id/openLesson"
-                app:destination="@id/lesson"
-                />
-        <action
-                android:id="@+id/openSettings"
-                app:destination="@id/settings"
-                />
-    </fragment>
-    <fragment
-            android:id="@+id/aboutFragment"
-            android:name="com.contentful.tea.kotlin.information.AboutFragment"
-            android:label="fragment_about"
-            tools:layout="@layout/fragment_about"
-            >
-    </fragment>
-    <fragment
-            android:id="@+id/imprintFragment"
-            android:name="com.contentful.tea.kotlin.information.ImprintFragment"
-            android:label="fragment_imprint"
-            tools:layout="@layout/fragment_imprint"
-            >
     </fragment>
 </navigation>
