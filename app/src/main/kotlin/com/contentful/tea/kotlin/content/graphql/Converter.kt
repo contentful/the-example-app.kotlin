@@ -1,9 +1,7 @@
-package com.contentful.tea.kotlin.content.rest
+package com.contentful.tea.kotlin.content.graphql
 
 import com.contentful.java.cda.CDAAsset
 import com.contentful.java.cda.CDAEntry
-import com.contentful.java.cda.CDALocale
-import com.contentful.java.cda.CDASpace
 import com.contentful.java.cda.image.ImageOption
 import com.contentful.java.cda.image.ImageOption.formatOf
 import com.contentful.java.cda.image.ImageOption.https
@@ -13,10 +11,8 @@ import com.contentful.tea.kotlin.content.Layout
 import com.contentful.tea.kotlin.content.LayoutModule
 import com.contentful.tea.kotlin.content.Lesson
 import com.contentful.tea.kotlin.content.LessonModule
-import com.contentful.tea.kotlin.content.Locale
-import com.contentful.tea.kotlin.content.Space
 
-fun Course.Companion.fromRestEntry(entry: CDAEntry, locale: String): Course = Course(
+fun Course.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String): Course = Course(
     entry.getField<String?>(locale, "title").orEmpty(),
     entry.getField<String?>(locale, "slug").orEmpty(),
     try {
@@ -32,21 +28,21 @@ fun Course.Companion.fromRestEntry(entry: CDAEntry, locale: String): Course = Co
     entry.getField<String?>(locale, "skillLevel").orEmpty(),
     entry.getField<List<CDAEntry>?>(locale, "lessons")
         .orEmpty()
-        .map { Lesson.fromRestEntry(it, locale) },
+        .map { Lesson.fromGraphQlEntry(it, locale) },
     entry.getField<List<CDAEntry>>(locale, "categories")
         .orEmpty()
-        .map { Category.fromRestEntry(it, locale) }
+        .map { Category.fromGraphQlEntry(it, locale) }
 )
 
 private fun Double?.or(default: Double): Double = this ?: default
 
-fun Category.Companion.fromRestEntry(entry: CDAEntry, locale: String) = Category(
+fun Category.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) = Category(
     entry.id(),
     entry.getField<String?>(locale, "title").orEmpty(),
     entry.getField<String?>(locale, "slug").orEmpty()
 )
 
-fun Layout.Companion.fromRestEntry(entry: CDAEntry, locale: String) = Layout(
+fun Layout.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) = Layout(
     entry.getField<String?>(locale, "title").orEmpty(),
     entry.getField<String?>(locale, "slug").orEmpty(),
     entry.getField<List<CDAEntry>?>(locale, "contentModules").orEmpty().map {
@@ -56,9 +52,9 @@ fun Layout.Companion.fromRestEntry(entry: CDAEntry, locale: String) = Layout(
 
 fun findLayoutModule(entry: CDAEntry, locale: String): LayoutModule =
     when (entry.contentType().id()) {
-        "layoutHighlightedCourse" -> LayoutModule.HightlightedCourse.fromRestEntry(entry, locale)
-        "layoutCopy" -> LayoutModule.Copy.fromRestEntry(entry, locale)
-        "layoutHeroImage" -> LayoutModule.HeroImage.fromRestEntry(entry, locale)
+        "layoutHighlightedCourse" -> LayoutModule.HightlightedCourse.fromGraphQlEntry(entry, locale)
+        "layoutCopy" -> LayoutModule.Copy.fromGraphQlEntry(entry, locale)
+        "layoutHeroImage" -> LayoutModule.HeroImage.fromGraphQlEntry(entry, locale)
         else -> LayoutModule.Copy(
             "<layout module type not found>",
             "## layout module type not found",
@@ -69,7 +65,7 @@ fun findLayoutModule(entry: CDAEntry, locale: String): LayoutModule =
         )
     }
 
-fun LayoutModule.HightlightedCourse.Companion.fromRestEntry(entry: CDAEntry, locale: String) =
+fun LayoutModule.HightlightedCourse.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
     LayoutModule.HightlightedCourse(
         entry.getField<String?>(locale, "title").orEmpty(),
         if (entry.getField<CDAEntry?>(locale, "course") == null) {
@@ -78,11 +74,11 @@ fun LayoutModule.HightlightedCourse.Companion.fromRestEntry(entry: CDAEntry, loc
                 emptyList(), emptyList()
             )
         } else {
-            Course.fromRestEntry(entry.getField<CDAEntry>(locale, "course"), locale)
+            Course.fromGraphQlEntry(entry.getField<CDAEntry>(locale, "course"), locale)
         }
     )
 
-fun LayoutModule.HeroImage.Companion.fromRestEntry(entry: CDAEntry, locale: String) =
+fun LayoutModule.HeroImage.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
     LayoutModule.HeroImage(
         entry.getField<String?>(locale, "title").orEmpty(),
         entry.getField<String?>(locale, "headline").orEmpty(),
@@ -94,7 +90,7 @@ fun LayoutModule.HeroImage.Companion.fromRestEntry(entry: CDAEntry, locale: Stri
         }
     )
 
-fun LayoutModule.Copy.Companion.fromRestEntry(entry: CDAEntry, locale: String) =
+fun LayoutModule.Copy.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
     LayoutModule.Copy(
         entry.getField<String?>(locale, "title").orEmpty(),
         entry.getField<String?>(locale, "headline").orEmpty(),
@@ -104,7 +100,7 @@ fun LayoutModule.Copy.Companion.fromRestEntry(entry: CDAEntry, locale: String) =
         entry.getField<String?>(locale, "visualStyle").orEmpty()
     )
 
-fun Lesson.Companion.fromRestEntry(entry: CDAEntry, locale: String) = Lesson(
+fun Lesson.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) = Lesson(
     entry.getField<String?>(locale, "title").orEmpty(),
     entry.getField<String?>(locale, "slug").orEmpty(),
     entry.getField<List<CDAEntry>?>(locale, "modules")
@@ -114,16 +110,16 @@ fun Lesson.Companion.fromRestEntry(entry: CDAEntry, locale: String) = Lesson(
 
 fun findLessonModule(entry: CDAEntry, locale: String): LessonModule =
     when (entry.contentType().id()) {
-        "lessonCodeSnippets" -> LessonModule.CodeSnippet.fromRestEntry(entry, locale)
-        "lessonImage" -> LessonModule.Image.fromRestEntry(entry, locale)
-        "lessonCopy" -> LessonModule.Copy.fromRestEntry(entry, locale)
+        "lessonCodeSnippets" -> LessonModule.CodeSnippet.fromGraphQlEntry(entry, locale)
+        "lessonImage" -> LessonModule.Image.fromGraphQlEntry(entry, locale)
+        "lessonCopy" -> LessonModule.Copy.fromGraphQlEntry(entry, locale)
         else -> LessonModule.Copy(
             "<lesson module type not found>",
             "## lesson module type not found"
         )
     }
 
-fun LessonModule.CodeSnippet.Companion.fromRestEntry(entry: CDAEntry, locale: String) =
+fun LessonModule.CodeSnippet.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
     LessonModule.CodeSnippet(
         entry.getField<String?>(locale, "title").orEmpty(),
         entry.getField<String?>(locale, "curl").orEmpty(),
@@ -137,7 +133,7 @@ fun LessonModule.CodeSnippet.Companion.fromRestEntry(entry: CDAEntry, locale: St
         entry.getField<String?>(locale, "swift").orEmpty()
     )
 
-fun LessonModule.Image.Companion.fromRestEntry(entry: CDAEntry, locale: String) =
+fun LessonModule.Image.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
     LessonModule.Image(
         entry.getField<String?>(locale, "title").orEmpty(),
         entry.getField<String?>(locale, "caption").orEmpty(),
@@ -152,12 +148,8 @@ fun LessonModule.Image.Companion.fromRestEntry(entry: CDAEntry, locale: String) 
         }
     )
 
-fun LessonModule.Copy.Companion.fromRestEntry(entry: CDAEntry, locale: String) = LessonModule.Copy(
-    entry.getField<String?>(locale, "title").orEmpty(),
-    entry.getField<String?>(locale, "copy").orEmpty()
-)
-
-fun Space.Companion.fromRestSpace(space: CDASpace) = Space(space.id(), space.name())
-
-fun Locale.Companion.fromRestLocale(locale: CDALocale) =
-    Locale(locale.id(), locale.code(), locale.name())
+fun LessonModule.Copy.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
+    LessonModule.Copy(
+        entry.getField<String?>(locale, "title").orEmpty(),
+        entry.getField<String?>(locale, "copy").orEmpty()
+    )

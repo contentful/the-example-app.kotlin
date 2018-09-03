@@ -26,7 +26,7 @@ class MainRouteCallback(private val activity: Activity) : RouteCallback() {
                     activity,
                     activity.getString(
                         R.string.settings_connected_successfully_to_space,
-                        it.name()
+                        it.name
                     ).toHtml(),
                     Toast.LENGTH_LONG
                 ).show()

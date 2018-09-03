@@ -4,15 +4,17 @@ import android.util.Log
 import com.contentful.java.cda.CDAClient
 import com.contentful.java.cda.CDAEntry
 import com.contentful.java.cda.CDALocale
-import com.contentful.java.cda.CDASpace
 import com.contentful.tea.kotlin.BuildConfig
 import com.contentful.tea.kotlin.content.Api
 import com.contentful.tea.kotlin.content.Category
 import com.contentful.tea.kotlin.content.ContentInfrastructure
 import com.contentful.tea.kotlin.content.Course
 import com.contentful.tea.kotlin.content.Layout
+import com.contentful.tea.kotlin.content.Locale
 import com.contentful.tea.kotlin.content.Parameter
+import com.contentful.tea.kotlin.content.Space
 import com.contentful.tea.kotlin.content.parameterFromBuildConfig
+import com.contentful.tea.kotlin.extensions.or
 import kotlinx.coroutines.experimental.launch
 import java.util.NoSuchElementException
 
@@ -178,13 +180,13 @@ open class Contentful(
 
     override fun fetchSpace(
         errorCallback: (Throwable) -> Unit,
-        successCallback: (CDASpace) -> Unit
+        successCallback: (Space) -> Unit
     ) {
         launch {
             try {
                 val space = client.fetchSpace()
 
-                successCallback(space)
+                successCallback(Space.fromRestSpace(space))
             } catch (throwable: Throwable) {
                 errorCallback(throwable)
             }
@@ -193,17 +195,17 @@ open class Contentful(
 
     override fun fetchAllLocales(
         errorCallback: (Throwable) -> Unit,
-        successCallback: (List<CDALocale>) -> Unit
+        successCallback: (List<Locale>) -> Unit
     ) {
         launch {
             try {
-                val categories = client
+                val locales = client
                     .fetch(CDALocale::class.java)
                     .all()
                     .items()
-                    .map { it as CDALocale }
+                    .map { Locale.fromRestLocale(it as CDALocale) }
 
-                successCallback(categories)
+                successCallback(locales)
             } catch (throwable: Throwable) {
                 errorCallback(throwable)
             }
@@ -213,7 +215,7 @@ open class Contentful(
     override fun applyParameter(
         parameter: Parameter,
         errorHandler: (Throwable) -> Unit,
-        successHandler: (CDASpace) -> Unit
+        successHandler: (Space) -> Unit
     ) {
         launch {
             val (newClientDelivery, newClientPreview) = createClients(parameter)
@@ -251,7 +253,7 @@ open class Contentful(
                 // look if current configured locale is available in space
                 parameter.locale = lookUpSuitableLocale()
 
-                successHandler(deliverySpace)
+                successHandler(Space.fromRestSpace(deliverySpace))
             } catch (throwable: Throwable) {
                 Log.e("Contentful.kt", "Cannot connect to space.", throwable)
                 errorHandler(throwable)
@@ -305,5 +307,3 @@ open class Contentful(
             parameter.deliveryToken.isNotEmpty() ||
             parameter.previewToken.isNotEmpty()
 }
-
-fun String?.or(other: String): String = if (isNullOrEmpty()) other else this!!

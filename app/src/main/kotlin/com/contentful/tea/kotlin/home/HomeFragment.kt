@@ -228,7 +228,7 @@ class HomeFragment : Fragment(), Reloadable {
                     "HomeFragment.kt",
                     getString(
                         R.string.settings_connected_successfully_to_space,
-                        space.name()
+                        space.name
                     )
                 )
 

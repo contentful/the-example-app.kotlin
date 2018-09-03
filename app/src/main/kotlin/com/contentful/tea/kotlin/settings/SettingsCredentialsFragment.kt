@@ -64,7 +64,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
                 activity?.toast(
                     getString(
                         R.string.settings_connected_successfully_to_space,
-                        space.name()
+                        space.name
                     )
                 )
             }
@@ -79,7 +79,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
             successCallback = { space ->
                 activity?.runOnUiThread {
                     findPreference(getString(R.string.settings_key_space_information))
-                        .summary = space.name()
+                        .summary = space.name
 
                     setEditPreference(
                         R.string.settings_key_space_id,
@@ -132,7 +132,7 @@ class SettingsCredentialsFragment : PreferenceFragmentCompat() {
                 activity?.toast(
                     getString(
                         R.string.settings_connected_successfully_to_space,
-                        space.name()
+                        space.name
                     )
                 )
             }
