@@ -6,7 +6,7 @@ import com.contentful.tea.kotlin.content.rest.Contentful
 import com.contentful.tea.kotlin.markdown.MarkdownProcessor
 
 class Dependencies(
-    val contentInfrastructure: ContentInfrastructure,
+    var contentInfrastructure: ContentInfrastructure,
     val markdown: MarkdownProcessor
 ) {
 

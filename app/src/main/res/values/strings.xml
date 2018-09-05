@@ -65,4 +65,5 @@
     <string name="settings_credentials_reset_description">Reset credentials to default settings, losing all the entered credentials.</string>
     <string name="settings_share_qr_label">Share current configuration …</string>
     <string name="settings_credentials_host_label">Change host</string>
+    <string name="settings_content_protocol_label">Use protocol</string>
 </resources>

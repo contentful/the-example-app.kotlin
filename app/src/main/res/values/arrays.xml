@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-\    <string-array name="code_languages">
+    <string-array name="code_languages">
         <item>JavaAndroid</item>
         <item>Java</item>
         <item>Swift</item>
@@ -10,5 +10,9 @@
         <item>Php</item>
         <item>Python</item>
         <item>Ruby</item>
+    </string-array>
+    <string-array name="settings_content_protocol_values">
+        <item>REST</item>
+        <item>GraphQL</item>
     </string-array>
 </resources>
