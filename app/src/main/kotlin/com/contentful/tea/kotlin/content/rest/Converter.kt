@@ -157,7 +157,8 @@ fun LessonModule.Copy.Companion.fromRestEntry(entry: CDAEntry, locale: String) =
     entry.getField<String?>(locale, "copy").orEmpty()
 )
 
-fun Space.Companion.fromRestSpace(space: CDASpace) = Space(space.id(), space.name())
+fun Space.Companion.fromRestSpace(space: CDASpace) =
+    Space(space.id().orEmpty(), space.name().orEmpty())
 
 fun Locale.Companion.fromRestLocale(locale: CDALocale) =
-    Locale(locale.id(), locale.code(), locale.name())
+    Locale(locale.id().orEmpty(), locale.code().orEmpty(), locale.name().orEmpty())
