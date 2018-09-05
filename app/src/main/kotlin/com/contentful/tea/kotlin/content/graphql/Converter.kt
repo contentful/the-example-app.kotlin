@@ -1,60 +1,33 @@
 package com.contentful.tea.kotlin.content.graphql
 
-import com.contentful.java.cda.CDAAsset
-import com.contentful.java.cda.CDAEntry
-import com.contentful.java.cda.image.ImageOption
-import com.contentful.java.cda.image.ImageOption.formatOf
-import com.contentful.java.cda.image.ImageOption.https
 import com.contentful.tea.kotlin.content.Category
 import com.contentful.tea.kotlin.content.Course
 import com.contentful.tea.kotlin.content.Layout
 import com.contentful.tea.kotlin.content.LayoutModule
 import com.contentful.tea.kotlin.content.Lesson
 import com.contentful.tea.kotlin.content.LessonModule
+import com.contentful.tea.kotlin.content.graphql.fragment.Lesson.AsLessonCodeSnippets
+import com.contentful.tea.kotlin.content.graphql.fragment.Lesson.AsLessonCopy
+import com.contentful.tea.kotlin.content.graphql.fragment.Lesson.AsLessonImage
 
-fun Course.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String): Course = Course(
-    entry.getField<String?>(locale, "title").orEmpty(),
-    entry.getField<String?>(locale, "slug").orEmpty(),
-    try {
-        entry.getField<CDAAsset?>(locale, "image")
-            ?.urlForImageWith(ImageOption.https(), ImageOption.formatOf(ImageOption.Format.webp))
-            .orEmpty()
-    } catch (_: Throwable) {
-        ""
-    },
-    entry.getField<String?>(locale, "shortDescription").orEmpty(),
-    entry.getField<String?>(locale, "description").orEmpty(),
-    entry.getField<Double?>(locale, "duration").or(0.0).toInt(),
-    entry.getField<String?>(locale, "skillLevel").orEmpty(),
-    entry.getField<List<CDAEntry>?>(locale, "lessons")
-        .orEmpty()
-        .map { Lesson.fromGraphQlEntry(it, locale) },
-    entry.getField<List<CDAEntry>>(locale, "categories")
-        .orEmpty()
-        .map { Category.fromGraphQlEntry(it, locale) }
-)
-
-private fun Double?.or(default: Double): Double = this ?: default
-
-fun Category.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) = Category(
-    entry.id(),
-    entry.getField<String?>(locale, "title").orEmpty(),
-    entry.getField<String?>(locale, "slug").orEmpty()
-)
-
-fun Layout.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) = Layout(
-    entry.getField<String?>(locale, "title").orEmpty(),
-    entry.getField<String?>(locale, "slug").orEmpty(),
-    entry.getField<List<CDAEntry>?>(locale, "contentModules").orEmpty().map {
-        findLayoutModule(it, locale)
+fun Layout.Companion.fromGraphQlEntry(home: HomeQuery.Data) =
+    with(home.layoutCollection?.items.orEmpty().first()) {
+        Layout(
+            title.orEmpty(),
+            slug.orEmpty(),
+            contentModules?.items.orEmpty().map { module ->
+                createHomeModule(module)
+            }
+        )
     }
-)
 
-fun findLayoutModule(entry: CDAEntry, locale: String): LayoutModule =
-    when (entry.contentType().id()) {
-        "layoutHighlightedCourse" -> LayoutModule.HightlightedCourse.fromGraphQlEntry(entry, locale)
-        "layoutCopy" -> LayoutModule.Copy.fromGraphQlEntry(entry, locale)
-        "layoutHeroImage" -> LayoutModule.HeroImage.fromGraphQlEntry(entry, locale)
+fun createHomeModule(module: HomeQuery.Item1): LayoutModule =
+    when (module) {
+        is HomeQuery.AsLayoutHighlightedCourse -> LayoutModule.HightlightedCourse.fromGraphQlEntry(
+            module
+        )
+        is HomeQuery.AsLayoutCopy -> LayoutModule.Copy.fromGraphQlEntry(module)
+        is HomeQuery.AsLayoutHeroImage -> LayoutModule.HeroImage.fromGraphQlEntry(module)
         else -> LayoutModule.Copy(
             "<layout module type not found>",
             "## layout module type not found",
@@ -65,91 +38,121 @@ fun findLayoutModule(entry: CDAEntry, locale: String): LayoutModule =
         )
     }
 
-fun LayoutModule.HightlightedCourse.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
-    LayoutModule.HightlightedCourse(
-        entry.getField<String?>(locale, "title").orEmpty(),
-        if (entry.getField<CDAEntry?>(locale, "course") == null) {
-            Course(
-                "", "", "", "", "", 0, "",
-                emptyList(), emptyList()
-            )
-        } else {
-            Course.fromGraphQlEntry(entry.getField<CDAEntry>(locale, "course"), locale)
-        }
+fun LayoutModule.HightlightedCourse.Companion.fromGraphQlEntry(
+    course: HomeQuery.AsLayoutHighlightedCourse
+) = LayoutModule.HightlightedCourse(
+    course.course?.fragments()?.hightlightedCourse?.title().orEmpty(),
+    Course(
+        course.course?.fragments()?.hightlightedCourse?.title().orEmpty(),
+        course.course?.fragments()?.hightlightedCourse?.slug().orEmpty(),
+        course.course?.fragments()?.hightlightedCourse?.image()?.url().orEmpty(),
+        course.course?.fragments()?.hightlightedCourse?.shortDescription().orEmpty(),
+        "",
+        0,
+        "",
+        emptyList(),
+        emptyList()
     )
-
-fun LayoutModule.HeroImage.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
-    LayoutModule.HeroImage(
-        entry.getField<String?>(locale, "title").orEmpty(),
-        entry.getField<String?>(locale, "headline").orEmpty(),
-        try {
-            entry.getField<CDAAsset?>(locale, "backgroundImage")
-                ?.urlForImageWith(https(), formatOf(ImageOption.Format.webp)).orEmpty()
-        } catch (_: Throwable) {
-            ""
-        }
-    )
-
-fun LayoutModule.Copy.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
-    LayoutModule.Copy(
-        entry.getField<String?>(locale, "title").orEmpty(),
-        entry.getField<String?>(locale, "headline").orEmpty(),
-        entry.getField<String?>(locale, "copy").orEmpty(),
-        entry.getField<String?>(locale, "ctaTitle").orEmpty(),
-        entry.getField<String?>(locale, "ctaLink").orEmpty(),
-        entry.getField<String?>(locale, "visualStyle").orEmpty()
-    )
-
-fun Lesson.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) = Lesson(
-    entry.getField<String?>(locale, "title").orEmpty(),
-    entry.getField<String?>(locale, "slug").orEmpty(),
-    entry.getField<List<CDAEntry>?>(locale, "modules")
-        .orEmpty()
-        .map { findLessonModule(it, locale) }
 )
 
-fun findLessonModule(entry: CDAEntry, locale: String): LessonModule =
-    when (entry.contentType().id()) {
-        "lessonCodeSnippets" -> LessonModule.CodeSnippet.fromGraphQlEntry(entry, locale)
-        "lessonImage" -> LessonModule.Image.fromGraphQlEntry(entry, locale)
-        "lessonCopy" -> LessonModule.Copy.fromGraphQlEntry(entry, locale)
+fun LayoutModule.HeroImage.Companion.fromGraphQlEntry(hero: HomeQuery.AsLayoutHeroImage) =
+    LayoutModule.HeroImage(
+        hero.title.orEmpty(),
+        hero.headline.orEmpty(),
+        hero.backgroundImage?.url.orEmpty()
+    )
+
+fun LayoutModule.Copy.Companion.fromGraphQlEntry(copy: HomeQuery.AsLayoutCopy) =
+    LayoutModule.Copy(
+        copy.title.orEmpty(),
+        copy.headline.orEmpty(),
+        copy.copy.orEmpty(),
+        copy.ctaTitle.orEmpty(),
+        copy.ctaLink.orEmpty(),
+        copy.visualStyle.orEmpty()
+    )
+
+fun Course.Companion.fromGraphQlEntry(
+    course: com.contentful.tea.kotlin.content.graphql.fragment.Course
+): Course =
+    Course(
+        course.title().orEmpty(),
+        course.slug().orEmpty(),
+        course.image()?.url().orEmpty(),
+        course.shortDescription().orEmpty(),
+        course.description().orEmpty(),
+        course.duration().or(0),
+        course.skillLevel().orEmpty(),
+        course.lessons()?.items().orEmpty().map {
+            Lesson.fromGraphQlEntry(it.fragments().lesson())
+        },
+        course.categories()?.items().orEmpty().map {
+            Category.fromGraphQlEntry(it.fragments().category())
+        }
+    )
+
+private fun Int?.or(default: Int): Int = this ?: default
+
+fun Lesson.Companion.fromGraphQlEntry(
+    lesson: com.contentful.tea.kotlin.content.graphql.fragment.Lesson
+) =
+    Lesson(
+        lesson.title().orEmpty(),
+        lesson.slug().orEmpty(),
+        lesson.modules()?.items().orEmpty().map { findLessonModule(it) }
+    )
+
+fun findLessonModule(
+    module: com.contentful.tea.kotlin.content.graphql.fragment.Lesson.Item
+): LessonModule =
+    when (module) {
+        is AsLessonCodeSnippets -> LessonModule.CodeSnippet.fromGraphQlEntry(module)
+        is AsLessonImage -> LessonModule.Image.fromGraphQlEntry(module)
+        is AsLessonCopy -> LessonModule.Copy.fromGraphQlEntry(module)
         else -> LessonModule.Copy(
             "<lesson module type not found>",
             "## lesson module type not found"
         )
     }
 
-fun LessonModule.CodeSnippet.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
-    LessonModule.CodeSnippet(
-        entry.getField<String?>(locale, "title").orEmpty(),
-        entry.getField<String?>(locale, "curl").orEmpty(),
-        entry.getField<String?>(locale, "dotNet").orEmpty(),
-        entry.getField<String?>(locale, "javascript").orEmpty(),
-        entry.getField<String?>(locale, "java").orEmpty(),
-        entry.getField<String?>(locale, "javaAndroid").orEmpty(),
-        entry.getField<String?>(locale, "php").orEmpty(),
-        entry.getField<String?>(locale, "python").orEmpty(),
-        entry.getField<String?>(locale, "ruby").orEmpty(),
-        entry.getField<String?>(locale, "swift").orEmpty()
-    )
+fun LessonModule.CodeSnippet.Companion.fromGraphQlEntry(module: AsLessonCodeSnippets) =
+    with(module.fragments().lessonCodeSnippet()!!) {
+        LessonModule.CodeSnippet(
+            title().orEmpty(),
+            curl().orEmpty(),
+            dotNet().orEmpty(),
+            javascript().orEmpty(),
+            java().orEmpty(),
+            javaAndroid().orEmpty(),
+            php().orEmpty(),
+            python().orEmpty(),
+            ruby().orEmpty(),
+            swift().orEmpty()
+        )
+    }
 
-fun LessonModule.Image.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
-    LessonModule.Image(
-        entry.getField<String?>(locale, "title").orEmpty(),
-        entry.getField<String?>(locale, "caption").orEmpty(),
-        try {
-            entry.getField<CDAAsset?>(locale, "image")
-                ?.urlForImageWith(
-                    ImageOption.https(),
-                    ImageOption.formatOf(ImageOption.Format.webp)
-                ).orEmpty()
-        } catch (_: Throwable) {
-            ""
-        }
-    )
+fun LessonModule.Image.Companion.fromGraphQlEntry(module: AsLessonImage) =
+    with(module.fragments().lessonImage()!!) {
+        LessonModule.Image(
+            title().orEmpty(),
+            caption().orEmpty(),
+            image()?.url().orEmpty()
+        )
+    }
 
-fun LessonModule.Copy.Companion.fromGraphQlEntry(entry: CDAEntry, locale: String) =
-    LessonModule.Copy(
-        entry.getField<String?>(locale, "title").orEmpty(),
-        entry.getField<String?>(locale, "copy").orEmpty()
+fun LessonModule.Copy.Companion.fromGraphQlEntry(module: AsLessonCopy) =
+    with(module.fragments().lessonCopy()!!) {
+        LessonModule.Copy(
+            title().orEmpty(),
+            copy().orEmpty()
+        )
+    }
+
+fun Category.Companion.fromGraphQlEntry(
+    category: com.contentful.tea.kotlin.content.graphql.fragment.Category
+) =
+    Category(
+        category.sys()?.id().orEmpty(),
+        category.title().orEmpty(),
+        category.slug().orEmpty()
     )
