@@ -1,9 +1,16 @@
+#
+# GraphQL routes, generating models through apollo.
+#
+# @see https://graphql.contentful.com/content/v1/spaces/qz0n5cdakyl9/explore?access_token=580d5944194846b690dd89b630a1cb98a0eef6a19b860ef71efc37ee8076ddb8
+# @see https://www.apollographql.com/docs/android/
+#
+
 query Home {
   layoutCollection(limit: 1) {
     items {
       title
       slug
-      contentModules {
+      contentModulesCollection {
         items {
           ... on LayoutHighlightedCourse {
             course {
@@ -88,12 +95,12 @@ fragment Course on Course {
   image {
     url
   }
-  lessons {
+  lessonsCollection {
     items {
       ...Lesson
     }
   }
-  categories {
+  categoriesCollection {
     items {
       ...Category
     }
@@ -107,7 +114,7 @@ fragment Course on Course {
 fragment Lesson on Lesson {
   title
   slug
-  modules {
+  modulesCollection {
     items {
       ... on LessonCodeSnippets {
         ...LessonCodeSnippet

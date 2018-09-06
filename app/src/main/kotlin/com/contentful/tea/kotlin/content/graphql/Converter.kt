@@ -15,7 +15,7 @@ fun Layout.Companion.fromGraphQlEntry(home: HomeQuery.Data) =
         Layout(
             title.orEmpty(),
             slug.orEmpty(),
-            contentModules?.items.orEmpty().map { module ->
+            contentModulesCollection?.items.orEmpty().map { module ->
                 createHomeModule(module)
             }
         )
@@ -83,10 +83,10 @@ fun Course.Companion.fromGraphQlEntry(
         course.description().orEmpty(),
         course.duration().or(0),
         course.skillLevel().orEmpty(),
-        course.lessons()?.items().orEmpty().map {
+        course.lessonsCollection()?.items().orEmpty().map {
             Lesson.fromGraphQlEntry(it.fragments().lesson())
         },
-        course.categories()?.items().orEmpty().map {
+        course.categoriesCollection()?.items().orEmpty().map {
             Category.fromGraphQlEntry(it.fragments().category())
         }
     )
@@ -99,7 +99,7 @@ fun Lesson.Companion.fromGraphQlEntry(
     Lesson(
         lesson.title().orEmpty(),
         lesson.slug().orEmpty(),
-        lesson.modules()?.items().orEmpty().map { findLessonModule(it) }
+        lesson.modulesCollection()?.items().orEmpty().map { findLessonModule(it) }
     )
 
 fun findLessonModule(
