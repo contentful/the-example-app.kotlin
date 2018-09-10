@@ -13,10 +13,11 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
-import com.contentful.java.cda.CDALocale
 import com.contentful.tea.kotlin.R
 import com.contentful.tea.kotlin.content.Api
+import com.contentful.tea.kotlin.content.Locale
 import com.contentful.tea.kotlin.content.Parameter
+import com.contentful.tea.kotlin.content.graphql.GraphQL
 import com.contentful.tea.kotlin.content.toUrl
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
@@ -30,6 +31,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var dependencies: Dependencies
     private var parameter: Parameter = Parameter()
+    private var useGraphQL: Boolean = false
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_main)
@@ -54,6 +56,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun fillPreferences() {
         parameter = dependencies.contentInfrastructure.parameter.copy()
+        useGraphQL = dependencies.contentInfrastructure is GraphQL
+
         fillInApi(
             findPreference(getString(R.string.settings_key_api)) as ListPreference
         )
@@ -65,7 +69,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         dependencies.contentInfrastructure.fetchSpace(errorCallback = {}) { space ->
             activity?.runOnUiThread {
                 findPreference(getString(R.string.settings_key_space_connect))?.summary =
-                    space.name()
+                    space.name
             }
         }
     }
@@ -95,7 +99,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             dependencies.contentInfrastructure.fetchAllLocales(errorCallback = { _ ->
                 activity?.toast(getString(R.string.error_could_not_fetch_locales))
             }, successCallback = { locales ->
-                entries = locales.map(CDALocale::code).toTypedArray()
+                entries = locales.map(Locale::code).toTypedArray()
                 entryValues = entries
                 setOnPreferenceChangeListener { _, newValue ->
                     parameter.locale = newValue as String
@@ -125,13 +129,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     activity?.toast(
                         getString(
                             R.string.settings_connected_successfully_to_space,
-                            space.name()
+                            space.name
                         ),
                         false
                     )
 
                     findPreference(getString(R.string.settings_key_space_connect))?.summary =
-                        space.name()
+                        space.name
                 }
             }
         )

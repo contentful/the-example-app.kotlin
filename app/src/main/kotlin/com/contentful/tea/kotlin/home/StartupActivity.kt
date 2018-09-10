@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.contentful.tea.kotlin.MainActivity
 import com.contentful.tea.kotlin.R
-import com.contentful.tea.kotlin.content.rest.Contentful
+import com.contentful.tea.kotlin.content.graphql.GraphQL
 import com.contentful.tea.kotlin.extensions.isNetworkError
 import com.contentful.tea.kotlin.extensions.showError
 import com.contentful.tea.kotlin.extensions.showNetworkError
@@ -30,7 +30,7 @@ class StartupActivity : AppCompatActivity() {
 
     private fun requestContentful() {
         launch {
-            Contentful().fetchHomeLayout(::error) {
+            GraphQL().fetchHomeLayout(::error) {
                 val intent = Intent(this@StartupActivity, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
