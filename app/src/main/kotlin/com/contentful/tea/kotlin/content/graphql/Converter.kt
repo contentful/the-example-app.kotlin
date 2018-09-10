@@ -152,7 +152,7 @@ fun Category.Companion.fromGraphQlEntry(
     category: com.contentful.tea.kotlin.content.graphql.fragment.Category
 ) =
     Category(
-        category.sys()?.id().orEmpty(),
+        category.sys().id().orEmpty(),
         category.title().orEmpty(),
         category.slug().orEmpty()
     )

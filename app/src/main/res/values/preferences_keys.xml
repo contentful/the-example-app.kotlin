@@ -15,5 +15,4 @@
     <string translatable="false" name="settings_key_host">host</string>
     <string translatable="false" name="settings_key_reset">reset</string>
     <string translatable="false" name="settings_key_share_qr">qr_code_share</string>
-    <string translatable="false" name="settings_key_content_protocol">content_protocol</string>
 </resources>

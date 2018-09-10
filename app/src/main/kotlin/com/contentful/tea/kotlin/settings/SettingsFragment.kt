@@ -18,7 +18,6 @@ import com.contentful.tea.kotlin.content.Api
 import com.contentful.tea.kotlin.content.Locale
 import com.contentful.tea.kotlin.content.Parameter
 import com.contentful.tea.kotlin.content.graphql.GraphQL
-import com.contentful.tea.kotlin.content.rest.Contentful
 import com.contentful.tea.kotlin.content.toUrl
 import com.contentful.tea.kotlin.dependencies.Dependencies
 import com.contentful.tea.kotlin.dependencies.DependenciesProvider
@@ -58,7 +57,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun fillPreferences() {
         parameter = dependencies.contentInfrastructure.parameter.copy()
         useGraphQL = dependencies.contentInfrastructure is GraphQL
-        dependencies.contentInfrastructure = if (useGraphQL) GraphQL() else Contentful()
 
         fillInApi(
             findPreference(getString(R.string.settings_key_api)) as ListPreference
@@ -66,10 +64,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         fillInLocales(
             findPreference(getString(R.string.settings_key_locale)) as ListPreference
-        )
-
-        fillContentProtocols(
-            findPreference(getString(R.string.settings_key_content_protocol)) as ListPreference
         )
 
         dependencies.contentInfrastructure.fetchSpace(errorCallback = {}) { space ->
@@ -113,24 +107,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     preferenceChanged()
                 }
             })
-        }
-
-    private fun fillContentProtocols(listPreference: ListPreference) =
-        listPreference.apply {
-            val protocols = resources.getStringArray(R.array.settings_content_protocol_values)
-            setDefaultValue(protocols[0])
-            value = if (useGraphQL) protocols[1] else protocols[0]
-            summary = value
-
-            entries = protocols
-            entryValues = protocols
-
-            setOnPreferenceChangeListener { _, newValue ->
-                useGraphQL = newValue == protocols[1]
-                summary = newValue.toString()
-                dependencies.contentInfrastructure = if (useGraphQL) GraphQL() else Contentful()
-                preferenceChanged()
-            }
         }
 
     private fun preferenceChanged(): Boolean {

@@ -13,10 +13,6 @@
                 android:title="@string/settings_locale_label"
                 android:key="@string/settings_key_locale"
                 />
-        <ListPreference
-                android:title="@string/settings_content_protocol_label"
-                android:key="@string/settings_key_content_protocol"
-                />
     </PreferenceCategory>
 
     <PreferenceCategory

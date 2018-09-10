@@ -11,8 +11,4 @@
         <item>Python</item>
         <item>Ruby</item>
     </string-array>
-    <string-array name="settings_content_protocol_values">
-        <item>REST</item>
-        <item>GraphQL</item>
-    </string-array>
 </resources>
