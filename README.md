@@ -1,3 +1,6 @@
+> **Note**: This repo is no longer officially maintained as of Jan, 2023.
+> Feel free to use it, fork it and patch it for your own needs.
+
 ![header](assets/store_feature_graphic.png)
 
 [![Build Status](https://app.bitrise.io/app/e28f5db64f9dcc90/status.svg?token=7Qkboqi4aHGpzkxU86rN0w)](https://app.bitrise.io/app/e28f5db64f9dcc90)
